@@ -1,0 +1,550 @@
+// Generated from BST-AII/Wildskills SKILL.md frontmatter.
+export type WildSkill = { name: string; description: string; category: string; path: string; href: string };
+export const wildSkills: WildSkill[] = [
+  {
+    "name": "intended-vs-implemented",
+    "description": "The method for finding the gap between what a system is supposed to do and what the code actually does — the class of bug generic scanners miss because they have no model of intent. Defines what counts as documented intent, what counts as implementation evidence, which mismatches matter, and how to avoid hand-wavy findings. Use when auditing AI-built code, reviewing access control against documented permissions, or checking whether a codebase matches its own documentation.",
+    "category": "pm-ai-shipping",
+    "path": "external/pm-skills/pm-ai-shipping/skills/intended-vs-implemented/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-ai-shipping/skills/intended-vs-implemented/SKILL.md"
+  },
+  {
+    "name": "shipping-artifacts",
+    "description": "The durable documentation set that makes an AI-built (vibe-coded) app reviewable before shipping. A small core every app needs — architecture, user/permission flows, permissions, variables/secrets, and a test-coverage map — plus conditional docs added only when they apply: emails, scheduled work, SEO, and embedded agents/automation. Defines what each doc must capture and how a reviewer or auditor uses it. Use when documenting a codebase for handoff, mapping user journeys and trust-boundary crossings, planning test coverage, or preparing for a security or performance audit.",
+    "category": "pm-ai-shipping",
+    "path": "external/pm-skills/pm-ai-shipping/skills/shipping-artifacts/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-ai-shipping/skills/shipping-artifacts/SKILL.md"
+  },
+  {
+    "name": "ab-test-analysis",
+    "description": "Analyze A/B test results with statistical significance, sample size validation, confidence intervals, and ship/extend/stop recommendations. Use when evaluating experiment results, checking if a test reached significance, interpreting split test data, or deciding whether to ship a variant.",
+    "category": "pm-data-analytics",
+    "path": "external/pm-skills/pm-data-analytics/skills/ab-test-analysis/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-data-analytics/skills/ab-test-analysis/SKILL.md"
+  },
+  {
+    "name": "cohort-analysis",
+    "description": "Perform cohort analysis on user engagement data — retention curves, feature adoption trends, and segment-level insights. Use when analyzing user retention by cohort, studying feature adoption over time, investigating churn patterns, or identifying engagement trends.",
+    "category": "pm-data-analytics",
+    "path": "external/pm-skills/pm-data-analytics/skills/cohort-analysis/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-data-analytics/skills/cohort-analysis/SKILL.md"
+  },
+  {
+    "name": "sql-queries",
+    "description": "Generate SQL queries from natural language descriptions. Supports BigQuery, PostgreSQL, MySQL, and other dialects. Reads database schemas from uploaded diagrams or documentation. Use when writing SQL, building data reports, exploring databases, or translating business questions into queries.",
+    "category": "pm-data-analytics",
+    "path": "external/pm-skills/pm-data-analytics/skills/sql-queries/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-data-analytics/skills/sql-queries/SKILL.md"
+  },
+  {
+    "name": "brainstorm-okrs",
+    "description": "Brainstorm team-level OKRs aligned with company objectives — qualitative objectives with measurable key results. Use when setting quarterly OKRs, aligning team goals with company strategy, drafting objectives, or learning how to write effective OKRs.",
+    "category": "pm-execution",
+    "path": "external/pm-skills/pm-execution/skills/brainstorm-okrs/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-execution/skills/brainstorm-okrs/SKILL.md"
+  },
+  {
+    "name": "create-prd",
+    "description": "Create a Product Requirements Document using a comprehensive 8-section template covering problem, objectives, segments, value propositions, solution, and release planning. Use when writing a PRD, documenting product requirements, preparing a feature spec, or reviewing an existing PRD.",
+    "category": "pm-execution",
+    "path": "external/pm-skills/pm-execution/skills/create-prd/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-execution/skills/create-prd/SKILL.md"
+  },
+  {
+    "name": "dummy-dataset",
+    "description": "Generate realistic dummy datasets for testing with customizable columns, constraints, and output formats (CSV, JSON, SQL, Python script). Use when creating test data, building mock datasets, or generating sample data for development and demos.",
+    "category": "pm-execution",
+    "path": "external/pm-skills/pm-execution/skills/dummy-dataset/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-execution/skills/dummy-dataset/SKILL.md"
+  },
+  {
+    "name": "job-stories",
+    "description": "Create job stories using the 'When [situation], I want to [motivation], so I can [outcome]' format with detailed acceptance criteria. Use when writing job stories, creating JTBD-style backlog items, or expressing user situations and motivations.",
+    "category": "pm-execution",
+    "path": "external/pm-skills/pm-execution/skills/job-stories/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-execution/skills/job-stories/SKILL.md"
+  },
+  {
+    "name": "outcome-roadmap",
+    "description": "Transform an output-focused roadmap into an outcome-focused one that communicates strategic intent. Rewrites initiatives as outcome statements reflecting user and business impacts. Use when shifting to outcome roadmaps, making a roadmap more strategic, or rewriting feature lists as outcomes.",
+    "category": "pm-execution",
+    "path": "external/pm-skills/pm-execution/skills/outcome-roadmap/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-execution/skills/outcome-roadmap/SKILL.md"
+  },
+  {
+    "name": "pre-mortem",
+    "description": "Run a pre-mortem risk analysis on a PRD or launch plan. Categorizes risks as Tigers (real problems), Paper Tigers (overblown concerns), and Elephants (unspoken worries), then classifies as launch-blocking, fast-follow, or track. Use when preparing for launch, stress-testing a product plan, or identifying what could go wrong.",
+    "category": "pm-execution",
+    "path": "external/pm-skills/pm-execution/skills/pre-mortem/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-execution/skills/pre-mortem/SKILL.md"
+  },
+  {
+    "name": "prioritization-frameworks",
+    "description": "Reference guide to 9 prioritization frameworks with formulas, when-to-use guidance, and templates — RICE, ICE, Kano, MoSCoW, Opportunity Score, and more. Use when selecting a prioritization method, comparing frameworks like RICE vs ICE, or learning how different prioritization approaches work.",
+    "category": "pm-execution",
+    "path": "external/pm-skills/pm-execution/skills/prioritization-frameworks/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-execution/skills/prioritization-frameworks/SKILL.md"
+  },
+  {
+    "name": "release-notes",
+    "description": "Generate user-facing release notes from tickets, PRDs, or changelogs. Creates clear, engaging summaries organized by category (new features, improvements, fixes). Use when writing release notes, creating changelogs, announcing product updates, or summarizing what shipped.",
+    "category": "pm-execution",
+    "path": "external/pm-skills/pm-execution/skills/release-notes/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-execution/skills/release-notes/SKILL.md"
+  },
+  {
+    "name": "retro",
+    "description": "Facilitate a structured sprint retrospective — what went well, what didn't, and prioritized action items with owners and deadlines. Use when running a retrospective, reflecting on a sprint, creating action items from team feedback, or learning how to run effective retros.",
+    "category": "pm-execution",
+    "path": "external/pm-skills/pm-execution/skills/retro/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-execution/skills/retro/SKILL.md"
+  },
+  {
+    "name": "sprint-plan",
+    "description": "Plan a sprint with capacity estimation, story selection, dependency mapping, and risk identification. Use when preparing for sprint planning, estimating team capacity, selecting stories, or balancing sprint scope against velocity.",
+    "category": "pm-execution",
+    "path": "external/pm-skills/pm-execution/skills/sprint-plan/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-execution/skills/sprint-plan/SKILL.md"
+  },
+  {
+    "name": "stakeholder-map",
+    "description": "Build a stakeholder map using a power/interest grid, identify communication strategies per quadrant, and generate a communication plan. Use when managing stakeholders, preparing for a launch, aligning cross-functional teams, or planning stakeholder engagement.",
+    "category": "pm-execution",
+    "path": "external/pm-skills/pm-execution/skills/stakeholder-map/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-execution/skills/stakeholder-map/SKILL.md"
+  },
+  {
+    "name": "strategy-red-team",
+    "description": "Red-team a PRD, roadmap, or strategy by attacking its load-bearing assumptions before reality does. Steelmans then attacks each claim, ranks failure modes by impact × likelihood × cheapness-to-test, and returns the cheapest test and kill criteria for each. Use when stress-testing a plan, pressure-testing a strategy, challenging assumptions, or preparing a doc for executive review.",
+    "category": "pm-execution",
+    "path": "external/pm-skills/pm-execution/skills/strategy-red-team/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-execution/skills/strategy-red-team/SKILL.md"
+  },
+  {
+    "name": "summarize-meeting",
+    "description": "Summarize a meeting transcript into structured notes with date, participants, topic, key decisions, summary points, and action items. Use when processing meeting recordings, creating meeting notes, writing meeting minutes, or recapping discussions.",
+    "category": "pm-execution",
+    "path": "external/pm-skills/pm-execution/skills/summarize-meeting/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-execution/skills/summarize-meeting/SKILL.md"
+  },
+  {
+    "name": "test-scenarios",
+    "description": "Create comprehensive test scenarios from user stories with test objectives, starting conditions, user roles, step-by-step actions, and expected outcomes. Use when writing QA test cases, creating test plans, defining acceptance tests, or preparing for feature validation.",
+    "category": "pm-execution",
+    "path": "external/pm-skills/pm-execution/skills/test-scenarios/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-execution/skills/test-scenarios/SKILL.md"
+  },
+  {
+    "name": "user-stories",
+    "description": "Create user stories following the 3 C's (Card, Conversation, Confirmation) and INVEST criteria with descriptions, design links, and acceptance criteria. Use when writing user stories, breaking down features into backlog items, or defining acceptance criteria.",
+    "category": "pm-execution",
+    "path": "external/pm-skills/pm-execution/skills/user-stories/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-execution/skills/user-stories/SKILL.md"
+  },
+  {
+    "name": "wwas",
+    "description": "Create product backlog items in Why-What-Acceptance format — independent, valuable, testable items with strategic context. Use when writing structured backlog items, breaking features into work items, or using the WWA format.",
+    "category": "pm-execution",
+    "path": "external/pm-skills/pm-execution/skills/wwas/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-execution/skills/wwas/SKILL.md"
+  },
+  {
+    "name": "beachhead-segment",
+    "description": "Identify the first beachhead market segment for a product launch. Evaluates segments against burning pain, willingness to pay, winnable market share, and referral potential. Use when choosing a first market, targeting an initial customer segment, or planning market entry strategy.",
+    "category": "pm-go-to-market",
+    "path": "external/pm-skills/pm-go-to-market/skills/beachhead-segment/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-go-to-market/skills/beachhead-segment/SKILL.md"
+  },
+  {
+    "name": "competitive-battlecard",
+    "description": "Create sales-ready competitive battlecards comparing your product against a specific competitor — positioning, feature comparison, objection handling, and win/loss patterns. Use when preparing sales teams, creating competitive materials, or responding to 'why not competitor X?'",
+    "category": "pm-go-to-market",
+    "path": "external/pm-skills/pm-go-to-market/skills/competitive-battlecard/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-go-to-market/skills/competitive-battlecard/SKILL.md"
+  },
+  {
+    "name": "growth-loops",
+    "description": "Identify growth loops (flywheels) for sustainable traction. Evaluates 5 loop types: Viral, Usage, Collaboration, User-Generated, and Referral. Use when designing growth mechanisms, building product-led traction, or understanding how growth loops work.",
+    "category": "pm-go-to-market",
+    "path": "external/pm-skills/pm-go-to-market/skills/growth-loops/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-go-to-market/skills/growth-loops/SKILL.md"
+  },
+  {
+    "name": "gtm-motions",
+    "description": "Identify the best GTM motions and tools across 7 motion types: Inbound, Outbound, Paid Digital, Community, Partners, ABM, and PLG. Use when selecting marketing channels, choosing between inbound and outbound strategy, or planning cross-channel campaigns.",
+    "category": "pm-go-to-market",
+    "path": "external/pm-skills/pm-go-to-market/skills/gtm-motions/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-go-to-market/skills/gtm-motions/SKILL.md"
+  },
+  {
+    "name": "gtm-strategy",
+    "description": "Create a go-to-market strategy covering marketing channels, messaging, success metrics, and launch timeline. Use when planning a product launch, creating a GTM plan from scratch, or defining a launch strategy for a new market.",
+    "category": "pm-go-to-market",
+    "path": "external/pm-skills/pm-go-to-market/skills/gtm-strategy/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-go-to-market/skills/gtm-strategy/SKILL.md"
+  },
+  {
+    "name": "ideal-customer-profile",
+    "description": "Identify the Ideal Customer Profile (ICP) from research data with demographics, behaviors, JTBD, and needs. Use when defining your ICP, analyzing PMF survey data, or understanding who your best customers are.",
+    "category": "pm-go-to-market",
+    "path": "external/pm-skills/pm-go-to-market/skills/ideal-customer-profile/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-go-to-market/skills/ideal-customer-profile/SKILL.md"
+  },
+  {
+    "name": "competitor-analysis",
+    "description": "Analyze competitors with strengths, weaknesses, and differentiation opportunities. Identifies direct competitors and maps the competitive landscape. Use when doing competitive research, preparing a competitive brief, or finding differentiation opportunities.",
+    "category": "pm-market-research",
+    "path": "external/pm-skills/pm-market-research/skills/competitor-analysis/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-market-research/skills/competitor-analysis/SKILL.md"
+  },
+  {
+    "name": "customer-journey-map",
+    "description": "Create an end-to-end customer journey map with stages, touchpoints, emotions, pain points, and opportunities. Use when mapping the customer experience, identifying friction points, improving onboarding, or visualizing the user journey.",
+    "category": "pm-market-research",
+    "path": "external/pm-skills/pm-market-research/skills/customer-journey-map/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-market-research/skills/customer-journey-map/SKILL.md"
+  },
+  {
+    "name": "market-segments",
+    "description": "Identify 3-5 potential customer segments with demographics, JTBD, and product fit analysis. Use when exploring market segments, identifying target audiences, evaluating new markets, or learning how to segment a market.",
+    "category": "pm-market-research",
+    "path": "external/pm-skills/pm-market-research/skills/market-segments/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-market-research/skills/market-segments/SKILL.md"
+  },
+  {
+    "name": "market-sizing",
+    "description": "Estimate market size using TAM, SAM, and SOM with top-down and bottom-up approaches. Use when sizing a market opportunity, estimating addressable market, preparing for investor pitches, or evaluating market entry.",
+    "category": "pm-market-research",
+    "path": "external/pm-skills/pm-market-research/skills/market-sizing/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-market-research/skills/market-sizing/SKILL.md"
+  },
+  {
+    "name": "sentiment-analysis",
+    "description": "Analyze user feedback data to identify segments with sentiment scores, JTBD, and product satisfaction insights. Use when analyzing user feedback at scale, running sentiment analysis on reviews or surveys, or identifying satisfaction patterns.",
+    "category": "pm-market-research",
+    "path": "external/pm-skills/pm-market-research/skills/sentiment-analysis/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-market-research/skills/sentiment-analysis/SKILL.md"
+  },
+  {
+    "name": "user-personas",
+    "description": "Create refined user personas from research data — 3 personas with JTBD, pains, gains, and unexpected insights. Use when building personas from survey data, creating user profiles from research, or segmenting users for product decisions.",
+    "category": "pm-market-research",
+    "path": "external/pm-skills/pm-market-research/skills/user-personas/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-market-research/skills/user-personas/SKILL.md"
+  },
+  {
+    "name": "user-segmentation",
+    "description": "Segment users from feedback data based on behavior, JTBD, and needs. Identifies at least 3 distinct user segments. Use when segmenting a user base, analyzing diverse user feedback, or building a segmentation model.",
+    "category": "pm-market-research",
+    "path": "external/pm-skills/pm-market-research/skills/user-segmentation/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-market-research/skills/user-segmentation/SKILL.md"
+  },
+  {
+    "name": "marketing-ideas",
+    "description": "Generate 5 creative, cost-effective marketing ideas with channels, messaging, and engagement rationale. Use when brainstorming marketing campaigns, planning product promotion, or looking for creative marketing tactics.",
+    "category": "pm-marketing-growth",
+    "path": "external/pm-skills/pm-marketing-growth/skills/marketing-ideas/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-marketing-growth/skills/marketing-ideas/SKILL.md"
+  },
+  {
+    "name": "north-star-metric",
+    "description": "Define a North Star Metric and 3-5 supporting input metrics that form a metrics constellation. Classify the business game (Attention, Transaction, Productivity) and validate against 7 criteria for an effective North Star. Use when choosing a North Star Metric, setting up a metrics framework, learning about the North Star Framework, or deciding what to measure.",
+    "category": "pm-marketing-growth",
+    "path": "external/pm-skills/pm-marketing-growth/skills/north-star-metric/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-marketing-growth/skills/north-star-metric/SKILL.md"
+  },
+  {
+    "name": "positioning-ideas",
+    "description": "Brainstorm product positioning ideas differentiated from competitors. Identifies top competitors and generates positioning statements with rationale. Use when developing product positioning, differentiating from competitors, or crafting brand positioning strategy.",
+    "category": "pm-marketing-growth",
+    "path": "external/pm-skills/pm-marketing-growth/skills/positioning-ideas/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-marketing-growth/skills/positioning-ideas/SKILL.md"
+  },
+  {
+    "name": "product-name",
+    "description": "Brainstorm 5 unique, memorable product names with rationale aligned to brand values and target audience. Use when naming a new product, rebranding, or exploring product name ideas.",
+    "category": "pm-marketing-growth",
+    "path": "external/pm-skills/pm-marketing-growth/skills/product-name/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-marketing-growth/skills/product-name/SKILL.md"
+  },
+  {
+    "name": "value-prop-statements",
+    "description": "Generate value proposition statements for marketing, sales, and onboarding from existing value propositions. Use when writing marketing copy, creating sales messaging, or crafting onboarding messages.",
+    "category": "pm-marketing-growth",
+    "path": "external/pm-skills/pm-marketing-growth/skills/value-prop-statements/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-marketing-growth/skills/value-prop-statements/SKILL.md"
+  },
+  {
+    "name": "analyze-feature-requests",
+    "description": "Analyze and prioritize a list of feature requests by theme, strategic alignment, impact, effort, and risk. Use when reviewing customer feature requests, triaging a backlog, or making prioritization decisions.",
+    "category": "pm-product-discovery",
+    "path": "external/pm-skills/pm-product-discovery/skills/analyze-feature-requests/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-product-discovery/skills/analyze-feature-requests/SKILL.md"
+  },
+  {
+    "name": "brainstorm-experiments-existing",
+    "description": "Design experiments to test assumptions for an existing product — prototypes, A/B tests, spikes, and other low-effort validation methods. Use when validating assumptions, testing feature ideas cheaply, or planning product experiments.",
+    "category": "pm-product-discovery",
+    "path": "external/pm-skills/pm-product-discovery/skills/brainstorm-experiments-existing/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-product-discovery/skills/brainstorm-experiments-existing/SKILL.md"
+  },
+  {
+    "name": "brainstorm-experiments-new",
+    "description": "Design lean startup experiments (pretotypes) for a new product. Creates XYZ hypotheses and suggests low-effort validation methods like landing pages, explainer videos, and pre-orders. Use when validating a new product idea, creating pretotypes, or testing market demand.",
+    "category": "pm-product-discovery",
+    "path": "external/pm-skills/pm-product-discovery/skills/brainstorm-experiments-new/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-product-discovery/skills/brainstorm-experiments-new/SKILL.md"
+  },
+  {
+    "name": "brainstorm-ideas-existing",
+    "description": "Brainstorm product ideas for an existing product using multi-perspective ideation from PM, Designer, and Engineer viewpoints. Use when generating new feature ideas, brainstorming solutions for an identified opportunity, or ideating with a product trio.",
+    "category": "pm-product-discovery",
+    "path": "external/pm-skills/pm-product-discovery/skills/brainstorm-ideas-existing/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-product-discovery/skills/brainstorm-ideas-existing/SKILL.md"
+  },
+  {
+    "name": "brainstorm-ideas-new",
+    "description": "Brainstorm feature ideas for a new product in initial discovery from PM, Designer, and Engineer perspectives. Use when starting product discovery for a new product, exploring features for a startup idea, or doing initial ideation.",
+    "category": "pm-product-discovery",
+    "path": "external/pm-skills/pm-product-discovery/skills/brainstorm-ideas-new/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-product-discovery/skills/brainstorm-ideas-new/SKILL.md"
+  },
+  {
+    "name": "identify-assumptions-existing",
+    "description": "Identify risky assumptions for a feature idea in an existing product across Value, Usability, Viability, and Feasibility. Uses multi-perspective devil's advocate thinking. Use when stress-testing a feature idea, doing risk assessment, or preparing for assumption mapping.",
+    "category": "pm-product-discovery",
+    "path": "external/pm-skills/pm-product-discovery/skills/identify-assumptions-existing/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-product-discovery/skills/identify-assumptions-existing/SKILL.md"
+  },
+  {
+    "name": "identify-assumptions-new",
+    "description": "Identify risky assumptions for a new product idea across 8 risk categories including Go-to-Market, Strategy, and Team. Use when evaluating startup risks, assessing a new product concept, or mapping assumptions for a new venture.",
+    "category": "pm-product-discovery",
+    "path": "external/pm-skills/pm-product-discovery/skills/identify-assumptions-new/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-product-discovery/skills/identify-assumptions-new/SKILL.md"
+  },
+  {
+    "name": "interview-script",
+    "description": "Create a structured customer interview script with JTBD probing questions, warm-up, core exploration, and wrap-up sections. Follows The Mom Test principles — no leading questions, no pitching, focus on past behavior. Use when preparing for user interviews, creating interview guides, or planning discovery research.",
+    "category": "pm-product-discovery",
+    "path": "external/pm-skills/pm-product-discovery/skills/interview-script/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-product-discovery/skills/interview-script/SKILL.md"
+  },
+  {
+    "name": "metrics-dashboard",
+    "description": "Define and design a product metrics dashboard with key metrics, data sources, visualization types, and alert thresholds. Use when creating a metrics dashboard, defining KPIs, setting up product analytics, or building a data monitoring plan.",
+    "category": "pm-product-discovery",
+    "path": "external/pm-skills/pm-product-discovery/skills/metrics-dashboard/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-product-discovery/skills/metrics-dashboard/SKILL.md"
+  },
+  {
+    "name": "opportunity-solution-tree",
+    "description": "Build an Opportunity Solution Tree (OST) to structure product discovery — map a desired outcome to opportunities, solutions, and experiments. Based on Teresa Torres' Continuous Discovery Habits. Use when structuring discovery work, mapping opportunities to solutions, or deciding what to build next.",
+    "category": "pm-product-discovery",
+    "path": "external/pm-skills/pm-product-discovery/skills/opportunity-solution-tree/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-product-discovery/skills/opportunity-solution-tree/SKILL.md"
+  },
+  {
+    "name": "prioritize-assumptions",
+    "description": "Prioritize assumptions using an Impact × Risk matrix and suggest experiments for each. Use when triaging a list of assumptions, deciding what to test first, or applying the assumption prioritization canvas.",
+    "category": "pm-product-discovery",
+    "path": "external/pm-skills/pm-product-discovery/skills/prioritize-assumptions/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-product-discovery/skills/prioritize-assumptions/SKILL.md"
+  },
+  {
+    "name": "prioritize-features",
+    "description": "Prioritize a backlog of feature ideas based on impact, effort, risk, and strategic alignment with top 5 recommendations. Use when prioritizing a feature backlog, making scope decisions, or ranking product ideas.",
+    "category": "pm-product-discovery",
+    "path": "external/pm-skills/pm-product-discovery/skills/prioritize-features/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-product-discovery/skills/prioritize-features/SKILL.md"
+  },
+  {
+    "name": "summarize-interview",
+    "description": "Summarize a customer interview transcript into a structured template with JTBD, satisfaction signals, and action items. Use when processing interview recordings or transcripts, synthesizing discovery interviews, or creating interview summaries.",
+    "category": "pm-product-discovery",
+    "path": "external/pm-skills/pm-product-discovery/skills/summarize-interview/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-product-discovery/skills/summarize-interview/SKILL.md"
+  },
+  {
+    "name": "ansoff-matrix",
+    "description": "Generate an Ansoff Matrix analysis mapping growth strategies across market penetration, market development, product development, and diversification. Use when considering growth options, planning market expansion, or evaluating strategic growth paths.",
+    "category": "pm-product-strategy",
+    "path": "external/pm-skills/pm-product-strategy/skills/ansoff-matrix/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-product-strategy/skills/ansoff-matrix/SKILL.md"
+  },
+  {
+    "name": "business-model",
+    "description": "Generate a Business Model Canvas with all 9 building blocks. Use when creating a business model, documenting how a business creates value, or analyzing an existing business model.",
+    "category": "pm-product-strategy",
+    "path": "external/pm-skills/pm-product-strategy/skills/business-model/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-product-strategy/skills/business-model/SKILL.md"
+  },
+  {
+    "name": "lean-canvas",
+    "description": "Generate a Lean Canvas with problem, solution, metrics, cost structure, UVP, unfair advantage, channels, segments, and revenue. Use when exploring a lean startup canvas, testing a business hypothesis, or modeling a new venture.",
+    "category": "pm-product-strategy",
+    "path": "external/pm-skills/pm-product-strategy/skills/lean-canvas/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-product-strategy/skills/lean-canvas/SKILL.md"
+  },
+  {
+    "name": "monetization-strategy",
+    "description": "Brainstorm 3-5 monetization strategies with audience fit, risks, and validation experiments. Use when exploring revenue models, evaluating pricing strategies, or deciding how to monetize a product.",
+    "category": "pm-product-strategy",
+    "path": "external/pm-skills/pm-product-strategy/skills/monetization-strategy/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-product-strategy/skills/monetization-strategy/SKILL.md"
+  },
+  {
+    "name": "pestle-analysis",
+    "description": "Perform a PESTLE analysis covering Political, Economic, Social, Technological, Legal, and Environmental factors. Use when assessing the macro environment, doing strategic planning, or evaluating external factors affecting your business.",
+    "category": "pm-product-strategy",
+    "path": "external/pm-skills/pm-product-strategy/skills/pestle-analysis/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-product-strategy/skills/pestle-analysis/SKILL.md"
+  },
+  {
+    "name": "porters-five-forces",
+    "description": "Perform Porter's Five Forces analysis — competitive rivalry, supplier power, buyer power, threat of substitutes, and threat of new entrants. Use when analyzing industry dynamics, assessing competitive forces, or evaluating market attractiveness.",
+    "category": "pm-product-strategy",
+    "path": "external/pm-skills/pm-product-strategy/skills/porters-five-forces/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-product-strategy/skills/porters-five-forces/SKILL.md"
+  },
+  {
+    "name": "pricing-strategy",
+    "description": "Analyze and design pricing strategies including pricing models, competitive pricing analysis, willingness-to-pay estimation, and price elasticity. Use when setting prices, evaluating pricing models, preparing for a pricing change, or comparing freemium vs paid approaches.",
+    "category": "pm-product-strategy",
+    "path": "external/pm-skills/pm-product-strategy/skills/pricing-strategy/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-product-strategy/skills/pricing-strategy/SKILL.md"
+  },
+  {
+    "name": "product-strategy",
+    "description": "Create a comprehensive product strategy using the 9-section Product Strategy Canvas — vision, segments, costs, value propositions, trade-offs, metrics, growth, capabilities, and defensibility. Use when building a product strategy, creating a strategic plan, or defining product direction.",
+    "category": "pm-product-strategy",
+    "path": "external/pm-skills/pm-product-strategy/skills/product-strategy/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-product-strategy/skills/product-strategy/SKILL.md"
+  },
+  {
+    "name": "product-vision",
+    "description": "Brainstorm an inspiring, achievable, and emotional product vision that motivates teams and aligns stakeholders. Use when defining or refining a product vision, creating a vision statement, or aligning the team around a shared direction.",
+    "category": "pm-product-strategy",
+    "path": "external/pm-skills/pm-product-strategy/skills/product-vision/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-product-strategy/skills/product-vision/SKILL.md"
+  },
+  {
+    "name": "startup-canvas",
+    "description": "Generate a Startup Canvas combining Product Strategy (9 sections) and Business Model (costs + revenue) for a new product. An alternative to BMC and Lean Canvas that separates strategy from business model. Use when launching a new product or evaluating a startup concept.",
+    "category": "pm-product-strategy",
+    "path": "external/pm-skills/pm-product-strategy/skills/startup-canvas/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-product-strategy/skills/startup-canvas/SKILL.md"
+  },
+  {
+    "name": "swot-analysis",
+    "description": "Perform a detailed SWOT analysis — strengths, weaknesses, opportunities, and threats with actionable recommendations. Use when doing strategic assessment, competitive analysis, or evaluating a product or business position.",
+    "category": "pm-product-strategy",
+    "path": "external/pm-skills/pm-product-strategy/skills/swot-analysis/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-product-strategy/skills/swot-analysis/SKILL.md"
+  },
+  {
+    "name": "value-proposition",
+    "description": "Design a detailed value proposition using a 6-part JTBD template — Who, Why, What before, How, What after, Alternatives. Use when creating a value proposition, analyzing customer value delivery, or articulating why customers should choose your product.",
+    "category": "pm-product-strategy",
+    "path": "external/pm-skills/pm-product-strategy/skills/value-proposition/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-product-strategy/skills/value-proposition/SKILL.md"
+  },
+  {
+    "name": "draft-nda",
+    "description": "Draft a detailed Non-Disclosure Agreement between two parties covering information types, jurisdiction, and clauses needing legal review. Use when creating confidentiality agreements or preparing an NDA for a partnership.",
+    "category": "pm-toolkit",
+    "path": "external/pm-skills/pm-toolkit/skills/draft-nda/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-toolkit/skills/draft-nda/SKILL.md"
+  },
+  {
+    "name": "grammar-check",
+    "description": "Identify grammar, logical, and flow errors in text and suggest targeted fixes without rewriting the entire text. Use when proofreading content, checking writing quality, or reviewing a draft.",
+    "category": "pm-toolkit",
+    "path": "external/pm-skills/pm-toolkit/skills/grammar-check/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-toolkit/skills/grammar-check/SKILL.md"
+  },
+  {
+    "name": "privacy-policy",
+    "description": "Draft a detailed privacy policy covering data types, jurisdiction, GDPR and compliance considerations, and clauses needing legal review. Use when creating a privacy policy, updating data protection documentation, or preparing for compliance.",
+    "category": "pm-toolkit",
+    "path": "external/pm-skills/pm-toolkit/skills/privacy-policy/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-toolkit/skills/privacy-policy/SKILL.md"
+  },
+  {
+    "name": "review-resume",
+    "description": "Comprehensive PM resume review and tailoring against 10 best practices including XYZ+S formula, keyword optimization, job-specific tailoring, and structure. Use when reviewing a PM resume, preparing for job applications, or improving resume impact.",
+    "category": "pm-toolkit",
+    "path": "external/pm-skills/pm-toolkit/skills/review-resume/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/pm-skills/pm-toolkit/skills/review-resume/SKILL.md"
+  },
+  {
+    "name": "debate",
+    "description": "通过跨模型对抗式辩论（GPT-5.4 提案 + Claude 审查）产出高质量产品文档（PRD）。 当用户需要：(1) 创建 PRD 或产品规格说明，(2) 做复杂的产品或策略决策、需要多视角分析， (3) 说 \"/debate\"，(4) 对产品方向进行结构化论证， (5) 对比多个产品方案的优劣时使用。 不适用于：简单问题、代码评审、单轮文档生成、技术架构设计。",
+    "category": "external",
+    "path": "external/prd-debate/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/external/prd-debate/SKILL.md"
+  },
+  {
+    "name": "doc-reader",
+    "description": "读取本地 PDF / DOCX / PPTX / XLSX 四种文档格式,抽取文本并输出结构化 Markdown(默认)或纯文本。按扩展名自动派发:PDF 用 pdfplumber 抽文本+表格、pypdf 兜底;DOCX 用 python-docx(标题层级+表格);PPTX 用 python-pptx(逐页文本框+可选备注);XLSX 用 openpyxl 只读模式(逐 sheet 单元格→表格)。不做 OCR、不读扫描件/图片型 PDF、不解读图像图表、不做 XLSX 公式求值、不解密加密文档。触发:框架或用户需要读取上述文档格式内容(如\"读这个 PDF/Word/PPT/Excel\")且现有能力缺此格式解析时。依赖惰性自建隔离 venv,与框架 hook 解释器隔离。",
+    "category": "doc-reader",
+    "path": "skills/doc-reader/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/skills/doc-reader/SKILL.md"
+  },
+  {
+    "name": "prd-debate",
+    "description": "纯 Sonnet 5 原生的对抗式辩论编排，产出高质量产品文档（PRD）。Proposer 与 Reviewer 均为 Sonnet 5 子代理，靠角色 prompt 强分化制造对抗（Proposer 扩张覆盖、 Reviewer 锚否决清单只否不写），无外部 CLI / 外部模型 / API 依赖。适用于：创建 PRD、 复杂产品/策略多视角分析、结构化论证、方案优劣对比。不适用于：简单问题、代码评审、 单轮文档生成、技术架构设计。本 skill 通常被 workloop-idea-to-prd / workloop-refine-prd 编排调用，也可独立运行。",
+    "category": "pm",
+    "path": "skills/pm/prd-debate/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/skills/pm/prd-debate/SKILL.md"
+  },
+  {
+    "name": "workloop-idea-to-prd",
+    "description": "End-to-end product loop that turns a raw idea, concept, or verbal ask into a candidate PRD in our prd_spec §1 format. Orchestrates pm-skills (single-model) to draft and the self-authored prd-debate (pure Sonnet 5 adversarial debate) to harden, then merges and self-checks against the prd_spec §5 veto list. Runs in two resumable phases (eval then synth) with the same inner three-way user gate as refine-prd (interaction parity). Use when the deliverable is a PRD and there is no existing PRD or draft to start from (idea-to-PRD, work-type",
+    "category": "pm",
+    "path": "skills/pm/workloop-idea-to-prd/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/skills/pm/workloop-idea-to-prd/SKILL.md"
+  },
+  {
+    "name": "workloop-refine-prd",
+    "description": "End-to-end product loop that refines an existing PRD or a half-finished requirements draft into a strengthened candidate PRD in our prd_spec §1 format. Orchestrates pm-skills (single-model) to analyze and supplement, and the self-authored prd-debate (pure Sonnet 5 adversarial debate) to harden, then merges over the starting draft and self-checks against the prd_spec §5 veto list. Runs in two resumable phases (eval then synth) with an inner three-way user gate on findings. Use when the deliverable is a PRD and a PRD-level starting point already exists (refine-PRD, work-types",
+    "category": "pm",
+    "path": "skills/pm/workloop-refine-prd/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/skills/pm/workloop-refine-prd/SKILL.md"
+  },
+  {
+    "name": "skill-creator",
+    "description": "Create new skills, modify and improve existing skills, and measure skill performance. Use when users want to create a skill from scratch, edit, or optimize an existing skill, run evals to test a skill, benchmark skill performance with variance analysis, or optimize a skill's description for better triggering accuracy.",
+    "category": "skill-creator",
+    "path": "skills/skill-creator/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/skills/skill-creator/SKILL.md"
+  },
+  {
+    "name": "commit-push",
+    "description": "增量审计通过后引导 git commit/push。无 git repo 则引导用户建 repo+upstream;无 .gitignore 则生成(忽略 tmp/、records/、__pycache__/、*.pyc、.claude/settings.local.json)。对外 push 默认 dry-run,--apply 才真推。",
+    "category": "version-mgmt",
+    "path": "skills/version-mgmt/commit-push/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/skills/version-mgmt/commit-push/SKILL.md"
+  },
+  {
+    "name": "framework-sync",
+    "description": "同步治理框架(.governance/AIIGovernance)与 skills(.governance/Wildskills)两 submodule 至最新版本 tag。tag 比对为主(无新版即跳过);本地脏则拒更新(先解决冲突);更新后提示跑熵检查;有本地改动需上游化时转 governance-pr skill。触发:session_start 超期兜底(sync_period_days 默认 7)+手动。",
+    "category": "version-mgmt",
+    "path": "skills/version-mgmt/framework-sync/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/skills/version-mgmt/framework-sync/SKILL.md"
+  },
+  {
+    "name": "governance-pr",
+    "description": "当业务 repo 内治理框架 submodule 相对上游有本地提交(需回流到治理框架 repo)时,引导生成 PR。挂熵检查链:熵检查未通过一律不建 PR(fail-closed)。用 gh pr create;对外动作默认 dry-run,--apply 才真建。",
+    "category": "version-mgmt",
+    "path": "skills/version-mgmt/governance-pr/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/skills/version-mgmt/governance-pr/SKILL.md"
+  },
+  {
+    "name": "vendor-update-check",
+    "description": "Report-only check for upstream updates to the vendored submodules under external/ (pm-skills tracked by latest semver tag, prd-debate tracked by default-branch head). Compares each current pin against upstream and reports a status of UP-TO-DATE, BEHIND, or UNKNOWN, writing a JSON report under tmp/. Use when you want to know whether the vendored external skills have upstream changes, or before deciding to re-pin. It never writes to or re-pins the submodules, and never auto-updates — re-pinning stays a human decision.",
+    "category": "version-mgmt",
+    "path": "skills/version-mgmt/vendor-update-check/SKILL.md",
+    "href": "https://github.com/BST-AII/Wildskills/blob/main/skills/version-mgmt/vendor-update-check/SKILL.md"
+  }
+];
