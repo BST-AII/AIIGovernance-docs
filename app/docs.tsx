@@ -24,9 +24,10 @@ const pages: Record<string, DocPage> = {
     group: "开始使用", label: "安装治理框架", title: "安装治理框架",
     intro: "使用 Windows 单文件安装器，把 AIIGovernance、Wildskills、Hooks 和隔离运行时一次性接入目标项目。",
     sections: [
-      { id: "requirements", title: "安装前准备", body: <><ul><li>Windows 10 或 Windows 11</li><li>一个需要治理的项目目录</li><li>建议安装 Claude Code 并完成登录</li></ul><Note title="Git 与 Python">Git 缺失时可使用安装器内置的 PortableGit；目标电脑不需要预装 Python，Hooks 使用项目内的便携 Python。</Note></> },
+      { id: "requirements", title: "安装前准备", body: <><ul><li>Windows 10 或 Windows 11</li><li>一个需要治理的项目目录</li><li>一个已加入 BST-AII 的 GitHub 账号</li><li>建议安装 Claude Code 并完成登录</li></ul><Note title="Git 与 Python">Git 缺失时可使用安装器内置的 PortableGit；目标电脑不需要预装 Python，Hooks、Sync Agent 与 MCP Bridge 使用安装包内的便携 Python。</Note></> },
       { id: "download", title: "下载安装器", body: <><div className="link-list"><a href="https://github.com/BST-AII/AIIGovernance-releases/releases/latest" target="_blank" rel="noreferrer"><b>下载最新 Windows 安装程序</b><span>进入组织内部安装包 Release，选择 EXE 和对应 SHA256 →</span></a><a href="https://github.com/BST-AII/AIIGovernance-releases/releases" target="_blank" rel="noreferrer"><b>查看历史发布版本</b><span>进入 AIIGovernance-releases 的版本列表 →</span></a></div><Note title="访问权限">安装程序存放在 Private 仓库中。请先登录 GitHub，并确认账号拥有 <code>BST-AII/AIIGovernance-releases</code> 的访问权限。</Note><ol><li>下载最新的 Windows 安装程序和对应的 <code>.sha256</code> 文件。</li><li>在 PowerShell 中校验 EXE 的 SHA256。</li><li>确认校验值一致后双击运行。</li></ol><Code>{`Get-FileHash .\\AIIGovernance-Setup-installer-vX.Y.Z.exe -Algorithm SHA256`}</Code></> },
-      { id: "install", title: "完成首次安装", body: <ol><li>双击安装器，选择“首次安装”。</li><li>选择项目根目录；如果还不是 Git 仓库，确认是否执行 <code>git init</code>。</li><li>安装器离线挂载 AIIGovernance 和 Wildskills。</li><li>确认 Claude 权限基线和项目 Trust。</li><li>选择是否继续安装飞书机器人。</li><li>查看 bootstrap、lint 和自检的真实结果。</li></ol> },
+      { id: "install", title: "完成首次安装", body: <ol><li>双击安装器，选择“首次安装”。</li><li>选择项目根目录；如果还不是 Git 仓库，确认是否执行 <code>git init</code>。</li><li>安装器离线挂载 AIIGovernance 和 Wildskills。</li><li>确认 Claude 权限基线和项目 Trust，并完成 bootstrap、lint 和自检。</li><li>输入 GitHub 用户名，在 GitHub 官方页面完成设备授权；用户名或 BST-AII 组织身份不匹配时安装会停止。</li><li>安装器自动注册共享 Sync Agent、当前项目和 <code>aiigovernance-records</code> MCP Bridge。</li><li>选择是否继续安装飞书机器人。</li></ol> },
+      { id: "records-sync", title: "知识回流与 MCP", body: <><p>每个 Windows 用户只运行一个后台 Sync Agent；同一用户的多个项目通过稳定的 Project ID 分开同步 <code>records/events.jsonl</code>，互不覆盖。多个 Claude Session 可以同时写入，Agent 只上传完整 JSONL 行，并在公司侧确认入库后推进游标。</p><Note title="凭据边界">GitHub token 不保存到本机或云端中继；设备私钥与 Relay Session 由 Windows DPAPI 保护。云端只能看到端到端加密信封，10.65.2.137 独立核验组织身份。</Note></> },
       { id: "verify", title: "安装后验证", body: <><Code>{`.\\tools\\python\\python.exe .governance\\AIIGovernance\\tool\\bootstrap.py --check`}</Code><p>验证通过后检查 Git 变更，并由项目维护者提交治理挂载。</p><Code>{`git status\ngit add .gitmodules .governance .claude CLAUDE.md project_profile.yaml records tools\ngit commit -m "chore: install AIIGovernance lite"`}</Code></> },
     ],
   },
@@ -96,7 +97,8 @@ const pages: Record<string, DocPage> = {
     intro: "卸载只拆除安装器管理的治理接线和运行时，保留项目业务数据与可审阅的 Git 变更。",
     sections: [
       { id: "entry", title: "进入卸载", body: <ol><li>运行安装器并选择“升级已有项目”。</li><li>选择已安装治理框架的项目。</li><li>在版本检查页面选择“卸载治理框架”。</li><li>阅读删除与保留清单后再次确认。</li></ol> },
-      { id: "remove", title: "会被移除", body: <ul><li>AIIGovernance 与 Wildskills submodule</li><li>AIIG Hooks 接线</li><li>安装器接入的项目 Skills</li><li>项目内便携 Python</li><li>安装器管理的元数据</li></ul> },
+      { id: "remove", title: "会被移除", body: <ul><li>AIIGovernance 与 Wildskills submodule</li><li>AIIG Hooks 接线</li><li>安装器接入的项目 Skills</li><li>当前项目的 Sync Agent 注册与 MCP Bridge 接线</li><li>项目内便携 Python</li><li>安装器管理的元数据</li></ul> },
+      { id: "shared-agent", title: "不会影响其他项目", body: <p>卸载只注销当前项目的游标和 MCP 配置。若同一 Windows 用户还有其他治理项目，后台 Sync Agent 继续运行；只有最后一个项目被卸载时才删除共享计划任务。</p> },
       { id: "keep", title: "会被保留", body: <ul><li><code>project_profile.yaml</code></li><li><code>records/</code> 与审计证据</li><li>用户权限配置</li><li>全局项目 Trust 记录</li></ul> },
       { id: "safety", title: "安全保护", body: <><p>如果治理 submodule 内存在未提交修改，卸载会停止，不会强制删除。Git 删除结果保留在项目工作区或暂存区，由维护者审核后提交。</p></> },
     ],
@@ -105,7 +107,7 @@ const pages: Record<string, DocPage> = {
     group: "参考", label: "版本说明", title: "版本与发布说明",
     intro: "安装器使用语义化版本，并通过 lite 分支的 GitHub Actions 自动测试、构建和发布。",
     sections: [
-      { id: "current", title: "0.3.x", body: <ul><li>首次安装与已有项目升级入口</li><li>版本检测、Settings 备份和升级说明</li><li>项目级安全卸载</li><li>已有项目独立添加飞书机器人</li><li>已有 cc-connect 相同版本安全复用</li><li>EXE Windows 文件版本和自动 GitHub Release</li></ul> },
+      { id: "current", title: "0.3.x", body: <ul><li>首次安装与已有项目升级入口</li><li>强制 GitHub/BST-AII 身份核验</li><li>自动安装多项目 Sync Agent 与 MCP Bridge</li><li>版本检测、Settings 备份和升级说明</li><li>项目级安全卸载</li><li>已有项目独立添加飞书机器人</li><li>已有 cc-connect 相同版本安全复用</li><li>EXE Windows 文件版本和自动 GitHub Release</li></ul> },
       { id: "automation", title: "自动版本规则", body: <p>推送到 <code>lite</code> 后，构建流程先测试和生成安装器；源码版本未发布时直接发布，已有对应 Tag 时自动递增 PATCH。成功后生成 Tag、ZIP、EXE 和 SHA256。</p> },
       { id: "artifacts", title: "发布产物", body: <ul><li><code>AIIGovernance-Setup-lite-vX.Y.Z.zip</code></li><li>单文件 Windows 安装器</li><li>SHA256 校验文件</li><li>CHANGELOG 更新说明</li></ul> },
       { id: "history", title: "查看历史版本", body: <p>完整版本变更记录保存在仓库根目录的 <code>CHANGELOG.md</code>，正式安装包位于 GitHub Releases。</p> },
