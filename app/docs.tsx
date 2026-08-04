@@ -125,7 +125,7 @@ export function DocsPage({ slug }: { slug: string }) {
   return <div className="docs-site">
     <header className="docs-header">
       <a className="docs-brand" href={pageHref("overview")}><img src={`${basePath}/app-icon.png`} alt=""/><span>AIIGovernance</span><em>Docs</em></a>
-      <div className="header-tools"><button aria-label="搜索文档">⌕&nbsp;&nbsp;搜索文档 <kbd>Ctrl K</kbd></button><a href="https://github.com/BST-AII/AIIGovernance-docs">GitHub ↗</a></div>
+      <div className="header-tools"><button aria-label="搜索文档">⌕&nbsp;&nbsp;搜索文档 <kbd>Ctrl K</kbd></button><a href="https://bst-aii.github.io/AIIGovernance-docs/">使用说明</a><a href="https://github.com/BST-AII/AIIGovernance-docs">GitHub ↗</a></div>
     </header>
     <nav className="category-nav" aria-label="文档分类"><a href={pageHref("installation")}>开始使用</a><a href={pageHref("architecture")}>治理框架</a><a href={pageHref("upgrade")}>维护与更新</a><a href={pageHref("releases")}>版本说明</a></nav>
     <div className="docs-grid">
