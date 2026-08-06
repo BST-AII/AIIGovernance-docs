@@ -8,6 +8,9 @@ const Code = ({ children }: { children: string }) => <pre className="code-block"
 const Note = ({ title, children }: { title: string; children: ReactNode }) => <aside className="note"><b>{title}</b><div>{children}</div></aside>;
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const pageHref = (slug: string) => `${basePath}${slug === "overview" ? "/" : `/${slug}/`}`;
+const latestReleaseHref = "https://github.com/BST-AII/AIIGovernance-releases/releases/latest";
+const releaseHistoryHref = "https://github.com/BST-AII/AIIGovernance-releases/releases";
+const installerIssueHref = "https://github.com/BST-AII/AIIGovernance-installer/issues/new?template=installer-bug.yml";
 
 const pages: Record<string, DocPage> = {
   overview: {
@@ -22,13 +25,19 @@ const pages: Record<string, DocPage> = {
   },
   installation: {
     group: "开始使用", label: "安装治理框架", title: "安装治理框架",
-    intro: "使用 Windows 单文件安装器，把 AIIGovernance、Wildskills、Hooks 和隔离运行时一次性接入目标项目。",
+    intro: "同一套可视化安装向导支持 Windows、Ubuntu / WSL 和 macOS，把 AIIGovernance、Wildskills、Hooks、Records Agent 与 MCP Bridge 一次性接入目标项目。",
     sections: [
+      { id: "latest-release", title: "下载最新正式版本", body: <><div className="link-list"><a href={latestReleaseHref} target="_blank" rel="noreferrer"><b>打开最新 Installer Release</b><span>永久指向当前最新版本；登录 GitHub 后选择自己的平台 →</span></a><a href={releaseHistoryHref} target="_blank" rel="noreferrer"><b>查看全部历史版本</b><span>查看旧版本、发布时间和校验文件 →</span></a></div><div className="simple-table"><div><b>Windows x64</b><span><code>AIIGovernance-Setup-installer-vX.Y.Z.exe</code></span></div><div><b>Ubuntu / WSL x64</b><span><code>AIIGovernance-Setup-linux-x64-vX.Y.Z.tar.gz</code></span></div><div><b>Apple Silicon</b><span><code>AIIGovernance-Setup-macos-arm64-vX.Y.Z.zip</code></span></div><div><b>Intel Mac</b><span><code>AIIGovernance-Setup-macos-x64-vX.Y.Z.zip</code></span></div></div><Note title="Private Release">请先登录拥有 BST-AII 权限的 GitHub 账号；未登录或无权限时 GitHub 会显示 404。安装包文件名带版本号，因此网页使用不会过期的 <code>releases/latest</code> 入口。</Note></> },
       { id: "requirements", title: "安装前准备", body: <><ul><li>Windows 10 或 Windows 11</li><li>一个需要治理的项目目录</li><li>一个已加入 BST-AII 的 GitHub 账号</li><li>建议安装 Claude Code 并完成登录</li></ul><Note title="Git 与 Python">Git 缺失时可使用安装器内置的 PortableGit；目标电脑不需要预装 Python，Hooks、Sync Agent 与 MCP Bridge 使用安装包内的便携 Python。</Note></> },
       { id: "download", title: "下载安装器", body: <><div className="link-list"><a href="https://github.com/BST-AII/AIIGovernance-releases/releases/latest" target="_blank" rel="noreferrer"><b>下载最新 Windows 安装程序</b><span>进入组织内部安装包 Release，选择 EXE 和对应 SHA256 →</span></a><a href="https://github.com/BST-AII/AIIGovernance-releases/releases" target="_blank" rel="noreferrer"><b>查看历史发布版本</b><span>进入 AIIGovernance-releases 的版本列表 →</span></a></div><Note title="访问权限">安装程序存放在 Private 仓库中。请先登录 GitHub，并确认账号拥有 <code>BST-AII/AIIGovernance-releases</code> 的访问权限。</Note><ol><li>下载最新的 Windows 安装程序和对应的 <code>.sha256</code> 文件。</li><li>在 PowerShell 中校验 EXE 的 SHA256。</li><li>确认校验值一致后双击运行。</li></ol><Code>{`Get-FileHash .\\AIIGovernance-Setup-installer-vX.Y.Z.exe -Algorithm SHA256`}</Code></> },
       { id: "install", title: "完成首次安装", body: <ol><li>双击安装器，选择“首次安装”。</li><li>选择项目根目录；如果还不是 Git 仓库，确认是否执行 <code>git init</code>。</li><li>安装器离线挂载 AIIGovernance 和 Wildskills。</li><li>确认 Claude 权限基线和项目 Trust，并完成 bootstrap、lint 和自检。</li><li>输入 GitHub 用户名，在 GitHub 官方页面完成设备授权；用户名或 BST-AII 组织身份不匹配时安装会停止。</li><li>安装器自动注册共享 Sync Agent、当前项目和 <code>aiigovernance-records</code> MCP Bridge。</li><li>选择是否继续安装飞书机器人。</li></ol> },
+      { id: "windows", title: "Windows 10 / 11", body: <><p>下载 EXE 和同名 <code>.sha256</code>，使用上方 PowerShell 命令核验后双击运行。一般使用普通用户权限即可。</p><Note title="Access is denied">先确认项目不在系统目录、只读网络盘或其他账号目录，并关闭仍占用旧安装器、cc-connect 或载荷缓存的进程。计划任务被公司策略拒绝时，新版会尝试当前用户启动项；只有错误步骤明确要求提升权限时才右键“以管理员身份运行”。</Note></> },
+      { id: "linux", title: "Ubuntu 24.04 / WSL2", body: <><p>Ubuntu 桌面只需要 Git；安装包已携带 Python、Qt 和所需 XCB 运行库。WSL 必须启用 WSLg 才能显示窗口。</p><Code>{"sudo apt update\nsudo apt install -y git\ntar -xzf AIIGovernance-Setup-linux-x64-vX.Y.Z.tar.gz\ncd AIIGovernance-Setup-linux-x64-vX.Y.Z\nchmod +x AIIGovernance-Setup-linux-x64-vX.Y.Z\n./AIIGovernance-Setup-linux-x64-vX.Y.Z"}</Code><Note title="窗口打不开">先确认正在 Ubuntu 桌面或已启用 WSLg，并检查 <code>echo $DISPLAY</code>。不要在纯 SSH/headless 会话中期待 GUI。</Note></> },
+      { id: "macos", title: "macOS Intel / Apple Silicon", body: <><ol><li>运行 <code>uname -m</code>：<code>arm64</code> 选择 Apple Silicon 包，<code>x86_64</code> 选择 Intel 包。</li><li>下载对应 ZIP 和 <code>.sha256</code>，运行 <code>shasum -a 256 文件名.zip</code> 并核对。</li><li>解压后把应用拖到 Applications；首次启动在 Finder 中右键应用并选择“打开”。</li><li>仍被拦截时进入“系统设置 → 隐私与安全性”，在安全提示下选择“仍要打开”。</li></ol><Note title="Apple 无法检查是否包含恶意软件">当前内部预览包尚未使用 Apple Developer ID 签名与公证，因此 Gatekeeper 会提示。核对 SHA256 后只为这个应用执行“仍要打开”；不要关闭 Gatekeeper 全局保护。</Note><Note title="企业代理证书错误">若飞书凭据校验出现 <code>CERTIFICATE_VERIFY_FAILED: self-signed certificate in certificate chain</code>，请让 IT 把公司根证书安装到 macOS 系统钥匙串并设为受信任。也可通过 <code>AIIG_ENTERPRISE_CA_FILE</code> 明确追加 IT 提供的 PEM；禁止关闭 TLS 校验。</Note></> },
+      { id: "troubleshooting", title: "常见问题与解决方法", body: <div className="simple-table"><div><b>GitHub Device Code 400</b><span>组织 OAuth App 必须启用 Device Flow；这不是用户名拼写错误。</span></div><div><b>授权后一直等待</b><span>保持安装器开启；公司核验严格关联页面显示的 Enrollment ID，超时后可重试。</span></div><div><b>Claude 已安装但未检测</b><span>关闭并重新打开安装器；仍失败时在终端确认 <code>claude --version</code>。</span></div><div><b>机器人回复超过三分钟</b><span>点击“继续等待/重新等待我的消息”；单轮超时不会撤销已完成的治理安装。</span></div><div><b>机器人已绑定其他项目</b><span>明确选择迁移到当前项目，或返回飞书创建新机器人；同一 App ID 不能同时绑定多个项目。</span></div></div> },
+      { id: "report-issue", title: "如何报告安装问题", body: <><ol><li>点击安装器右上角或失败页的“报告问题”。</li><li>填写复现步骤并检查脱敏预览；预览包含版本、平台、当前状态和最多 200 行日志。</li><li>确认后提交。已完成设备身份核验时可自动创建私有 Issue；否则按钮显示“打开 GitHub Issue 表单”，登录后手工提交预填内容。</li></ol><div className="link-list"><a href={installerIssueHref} target="_blank" rel="noreferrer"><b>直接打开 Installer Issue 表单</b><span>用于安装器无法启动或报告窗口不可用的情况 →</span></a></div><Note title="隐私边界">不采集 App Secret、Token、对话、Records、Task 正文、真实 HOME 路径或完整项目路径；提交前始终由用户预览确认。</Note></> },
       { id: "records-sync", title: "知识回流与 MCP", body: <><p>每个 Windows 用户只运行一个后台 Sync Agent；同一用户的多个项目通过稳定的 Project ID 分开同步 <code>records/events.jsonl</code>，互不覆盖。多个 Claude Session 可以同时写入，Agent 只上传完整 JSONL 行，并在公司侧确认入库后推进游标。</p><Note title="凭据边界">GitHub token 不保存到本机或云端中继；设备私钥与 Relay Session 由 Windows DPAPI 保护。云端只能看到端到端加密信封，10.65.2.137 独立核验组织身份。</Note></> },
-      { id: "verify", title: "安装后验证", body: <><Code>{`.\\tools\\python\\python.exe .governance\\AIIGovernance\\tool\\bootstrap.py --check`}</Code><p>验证通过后检查 Git 变更，并由项目维护者提交治理挂载。</p><Code>{`git status\ngit add .gitmodules .governance .claude CLAUDE.md project_profile.yaml records tools\ngit commit -m "chore: install AIIGovernance lite"`}</Code></> },
+      { id: "verify", title: "安装后验证", body: <><p>安装器已经自动执行 bootstrap、lint 和 selftest，普通用户不需要再次运行脚本。重新打开 Claude 会话并进入项目，首条回复出现“治理已加载”即完成使用侧验证。</p><p>项目维护者可选地运行 <code>git status</code> 审阅安装器产生的治理文件，并按团队流程提交；手工运行 <code>bootstrap.py --check</code> 仅用于高级排查。</p></> },
     ],
   },
   robot: {
@@ -105,12 +114,13 @@ const pages: Record<string, DocPage> = {
   },
   releases: {
     group: "参考", label: "版本说明", title: "版本与发布说明",
-    intro: "安装器使用语义化版本，并通过 lite 分支的 GitHub Actions 自动测试、构建和发布。",
+    intro: "这里汇总当前正式安装器、跨平台产物和面向用户的版本变化；安装包仍从组织内部 Release 仓库下载。",
     sections: [
+      { id: "latest", title: "当前正式版本：v0.3.30", body: <><p>发布时间：2026-08-06。Windows、Ubuntu x64、macOS Apple Silicon 和 macOS Intel 由同一个 Release 交付。</p><ul><li>新增安装器统一“报告问题”入口、脱敏预览和私有 GitHub Issue 回流。</li><li>未完成设备身份或云端暂不可用时，安全降级为预填 Issue Form，不阻断安装。</li><li>修复 macOS Finder 启动时 Claude PATH 未传给机器人验证探针的问题。</li><li>保留多项目 Sync Agent、MCP Bridge、升级、卸载和机器人唯一绑定保护。</li></ul><div className="link-list"><a href={latestReleaseHref} target="_blank" rel="noreferrer"><b>打开 v0.3.30 / 最新 Release</b><span>未来发布新版本后，此入口会自动指向新版本 →</span></a></div></> },
       { id: "current", title: "0.3.x", body: <ul><li>首次安装与已有项目升级入口</li><li>强制 GitHub/BST-AII 身份核验</li><li>自动安装多项目 Sync Agent 与 MCP Bridge</li><li>版本检测、Settings 备份和升级说明</li><li>项目级安全卸载</li><li>已有项目独立添加飞书机器人</li><li>已有 cc-connect 相同版本安全复用</li><li>EXE Windows 文件版本和自动 GitHub Release</li></ul> },
-      { id: "automation", title: "自动版本规则", body: <p>推送到 <code>lite</code> 后，构建流程先测试和生成安装器；源码版本未发布时直接发布，已有对应 Tag 时自动递增 PATCH。成功后生成 Tag、ZIP、EXE 和 SHA256。</p> },
-      { id: "artifacts", title: "发布产物", body: <ul><li><code>AIIGovernance-Setup-lite-vX.Y.Z.zip</code></li><li>单文件 Windows 安装器</li><li>SHA256 校验文件</li><li>CHANGELOG 更新说明</li></ul> },
-      { id: "history", title: "查看历史版本", body: <p>完整版本变更记录保存在仓库根目录的 <code>CHANGELOG.md</code>，正式安装包位于 GitHub Releases。</p> },
+      { id: "automation", title: "自动版本规则", body: <p>推送到安装器 <code>main</code> 分支后，自动发布流程递增 PATCH 版本，并在 Windows、Ubuntu、macOS Intel 与 Apple Silicon Runner 上测试和构建。成功后生成统一 Tag、四平台安装包、SHA256 与来源 manifest。</p> },
+      { id: "artifacts", title: "发布产物", body: <ul><li><code>AIIGovernance-Setup-installer-vX.Y.Z.exe</code>：Windows x64。</li><li><code>AIIGovernance-Setup-linux-x64-vX.Y.Z.tar.gz</code>：Ubuntu / WSL x64。</li><li><code>AIIGovernance-Setup-macos-arm64-vX.Y.Z.zip</code>：Apple Silicon。</li><li><code>AIIGovernance-Setup-macos-x64-vX.Y.Z.zip</code>：Intel Mac。</li><li>每个安装包对应的 SHA256 与来源 manifest。</li></ul> },
+      { id: "history", title: "查看历史版本", body: <><p>本页保留当前版本面向用户的主要变化；精确 Tag、发布时间、校验文件和旧安装包位于完整 Release 历史。</p><div className="link-list"><a href={releaseHistoryHref} target="_blank" rel="noreferrer"><b>查看完整 Release 历史</b><span>需要先登录拥有 BST-AII 权限的 GitHub 账号 →</span></a><a href={pageHref("installation")}><b>返回跨平台安装说明</b><span>查看下载、macOS 权限、故障处理和问题报告 →</span></a></div></> },
     ],
   },
 };
