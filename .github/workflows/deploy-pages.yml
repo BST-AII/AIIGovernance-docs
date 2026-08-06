@@ -32,6 +32,12 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: out
+      - name: Upload domestic mirror artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: domestic-mirror
+          path: out
+          if-no-files-found: error
 
   deploy:
     environment:
@@ -43,3 +49,24 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
+
+  deploy-domestic-mirror:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download static site
+        uses: actions/download-artifact@v4
+        with:
+          name: domestic-mirror
+          path: out
+      - name: Configure restricted deploy key
+        env:
+          DEPLOY_KEY: ${{ secrets.AIIG_DOCS_DEPLOY_KEY }}
+        run: |
+          test -n "$DEPLOY_KEY"
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H service.pikso.art > ~/.ssh/known_hosts
+      - name: Atomically deploy domestic mirror
+        run: tar -C out -czf - . | ssh -i ~/.ssh/id_ed25519 aiigdocs@service.pikso.art

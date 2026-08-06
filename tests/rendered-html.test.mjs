@@ -30,6 +30,8 @@ test("exports every documented category", async () => {
 test("uses the GitHub Pages base path for generated assets", async () => {
   const html = await readFile(new URL("index.html", outputRoot), "utf8");
   assert.match(html, /\/AIIGovernance-docs\/_next\//);
+  assert.match(html, /https:\/\/service\.pikso\.art\/AIIGovernance-docs\//);
+  assert.match(html, /国内镜像/);
 });
 
 test("publishes cross-platform installation, issue, and release guidance", async () => {
