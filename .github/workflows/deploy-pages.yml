@@ -53,6 +53,8 @@ jobs:
   deploy-domestic-mirror:
     runs-on: ubuntu-latest
     needs: build
+    env:
+      DEPLOY_HOST: 101.47.19.2
     steps:
       - name: Download static site
         uses: actions/download-artifact@v4
@@ -67,6 +69,6 @@ jobs:
           install -d -m 700 ~/.ssh
           printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H service.pikso.art > ~/.ssh/known_hosts
+          ssh-keyscan -H "$DEPLOY_HOST" > ~/.ssh/known_hosts
       - name: Atomically deploy domestic mirror
-        run: tar -C out -czf - . | ssh -i ~/.ssh/id_ed25519 aiigdocs@service.pikso.art
+        run: tar -C out -czf - . | ssh -i ~/.ssh/id_ed25519 aiigdocs@"$DEPLOY_HOST"
