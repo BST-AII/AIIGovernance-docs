@@ -42,6 +42,8 @@ test("publishes cross-platform installation, issue, and release guidance", async
   assert.match(installation, /AIIGovernance-Setup-macos-arm64-vX\.Y\.Z\.zip/);
   assert.match(installation, /Apple 无法检查是否包含恶意软件/);
   assert.match(installation, /如何报告安装问题/);
+  assert.match(installation, /Hook 故障决策树/);
+  assert.match(installation, /hook-doctor/);
   assert.match(installation, /AIIGovernance-releases\/releases\/latest/);
   assert.match(installation, /普通用户不需要再次运行脚本/);
 
