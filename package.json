@@ -10,6 +10,9 @@
     "build": "next build",
     "build:pages": "node scripts/build-pages.mjs",
     "start": "next start",
+    "sync:release": "node scripts/sync-release-data.mjs",
+    "shots:console": "node scripts/screenshots/capture-console.mjs",
+    "shots:installer": "node scripts/screenshots/capture-installer.mjs",
     "test": "npm run build:pages && node --test tests/rendered-html.test.mjs",
     "lint": "eslint . --ignore-pattern .next --ignore-pattern out --ignore-pattern dist"
   },

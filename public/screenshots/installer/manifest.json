@@ -1,0 +1,14 @@
+{
+  "kind": "installer-wizard",
+  "capturedAt": "2026-08-16T05:43:09.627Z",
+  "guiDir": "E:\\pythonworkspace\\AIIGovernanceV2\\.worktrees\\aiig-060\\installer\\gui",
+  "sourceBranch": "codex/0.6.0-installer",
+  "sourceCommit": "e943265",
+  "viewport": {
+    "width": 1080,
+    "height": 720,
+    "deviceScaleFactor": 2
+  },
+  "dataSource": "scripts/screenshots/stub-pywebview.js（假桥示意数据，非真实安装记录）",
+  "screens": 30
+}

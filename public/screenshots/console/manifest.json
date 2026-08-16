@@ -1,0 +1,12 @@
+{
+  "kind": "console-screens",
+  "capturedAt": "2026-08-16T08:39:17.965Z",
+  "source": "http://localhost:5211/admin/app",
+  "viewport": {
+    "width": 1440,
+    "height": 900,
+    "deviceScaleFactor": 2
+  },
+  "dataSource": "console/src/mocks/devFixtures.ts（开发夹具假数据；/me 返回系统管理员，因此所有导航项都可见）",
+  "screens": 11
+}
