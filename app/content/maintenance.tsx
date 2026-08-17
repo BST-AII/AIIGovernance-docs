@@ -1,12 +1,13 @@
 import {
-  Code, DocPage, Figure, Matrix, Note, Warn,
+  Code, DocPage, Figure, Maintainer, Matrix, Note, Warn,
   installerIssueHref, pageHref,
 } from "../doc-kit";
 import { versionLabel } from "../release-data";
 
 export const upgrade: DocPage = {
-  group: "维护与更新", label: "升级与重装", title: "升级与重装已有治理项目",
-  intro: "安装器会检测项目已安装的版本，在你确认后更新框架并重新完成 Skills、设置与验证。升级和重装是两套不同的语义，选错会得到不同的结果。",
+  group: "维护", label: "升级、重装与修复", title: "升级、重装与修复",
+  intro: "安装器会识别项目当前状态，并根据所选模式更新受管组件，同时保留业务代码、记录和项目身份。",
+  keywords: ["升级", "重装", "修复", "覆盖", "恢复安装", "安装模式"],
   sections: [
     {
       id: "check", title: "检测版本",
@@ -17,31 +18,49 @@ export const upgrade: DocPage = {
           <li>选择项目根目录。</li>
           <li>安装器比较项目里的安装元数据与当前安装包的版本。</li>
         </ol>
-        <Figure src="screenshots/installer/upgrade_check.png" alt="安装器版本检查页" caption="版本检查页：列出项目已安装版本与当前安装包版本。已是最新版时，这一页仍然提供「重装当前版本（修复）」的出路。" source="installer-stub" />
+        <Figure src="screenshots/installer/upgrade_check.png" alt="安装器版本检查页" caption="版本检查页列出项目已安装版本与当前安装包版本。已是最新版时，仍可选择「重装当前版本（修复）」。" source="installer-stub" />
+      </>,
+    },
+    {
+      id: "modes", title: "选择正确的安装模式",
+      body: <>
+        <p>安装器会先识别项目和上一次安装的状态，再显示适用操作。以下名称用于区分行为边界，不要求用户记住内部代码名。</p>
+        <Matrix
+          head={["操作", "适用情况", "处理范围"]}
+          rows={[
+            ["首次安装（fresh）", "项目尚未接入治理框架", "安装受管组件并建立项目身份、Hooks、MCP 与后台服务接线。"],
+            ["升级（upgrade）", "项目已有较早版本", "只更新版本号发生变化的受管组件。"],
+            ["覆盖受管组件（overwrite_managed）", "需要重新铺设安装器管理的组件", "仅清理并重建受管组件，不删除业务代码、记录、身份和无关接线。"],
+            ["修复（repair）", "当前版本文件缺失、损坏或行为异常", "按当前安装包重新安装并验证全部受管组件。"],
+            ["继续安装（resume）", "上一次安装中断且存在可恢复状态", "从已记录的安全检查点继续；无法安全恢复时转入修复，不猜测完成状态。"],
+            ["卸载（uninstall）", "不再在当前项目使用治理组件", "只移除当前项目的受管组件和接线，保留业务数据与治理记录。"],
+          ]}
+        />
+        <Warn title="覆盖不等于清空项目">无论选择覆盖、修复还是卸载，安装器都不得删除业务代码、Records、Task/frozen、Agent Outbox、Project identity、device identity、第三方 Hook 或无关 submodule。</Warn>
       </>,
     },
     {
       id: "semantics", title: "三条版本规则",
       body: <>
-        <p>下面三条自 {versionLabel} 起生效。它们解释了一个曾经让人困惑很久的现象：明明点了升级，机器上跑的还是旧代码。</p>
+        <p>下面三条自 {versionLabel} 起生效，用于确保安装结果与所选版本一致。</p>
         <Matrix
           head={["规则", "内容", "为什么"]}
           rows={[
-            ["重装 = 全量重装", "重装、覆盖安装和首次安装都会把所有组件重新落位，即使版本号完全相同也一样。", "重装是修复路径。修复路径绝不信任盘上已有的内容——否则你为了修问题而重装，装完还是那份坏的。"],
-            ["升级 = 只装版本号提升的组件", "升级按组件版本号精确更新：版本没变的组件跳过不装。", "升级要快，也要可预测。只动真正变了的东西，其余保持原状。"],
-            ["每次改代码的发布必须提升版本号", "只要发布里改了代码，配套的组件版本号就必须跟着提升。", "这是上一条的前提。版本号不提升，升级就会正确地跳过它——代码改了却装不上，而且是静默的。"],
+            ["重装 = 全量重装", "重装、覆盖安装和首次安装都会重新落位所需受管组件，即使版本号完全相同。", "修复路径不能把磁盘上的既有文件视为已验证结果。"],
+            ["升级 = 只安装版本号提升的组件", "升级按组件版本号精确更新；版本未变化的组件保持原状。", "减少不必要的写入，并使升级结果可预测。"],
+            ["代码变化必须对应版本变化", "发布中只要修改了组件代码，组件版本号就必须同步提升。", "否则升级会按既定规则跳过该组件，导致新代码没有安装。"],
           ]}
         />
-        <Warn title="这三条是从真实事故里立出来的">{versionLabel} 之前，Linux 与 macOS 上的共享运行时按固定版本号钉安装，而包版本长期停在同一个值。包管理器认为条件已满足，于是什么都不装——每次升级之后机器上跑的仍是上一版的 Agent 与 Bridge，且没有任何报错。一位 Ubuntu 使用者的知识检索 404 因此跨了好几个版本都没被修掉。现在语义写死了：重装强制重装，升级受版本号门控。</Warn>
-        <Note title="怎么选">日常跟版本用「升级」。遇到怀疑装坏了、文件被误删、或某个功能明明发布了却不生效——用「重装当前版本（修复）」，它会把所有组件重新铺一遍。</Note>
+        <Maintainer title="维护者说明：版本规则的历史原因"><p>{versionLabel} 之前，Linux 与 macOS 上的共享运行时曾因固定包版本未提升而被包管理器跳过，导致升级后仍运行旧版 Agent 与 Bridge。当前语义固定为：修复和重装强制重新安装受管组件，升级受组件版本号门控。</p></Maintainer>
+        <Note title="如何选择">日常更新选择「升级」。如果文件缺失、安装损坏，或发布后的功能没有生效，选择「重装当前版本（修复）」重新安装并验证受管组件。</Note>
       </>,
     },
     {
-      id: "rewire", title: "整机重接线",
+      id: "rewire", title: "更新本机已登记项目的接线",
       body: <>
         <p>升级和重装<b>不只处理你选中的那个项目</b>。安装器会通过后台 Agent 枚举这台机器上全部已挂载的治理项目，逐个重写它们的 <code>.mcp.json</code>，指向本次的载荷与运行时。</p>
-        <p>这解决的是多项目机器上的一类顽固问题：你升级了项目 A，项目 B 的配置还指着上一版载荷的绝对路径，于是 B 的检索莫名其妙地坏掉，而你以为自己已经升级过了。</p>
-        <Note title="单个项目失败不阻断">重接线过程中某个项目失败只会被记录下来，不会中断整体升级。完成页会如实列出结果。</Note>
+        <p>这样可以避免多项目机器上的其他项目继续引用旧版载荷的绝对路径。</p>
+        <Note title="单个项目失败不阻断">更新接线时，单个项目失败会被记录并显示在完成页，不会中断其他项目的处理。</Note>
       </>,
     },
     {
@@ -55,9 +74,10 @@ export const upgrade: DocPage = {
       id: "preserve", title: "会保留什么",
       body: <ul>
         <li><code>project_profile.yaml</code></li>
-        <li><code>records/</code> 原始治理记录</li>
+        <li><code>records/</code>、Task/frozen 与原始治理记录</li>
+        <li>Agent Outbox、Project identity 与 device identity</li>
         <li>升级前 settings 的 <code>*.aiig-upgrade.bak</code> 备份</li>
-        <li>非 AIIG 管理的 skills、submodule 与全部业务源码</li>
+        <li>第三方 Hook，以及非 AIIG 管理的 Skills、submodule 与全部业务源码</li>
       </ul>,
     },
     {
@@ -71,8 +91,9 @@ export const upgrade: DocPage = {
 };
 
 export const uninstall: DocPage = {
-  group: "维护与更新", label: "卸载", title: "安全卸载治理框架",
-  intro: "卸载只拆除安装器管理的治理接线和运行时，保留项目业务数据与可审阅的 Git 变更。",
+  group: "维护", label: "安全卸载", title: "安全卸载治理组件",
+  intro: "卸载仅移除当前项目中由安装器管理的组件和接线，不删除业务代码与治理记录。",
+  keywords: ["卸载", "移除", "保留数据", "后台服务"],
   sections: [
     {
       id: "entry", title: "进入卸载",
@@ -108,10 +129,11 @@ export const uninstall: DocPage = {
       id: "keep", title: "会被保留",
       body: <ul>
         <li><code>project_profile.yaml</code></li>
-        <li><code>records/</code> 与审计证据</li>
+        <li><code>records/</code>、Task/frozen 与审计证据</li>
+        <li>Agent Outbox、Project identity 与 device identity</li>
         <li>用户权限配置</li>
         <li>全局项目 Trust 记录</li>
-        <li>非 AIIG 管理的 skills、submodule 与全部业务源码</li>
+        <li>第三方 Hook，以及非 AIIG 管理的 Skills、submodule 与全部业务源码</li>
       </ul>,
     },
     {
@@ -122,8 +144,9 @@ export const uninstall: DocPage = {
 };
 
 export const troubleshooting: DocPage = {
-  group: "维护与更新", label: "常见故障对照表", title: "常见故障对照表",
-  intro: "按症状查处置。先在这里对一遍，多数问题有明确解法；确实对不上再提交问题报告。",
+  group: "维护", label: "排查问题", title: "按现象排查问题",
+  intro: "先根据错误现象确认故障所在环节，再执行对应检查；无法定位时提交脱敏问题报告。",
+  keywords: ["故障", "报错", "诊断", "Hook", "检索", "登录"],
   sections: [
     {
       id: "install", title: "安装与启动",
@@ -149,7 +172,7 @@ export const troubleshooting: DocPage = {
     {
       id: "hooks", title: "Hook 故障决策树",
       body: <>
-        <p>治理没生效时，按下面的顺序定位——每一层的处置不同，跳着猜会白费时间。</p>
+        <p>治理未生效时，请按以下顺序定位。每一层对应不同的处理方式。</p>
         <div className="simple-table">
           <div><b>没有 UserPromptSubmit 配置</b><span>属于安装/升级接线问题。用“升级/修复”重建 <code>.claude/settings.local.json</code>。</span></div>
           <div><b>配置存在，但隔离执行失败</b><span>检查便携 Python、脚本权限、文件哈希和路径引号。</span></div>
@@ -157,7 +180,7 @@ export const troubleshooting: DocPage = {
           <div><b>锚点已落盘，但没有注入文本</b><span>属于 Hook 输出协议、输出大小或 Claude Code 版本兼容问题。</span></div>
           <div><b>Stop 反复拦截</b><span>首次拦截后的 <code>stop_hook_active=true</code> 必须静默成功返回；否则是 Stop 重入回归。</span></div>
         </div>
-        <Note title="让安装器替你查">安装器的“报告问题”会自动运行只读的 <code>hook-doctor</code>。它只读取真实项目配置，Hook 的实际执行发生在一个用完即删的临时项目里，不会动你的项目。</Note>
+        <Note title="使用安装器诊断">安装器的“报告问题”会自动运行只读的 <code>hook-doctor</code>。它只读取真实项目配置；Hook 的实际执行发生在临时项目中，不会修改当前项目。</Note>
       </>,
     },
     {
@@ -165,7 +188,7 @@ export const troubleshooting: DocPage = {
       body: <div className="simple-table">
         <div><b>会话开始十几分钟后检索工具集体 404</b><span>{versionLabel} 之前的后台令牌轮换竞态。升级到 {versionLabel} 或更高版本根治。</span></div>
         <div><b>结果里有中文就断开连接</b><span>同为 {versionLabel} 之前的缺陷，非 ASCII 结果在部分终端编码下会打断连接。升级即可。</span></div>
-        <div><b>升级过了，问题还在（Linux/macOS）</b><span>很可能撞上了旧版本的升级不落地缺陷。改用“重装当前版本（修复）”走全量重铺，详见<a href={pageHref("upgrade")}>三条版本规则</a>。</span></div>
+        <div><b>升级后问题仍然存在（Linux/macOS）</b><span>可能受到旧版本升级未落地缺陷的影响。改用“重装当前版本（修复）”重新安装受管组件，详见<a href={pageHref("upgrade")}>三条版本规则</a>。</span></div>
         <div><b>多项目机器上某个项目检索坏了</b><span>该项目的配置可能仍指向旧载荷。{versionLabel} 起升级/重装会自动重接线本机全部项目；先升级再看。</span></div>
         <div><b>一条知识都查不到</b><span>先用 <code>knowledge_status</code> 看回流是否到位、有没有待处理批次，再用 <code>list_projects</code> 确认可见项目范围。也可能是知识仍在待审核或已被归档。</span></div>
         <div><b>怀疑本机没在同步</b><span>用 <code>diagnostic_logs</code> 读本机近期的 Sync Agent 错误。它不联网，可以安全地先自查。</span></div>
@@ -193,14 +216,14 @@ export const troubleshooting: DocPage = {
     {
       id: "escalate", title: "还是没解决",
       body: <>
-        <p>对不上表里任何一条时，用安装器内置的问题报告——它会自动附上版本、平台、当前状态、Hook Doctor 结论和最多 200 行脱敏日志，比手写描述有用得多。</p>
+        <p>如果问题不符合上述情况，请使用安装器内置的问题报告。报告会附带版本、平台、当前状态、Hook Doctor 结论和最多 200 行脱敏日志。</p>
         <ol>
           <li>点安装器右上角或失败页的“报告问题”。</li>
           <li>填写复现步骤，检查脱敏预览。</li>
           <li>确认提交。已完成设备核验时可自动创建私有 Issue，否则会打开预填好的 GitHub 表单。</li>
         </ol>
         <div className="link-list"><a href={installerIssueHref} target="_blank" rel="noreferrer"><b>直接打开 Installer Issue 表单</b><span>用于安装器无法启动、或报告窗口不可用的情况 →</span></a></div>
-        <Code>{`# 提交前可以先自己看一眼后台服务状态
+        <Code>{`# 提交前检查后台服务状态
 # Ubuntu / WSL
 systemctl --user status aiig-records-agent.service
 

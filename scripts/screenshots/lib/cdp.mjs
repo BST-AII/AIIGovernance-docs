@@ -13,6 +13,7 @@ import { existsSync } from "node:fs";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import WebSocket from "next/dist/compiled/ws/index.js";
 
 /** 按平台列出常见的 Chromium 系浏览器位置。 */
 const CANDIDATES = {
@@ -73,11 +74,17 @@ export async function launch({ width = 1440, height = 900, scale = 2 } = {}) {
     [
       "--headless=new",
       "--remote-debugging-port=0",
+      "--remote-allow-origins=*",
       `--user-data-dir=${profile}`,
       "--no-first-run",
       "--no-default-browser-check",
       "--disable-extensions",
       "--disable-background-networking",
+      "--disable-gpu",
+      "--disable-gpu-compositing",
+      "--disable-gpu-sandbox",
+      "--disable-dev-shm-usage",
+      ...(process.platform === "win32" ? ["--no-sandbox"] : []),
       "--hide-scrollbars",
       "--force-device-scale-factor=1",
       "--allow-file-access-from-files",
@@ -116,33 +123,58 @@ export async function launch({ width = 1440, height = 900, scale = 2 } = {}) {
     );
   }
 
-  const versionResponse = await fetch(`http://127.0.0.1:${port}/json/version`);
-  if (!versionResponse.ok) {
+  const targetResponse = await fetch(`http://127.0.0.1:${port}/json/new?about%3Ablank`, {
+    method: "PUT",
+    signal: AbortSignal.timeout(10000),
+  });
+  if (!targetResponse.ok) {
     child.kill();
-    throw new CaptureError(`浏览器调试端点返回 ${versionResponse.status}。`);
+    throw new CaptureError(`浏览器新建页面端点返回 ${targetResponse.status}。`);
   }
-  const version = await versionResponse.json();
+  const target = await targetResponse.json();
 
-  const socket = new WebSocket(version.webSocketDebuggerUrl);
+  const socket = new WebSocket(target.webSocketDebuggerUrl);
   await new Promise((resolve, reject) => {
-    socket.onopen = resolve;
-    socket.onerror = () => reject(new CaptureError("无法连接浏览器调试端口。"));
+    const timer = setTimeout(() => {
+      socket.close();
+      reject(new CaptureError("连接浏览器调试端口超时（10 秒）。"));
+    }, 10000);
+    socket.once("open", () => { clearTimeout(timer); resolve(); });
+    socket.once("error", () => { clearTimeout(timer); reject(new CaptureError("无法连接浏览器调试端口。")); });
   });
 
   let nextId = 0;
   const pending = new Map();
   const listeners = new Set();
-  socket.onmessage = (event) => {
-    const message = JSON.parse(event.data);
+  child.once("exit", (code) => {
+    for (const [id, request] of pending) {
+      clearTimeout(request.timer);
+      request.reject(new CaptureError(`浏览器在 CDP 请求完成前退出（请求 ${id}，退出码 ${code}）。\n${stderr.trim()}`));
+    }
+    pending.clear();
+  });
+  socket.on("message", async (event) => {
+    let payload = event;
+    if (typeof payload !== "string") {
+      if (typeof payload?.text === "function") payload = await payload.text();
+      else if (payload instanceof ArrayBuffer) payload = new TextDecoder().decode(payload);
+      else if (ArrayBuffer.isView(payload)) payload = new TextDecoder().decode(payload);
+      else payload = String(payload);
+    }
+    const message = JSON.parse(payload);
+    if (process.env.AIIG_CDP_DEBUG === "1") {
+      process.stderr.write(`[cdp] recv ${payload.slice(0, 500)}\n`);
+    }
     if (message.id !== undefined && pending.has(message.id)) {
-      const { resolve, reject } = pending.get(message.id);
+      const { resolve, reject, timer } = pending.get(message.id);
       pending.delete(message.id);
+      clearTimeout(timer);
       if (message.error) reject(new CaptureError(`${message.error.message}`));
       else resolve(message.result);
       return;
     }
     for (const listener of listeners) listener(message);
-  };
+  });
 
   function send(method, params = {}, sessionId) {
     nextId += 1;
@@ -150,8 +182,20 @@ export async function launch({ width = 1440, height = 900, scale = 2 } = {}) {
     const payload = { id, method, params };
     if (sessionId) payload.sessionId = sessionId;
     return new Promise((resolve, reject) => {
-      pending.set(id, { resolve, reject });
-      socket.send(JSON.stringify(payload));
+      const timer = setTimeout(() => {
+        pending.delete(id);
+        reject(new CaptureError(`${method} 超时（20 秒）。\n${stderr.trim()}`));
+      }, 20000);
+      pending.set(id, { resolve, reject, timer });
+      if (process.env.AIIG_CDP_DEBUG === "1") {
+        process.stderr.write(`[cdp] send ${JSON.stringify(payload)}\n`);
+      }
+      socket.send(JSON.stringify(payload), (error) => {
+        if (!error) return;
+        clearTimeout(timer);
+        pending.delete(id);
+        reject(new CaptureError(`${method} 发送失败：${error.message}`));
+      });
     });
   }
 
@@ -173,13 +217,19 @@ export async function launch({ width = 1440, height = 900, scale = 2 } = {}) {
     });
   }
 
-  const { targetId } = await send("Target.createTarget", { url: "about:blank" });
-  const { sessionId } = await send("Target.attachToTarget", { targetId, flatten: true });
-  await send("Page.enable", {}, sessionId);
-  await send("Runtime.enable", {}, sessionId);
-  await send("Emulation.setDeviceMetricsOverride", {
-    width, height, deviceScaleFactor: scale, mobile: false,
-  }, sessionId);
+  const sessionId = undefined;
+  try {
+    await send("Page.enable", {}, sessionId);
+    await send("Runtime.enable", {}, sessionId);
+    await send("Emulation.setDeviceMetricsOverride", {
+      width, height, deviceScaleFactor: scale, mobile: false,
+    }, sessionId);
+  } catch (error) {
+    socket.close();
+    child.kill();
+    await rm(profile, { recursive: true, force: true }).catch(() => {});
+    throw error;
+  }
 
   const consoleErrors = [];
   listeners.add((message) => {

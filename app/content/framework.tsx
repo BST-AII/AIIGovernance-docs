@@ -2,8 +2,9 @@ import { Code, DocPage, Note, pageHref } from "../doc-kit";
 import { SkillCatalog } from "../skill-catalog";
 
 export const architecture: DocPage = {
-  group: "治理框架", label: "治理架构", title: "治理框架架构",
-  intro: "框架采用 Law、Spec、Execution 三层分立，并以事件和决策双流水形成可核验的项目证据。",
+  group: "使用指南", label: "治理如何工作", title: "治理框架如何工作",
+  intro: "了解规则如何加载、任务如何执行，以及事实记录和决策记录如何共同形成审计证据。",
+  keywords: ["Law", "Spec", "Execution", "Task", "审计", "知识回流"],
   sections: [
     {
       id: "layers", title: "三层治理模型",
@@ -22,7 +23,7 @@ export const architecture: DocPage = {
       body: <p><code>events.jsonl</code> 保存 Hooks 观察到的事实；<code>decisions.jsonl</code> 保存 Agent 申报的判断。<code>board.md</code> 和任务视图由两条原始流水生成，可以随时重建。</p>,
     },
     {
-      id: "backflow", title: "知识如何离开项目",
+      id: "backflow", title: "知识如何安全回流",
       body: <>
         <p>项目内的记录不会自己跑到云上。后台 Sync Agent 只上传完整的 JSONL 行，在你的电脑上签名并用公司公钥端到端加密，公共 Relay 只承担密文队列的角色——它看不到内容。公司侧独立核验设备绑定与数据权限后入库，Agent 收到入库确认才推进游标。</p>
         <p>入库之后的知识去两个地方：一是<a href={pageHref("console")}>管理平台</a>供人查看与审核，二是通过<a href={pageHref("mcp")}>受治理的检索工具</a>回到会话里被复用。</p>
@@ -32,12 +33,13 @@ export const architecture: DocPage = {
 };
 
 export const laws: DocPage = {
-  group: "治理框架", label: "业务法说明", title: "基本法与业务法",
-  intro: "基本法规定所有任务共同遵守的工作秩序，业务法根据任务职能按需加载。",
+  group: "使用指南", label: "规则与 Skills", title: "任务会加载哪些规则",
+  intro: "所有任务遵守共同的基本规则，并根据工作类型加载对应的业务规则。",
+  keywords: ["基本法", "业务法", "coding", "governance", "pm", "audit", "Skills"],
   sections: [
     {
       id: "constitution", title: "基本法",
-      body: <p><code>law/constitution.md</code> 按“接活、动手前、执行中、收尾、不可逆动作”组织，覆盖分诊、任务定义、用户确认、范围控制、验证和诚实申报。</p>,
+      body: <p><code>law/constitution.md</code> 按“接收任务、开始前、执行中、交付和高风险操作”组织，覆盖分诊、任务定义、用户确认、范围控制、验证和诚实申报。</p>,
     },
     {
       id: "business-laws", title: "三部业务法",
@@ -55,8 +57,9 @@ export const laws: DocPage = {
 };
 
 export const skills: DocPage = {
-  group: "治理框架", label: "Skills 说明", title: "Wildskills 与项目 Skills",
-  intro: "Wildskills 提供可复用的专业工作能力，AIIGovernance 负责把它们接入项目并约束调用过程。",
+  group: "使用指南", label: "Skill 目录", title: "使用和管理 Skills",
+  intro: "Skills 为 Agent 提供可复用的专业能力，治理框架负责发现、加载并约束其使用范围。",
+  keywords: ["Wildskills", "Skill", "技能", "目录", "调用"],
   sections: [
     {
       id: "location", title: "Skills 安装在哪里",
@@ -71,8 +74,8 @@ export const skills: DocPage = {
       body: <ul><li>用户明确点名某个 Skill 时必须使用。</li><li>任务与 Skill 描述明确匹配时按需使用。</li><li>使用前读取对应 <code>SKILL.md</code> 的完整说明。</li><li>Skill 不能扩大用户授权范围。</li></ul>,
     },
     {
-      id: "catalog", title: "全部 Wildskills",
-      body: <><p>下面的目录直接来自 Wildskills 仓库中全部 <code>SKILL.md</code> 的元数据，可以按名称、用途和类别筛选。</p><SkillCatalog /></>,
+      id: "catalog", title: "浏览 Skill 目录",
+      body: <><p>目录直接读取 Wildskills 仓库中全部 <code>SKILL.md</code> 的元数据。先搜索名称、用途或关键词，再按需展开对应类别。</p><SkillCatalog /></>,
     },
     {
       id: "add", title: "增加或升级 Skill",
@@ -82,8 +85,9 @@ export const skills: DocPage = {
 };
 
 export const usage: DocPage = {
-  group: "治理框架", label: "怎么调用", title: "如何调用治理框架与 Skills",
-  intro: "治理框架通常由 Claude Code 在项目会话中自动加载；用户也可以明确指定职能、Skill 和验收要求。",
+  group: "使用指南", label: "日常使用", title: "在项目中开始一次任务",
+  intro: "在项目目录中启动 Claude Code，然后用自然语言说明目标、验收标准和限制条件。",
+  keywords: ["Claude Code", "任务", "验收标准", "Skill", "知识检索"],
   sections: [
     {
       id: "start-session", title: "进入治理项目",

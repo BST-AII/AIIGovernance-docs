@@ -9,6 +9,7 @@ export type DocPage = {
   label: string;
   title: string;
   intro: string;
+  keywords?: string[];
   sections: Section[];
 };
 
@@ -54,6 +55,14 @@ export const Warn = ({ title, children }: { title: string; children: ReactNode }
     <b>{title}</b>
     <div>{children}</div>
   </aside>
+);
+
+/** 面向维护者的实现依据。普通用户不需要先读，但内容仍在静态 HTML 中可检索、可引用。 */
+export const Maintainer = ({ title = "维护者说明", children }: { title?: string; children: ReactNode }) => (
+  <details className="maintainer">
+    <summary>{title}</summary>
+    <div>{children}</div>
+  </details>
 );
 
 /* ── 截图与出处 ────────────────────────────────────────────────────────

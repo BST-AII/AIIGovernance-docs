@@ -20,6 +20,12 @@ const labels: Record<string, string> = {
   "external": "外部扩展",
 };
 
+const briefDescription = (value: string) => {
+  if (!value) return "该 Skill 的用途说明请查看源文件。";
+  const firstSentence = value.split(/(?<=[。！？.!?])\s+/u)[0] || value;
+  return firstSentence.length > 140 ? `${firstSentence.slice(0, 137)}…` : firstSentence;
+};
+
 export function SkillCatalog() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("all");
@@ -40,14 +46,15 @@ export function SkillCatalog() {
       <label><span>类别</span><select value={category} onChange={event => setCategory(event.target.value)}><option value="all">全部类别</option>{categories.map(key => <option key={key} value={key}>{labels[key] || key}</option>)}</select></label>
     </div>
     <p className="catalog-result">当前显示 {visible.length} 个 Skill</p>
-    {grouped.map(group => <section className="skill-group" key={group.key}>
-      <h3>{labels[group.key] || group.key}<span>{group.skills.length}</span></h3>
+    {grouped.map(group => <details className="skill-group" key={group.key} open={query.trim() !== "" || category !== "all" ? true : undefined}>
+      <summary>{labels[group.key] || group.key}<span>{group.skills.length}</span></summary>
       <div className="skill-list">{group.skills.map(skill => <article key={skill.path}>
         <div><code>{skill.name}</code><a href={skill.href}>查看 SKILL.md ↗</a></div>
-        <p>{skill.description || "该 Skill 的用途说明请查看源文件。"}</p>
+        <p>{briefDescription(skill.description)}</p>
+        {briefDescription(skill.description) !== skill.description ? <details className="skill-details"><summary>查看完整用途说明</summary><p>{skill.description}</p></details> : null}
         <small>{skill.path}</small>
       </article>)}</div>
-    </section>)}
+    </details>)}
     {!visible.length && <div className="catalog-empty">没有匹配的 Skill，请更换关键词或类别。</div>}
   </div>;
 }
