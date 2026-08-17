@@ -2,6 +2,7 @@
  * 正文内容按分组放在 app/content/ 下，共用的排版组件在 app/doc-kit.tsx。 */
 
 import { basePath, domesticMirrorHref, pageHref, type DocPage } from "./doc-kit";
+import { DocsControls, type NavGroup, type SearchEntry } from "./docs-controls";
 import { installation, overview, robot } from "./content/getting-started";
 import { architecture, laws, skills, usage } from "./content/framework";
 import { account, consolePage, mcp } from "./content/platform";
@@ -18,12 +19,12 @@ const pages: Record<string, DocPage> = {
 
 export const docSlugs = Object.keys(pages).filter((slug) => slug !== "overview");
 
-const groups = ["开始使用", "治理框架", "知识平台", "维护与更新", "参考"];
+const groups = ["快速开始", "使用指南", "管理平台", "维护", "参考"];
 
 /* 左侧栏与上下翻页共用这一份顺序。 */
 const order = [
   "overview", "installation", "robot",
-  "architecture", "laws", "skills", "usage",
+  "usage", "architecture", "laws", "skills",
   "console", "account", "mcp",
   "upgrade", "uninstall", "troubleshooting",
   "releases",
@@ -31,11 +32,11 @@ const order = [
 
 /* 顶部分类导航：每个分组指向它的第一页。 */
 const categories: { label: string; slug: string }[] = [
-  { label: "开始使用", slug: "installation" },
-  { label: "治理框架", slug: "architecture" },
-  { label: "知识平台", slug: "console" },
-  { label: "维护与更新", slug: "upgrade" },
-  { label: "版本说明", slug: "releases" },
+  { label: "快速开始", slug: "overview" },
+  { label: "使用指南", slug: "usage" },
+  { label: "管理平台", slug: "console" },
+  { label: "维护", slug: "upgrade" },
+  { label: "版本与下载", slug: "releases" },
 ];
 
 export function DocsPage({ slug }: { slug: string }) {
@@ -44,11 +45,36 @@ export function DocsPage({ slug }: { slug: string }) {
   const previous = position > 0 ? order[position - 1] : null;
   const next = position >= 0 && position < order.length - 1 ? order[position + 1] : null;
   const activeGroup = page.group;
+  const navGroups: NavGroup[] = groups.map(group => ({
+    label: group,
+    links: order.filter(key => pages[key].group === group).map(key => ({
+      label: pages[key].label,
+      href: pageHref(key),
+      current: key === slug,
+    })),
+  }));
+  const searchEntries: SearchEntry[] = order.flatMap(key => {
+    const entry = pages[key];
+    const pageEntry = {
+      title: entry.title,
+      context: entry.intro,
+      href: pageHref(key),
+      searchText: [entry.title, entry.label, entry.intro, ...(entry.keywords ?? [])].join(" "),
+      page: true,
+    };
+    return [pageEntry, ...entry.sections.map(section => ({
+      title: section.title,
+      context: entry.title,
+      href: `${pageHref(key)}#${section.id}`,
+      searchText: [section.title, entry.title, entry.label, ...(entry.keywords ?? [])].join(" "),
+      page: false,
+    }))];
+  });
 
   return <div className="docs-site">
     <header className="docs-header">
       <a className="docs-brand" href={pageHref("overview")}><img src={`${basePath}/app-icon.png`} alt=""/><span>AIIGovernance</span><em>Docs</em></a>
-      <div className="header-tools"><button aria-label="搜索文档">⌕&nbsp;&nbsp;搜索文档 <kbd>Ctrl K</kbd></button><a href="https://bst-aii.github.io/AIIGovernance-docs/">使用说明</a><a href={domesticMirrorHref}>国内镜像</a><a href="https://github.com/BST-AII/AIIGovernance-docs">GitHub ↗</a></div>
+      <DocsControls entries={searchEntries} groups={navGroups} homeHref={pageHref("overview")} mirrorHref={domesticMirrorHref} repositoryHref="https://github.com/BST-AII/AIIGovernance-docs" />
     </header>
     <nav className="category-nav" aria-label="文档分类">
       {categories.map(category => <a
@@ -63,6 +89,7 @@ export function DocsPage({ slug }: { slug: string }) {
       </aside>
       <main className="article">
         <div className="article-label">{page.group}</div><h1>{page.title}</h1><p className="article-intro">{page.intro}</p>
+        <details className="mobile-page-toc"><summary>本页导航</summary>{page.sections.map(section => <a href={`#${section.id}`} key={section.id}>{section.title}</a>)}</details>
         {page.sections.map(section => <section className="article-section" id={section.id} key={section.id}><h2><a href={`#${section.id}`}>#</a>{section.title}</h2>{section.body}</section>)}
         <nav className="page-turn">{previous ? <a href={pageHref(previous)}><span>上一页</span><b>← {pages[previous].label}</b></a> : <i/>}{next ? <a className="next" href={pageHref(next)}><span>下一页</span><b>{pages[next].label} →</b></a> : null}</nav>
       </main>

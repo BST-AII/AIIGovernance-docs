@@ -19,4 +19,18 @@ const result = spawnSync(process.execPath, [nextCli, "build"], {
 if (result.error) {
   throw result.error;
 }
-process.exit(result.status ?? 1);
+if (result.status !== 0) {
+  process.exit(result.status ?? 1);
+}
+
+const searchIndex = spawnSync(process.execPath, [
+  fileURLToPath(new URL("./generate-search-index.mjs", import.meta.url)),
+], {
+  env,
+  stdio: "inherit",
+  shell: false,
+});
+if (searchIndex.error) {
+  throw searchIndex.error;
+}
+process.exit(searchIndex.status ?? 1);

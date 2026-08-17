@@ -13,8 +13,13 @@
     "sync:release": "node scripts/sync-release-data.mjs",
     "shots:console": "node scripts/screenshots/capture-console.mjs",
     "shots:installer": "node scripts/screenshots/capture-installer.mjs",
-    "test": "npm run build:pages && node --test tests/rendered-html.test.mjs",
-    "lint": "eslint . --ignore-pattern .next --ignore-pattern out --ignore-pattern dist"
+    "test": "npm run build:pages && npm run test:rendered && npm run test:content",
+    "test:rendered": "node --test tests/rendered-html.test.mjs",
+    "test:content": "node scripts/check-docs-content.mjs",
+    "test:browser": "node tests/browser-smoke.mjs",
+    "verify": "npm run lint && npm run build:pages && npm run test:rendered && npm run test:content",
+    "verify:dual-site": "node scripts/verify-dual-site.mjs",
+    "lint": "eslint . --ignore-pattern .next --ignore-pattern out --ignore-pattern dist --ignore-pattern outputs"
   },
   "dependencies": {
     "next": "16.2.6",

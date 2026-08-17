@@ -1,5 +1,5 @@
 import {
-  DocPage, Matrix, Note, Warn,
+  DocPage, Maintainer, Matrix, Note, Warn,
   latestReleaseHref, pageHref, releaseHistoryHref,
 } from "../doc-kit";
 import { assetSize, release, versionLabel } from "../release-data";
@@ -8,8 +8,9 @@ import { noteFor } from "../release-notes";
 const note = noteFor(release.version);
 
 export const releases: DocPage = {
-  group: "参考", label: "版本说明", title: "版本与发布说明",
-  intro: "这里汇总当前正式安装器、跨平台产物和面向用户的版本变化；安装包仍从组织内部 Release 仓库下载。",
+  group: "参考", label: "版本与下载", title: "版本、安装包与校验信息",
+  intro: "查看当前正式版本、各平台安装包、SHA-256、已知限制和历史发布记录。",
+  keywords: ["版本", "下载", "安装包", "SHA-256", "Release"],
   sections: [
     {
       id: "latest", title: `当前正式版本：${versionLabel}`,
@@ -47,15 +48,15 @@ export const releases: DocPage = {
       </>,
     },
     {
-      id: "single-source", title: "本页数据从哪里来",
-      body: <>
-        <p>版本号、发布日期、安装包文件名与 SHA256 全部由一个同步脚本从 GitHub Release API 写入一份数据文件，页面只负责渲染；人工只维护面向用户的说明文字。</p>
+      id: "single-source", title: "版本数据来源",
+      body: <Maintainer title="维护者说明：版本数据如何同步">
+        <p>版本号、发布日期、安装包文件名与 SHA256 由同步脚本从 GitHub Release API 写入数据文件，页面只负责渲染；面向用户的更新说明单独维护。</p>
         <div className="simple-table">
-          <div><b>机器写</b><span><code>app/release-data.ts</code>——由 <code>npm run sync:release</code> 从真实 Release 重写。取不到真实发布记录时脚本直接失败，绝不写入编造的值。</span></div>
-          <div><b>人工写</b><span><code>app/release-notes.ts</code>——按版本号维护的更新说明文字。同步脚本永远不碰这份文件。</span></div>
+          <div><b>自动同步</b><span><code>app/release-data.ts</code> 由 <code>npm run sync:release</code> 根据真实 Release 重写。无法取得发布记录时脚本以非零状态退出，不写入替代值。</span></div>
+          <div><b>人工维护</b><span><code>app/release-notes.ts</code> 按版本号维护更新说明；同步脚本不会修改该文件。</span></div>
         </div>
-        <Note title="为发布流水预留的接口">打完 tag 之后在 docs 仓运行 <code>npm run sync:release</code> 即可；<code>npm run sync:release -- --check</code> 只比对不写盘，站点数据与真实 Release 漂移时以非零退出码报错，适合放进 CI。</Note>
-      </>,
+        <Note title="CI 校验入口">发布 tag 后运行 <code>npm run sync:release</code>；<code>npm run sync:release -- --check</code> 只比较、不写盘，站点数据与真实 Release 不一致时以非零状态退出。</Note>
+      </Maintainer>,
     },
     {
       id: "current", title: "0.3.x 累计能力",

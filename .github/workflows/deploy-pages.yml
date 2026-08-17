@@ -3,20 +3,26 @@ name: deploy-github-pages
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
+    inputs:
+      full_visual:
+        description: Run all 14 pages at five widths and retain preview screenshots
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: pages
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -24,26 +30,49 @@ jobs:
           node-version: "22"
           cache: npm
       - run: npm ci
-      - name: Build static site
+      - name: Lint, build once, and verify rendered content
         env:
           GITHUB_PAGES_BUILD: "true"
           NEXT_PUBLIC_BASE_PATH: /AIIGovernance-docs
-        run: npm run build:pages
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: out
-      - name: Upload domestic mirror artifact
+        run: npm run verify
+      - name: Browser and accessibility smoke
+        env:
+          AIIG_BROWSER_FULL: ${{ (github.event_name == 'workflow_dispatch' && inputs.full_visual) && '1' || '0' }}
+          AIIG_BROWSER_CAPTURE: ${{ (github.event_name == 'workflow_dispatch' && inputs.full_visual) && '1' || '0' }}
+        run: npm run test:browser
+      - name: Upload manually requested full visual matrix
+        if: github.event_name == 'workflow_dispatch' && inputs.full_visual
         uses: actions/upload-artifact@v4
         with:
-          name: domestic-mirror
-          path: out
+          name: docs-visual-matrix-${{ github.run_id }}
+          path: outputs/browser-previews
           if-no-files-found: error
+          retention-days: 7
+      - name: Upload browser diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-failure-${{ github.run_id }}
+          path: outputs/browser-failures
+          if-no-files-found: ignore
+          retention-days: 7
+      - name: Upload the single verified site artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
 
   deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: build
     steps:
       - name: Deploy
@@ -51,16 +80,23 @@ jobs:
         uses: actions/deploy-pages@v4
 
   deploy-domestic-mirror:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    needs: build
+    timeout-minutes: 15
+    needs: [build, deploy]
     env:
       DEPLOY_HOST: 101.47.19.2
     steps:
-      - name: Download static site
+      - uses: actions/checkout@v4
+      - name: Download the same verified artifact used by GitHub Pages
         uses: actions/download-artifact@v4
         with:
-          name: domestic-mirror
-          path: out
+          name: github-pages
+          path: artifact
+      - name: Extract verified static site
+        run: |
+          mkdir out
+          tar -xf artifact/artifact.tar -C out
       - name: Configure restricted deploy key
         env:
           DEPLOY_KEY: ${{ secrets.AIIG_DOCS_DEPLOY_KEY }}
@@ -72,3 +108,7 @@ jobs:
           ssh-keyscan -H "$DEPLOY_HOST" > ~/.ssh/known_hosts
       - name: Atomically deploy domestic mirror
         run: tar -C out -czf - . | ssh -i ~/.ssh/id_ed25519 aiigdocs@"$DEPLOY_HOST"
+      - name: Verify GitHub Pages and domestic mirror
+        env:
+          EXPECTED_COMMIT: ${{ github.sha }}
+        run: npm run verify:dual-site

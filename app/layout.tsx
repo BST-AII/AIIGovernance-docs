@@ -8,8 +8,8 @@ const publicOrigin = basePath
 
 export const metadata: Metadata = {
   metadataBase: new URL(publicOrigin),
-  title: "AIIGovernance Docs · 项目级 AI 治理框架",
-  description: "将治理规则、Skills、执行 Hooks 与审计记录部署到项目内部，让 AI 的每次工作有规则、有边界、有证据、可核验。",
+  title: "AIIGovernance 文档",
+  description: "让 AI 在项目规则内工作，并留下可核验的证据。",
   icons: { icon: `${basePath}/app-icon.png`, shortcut: `${basePath}/app-icon.png` },
   openGraph: {
     title: "AIIGovernance Docs",

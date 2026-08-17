@@ -1,5 +1,5 @@
 import {
-  Code, DocPage, Figure, Level, Matrix, Note, Warn,
+  Code, DocPage, Figure, Level, Maintainer, Matrix, Note, Warn,
   installerIssueHref, latestReleaseHref, pageHref, releaseHistoryHref,
 } from "../doc-kit";
 import { assetSize, placeholderName, release, versionLabel } from "../release-data";
@@ -13,35 +13,37 @@ const macArm = asset("macOS Apple Silicon");
 const macIntel = asset("macOS Intel");
 
 export const overview: DocPage = {
-  group: "开始使用", label: "概览", title: "AIIGovernance 治理框架",
-  intro: "AIIGovernance 将治理规则、执行 Hooks、审计记录和 Wildskills 安装到项目内部，让 AI 的每一次工作有规则、有边界、有证据、可核验。",
+  group: "快速开始", label: "产品概览", title: "让 AI 在项目规则内工作",
+  intro: "AIIGovernance 把治理规则、专业 Skills、执行检查和审计记录接入项目。你可以照常使用 Claude Code；系统会根据任务加载适用规则、记录关键事实，并在高风险操作前要求确认。",
+  keywords: ["产品概览", "治理", "审计", "快速开始"],
   sections: [
     {
-      id: "what-it-is", title: "它解决什么问题",
-      body: <><p>AI Agent 能读写代码、运行命令并调用外部工具，但仅靠提示词很难持续保证工作边界，也很难在任务结束后还原“做了什么、为什么这样做”。</p><p>AIIGovernance 把治理落到项目文件、Git 版本和机械检查中，使团队共享同一套规则和证据。</p></>,
+      id: "first-use", title: "第一次使用",
+      body: <div className="simple-table"><div><b>安装到项目</b><span>选择你的系统，下载并校验安装包，然后按照向导接入治理框架。</span></div><div><b>开始一次任务</b><span>在项目目录中启动 Claude Code，直接描述目标、验收标准和限制条件。</span></div><div><b>查看知识回流</b><span>登录管理平台，查看已经入库的知识元数据、项目分布和处理状态。</span></div></div>,
     },
     {
-      id: "principle", title: "治理落入代码，证据生于设计",
-      body: <><p className="english-line">Governance as code. Evidence by design.</p><p>治理规则像代码一样可版本化、可执行、可检查；证据不是事后补写，而是在任务执行过程中由 Hooks 和 Agent 分别产生。</p></>,
+      id: "capabilities", title: "它会为你做什么",
+      body: <ul><li>为不同任务加载对应规则和 Skills。</li><li>在删除、覆盖、部署等高风险操作前检查授权。</li><li>分别记录工具观察到的事实和 Agent 作出的判断。</li><li>在任务结束时执行机械检查并保留可追溯证据。</li><li>将授权范围内的知识安全回流，并允许后续会话检索复用。</li></ul>,
     },
     {
-      id: "capabilities", title: "核心能力",
-      body: <ul><li>项目级安装和独立版本钉定</li><li>基本法与业务法按任务职能加载</li><li>Wildskills 项目级接入和调用</li><li>事件与决策双流水审计</li><li>不可逆动作前置闸和机械核验</li><li>安装、升级、机器人接入与安全卸载</li><li>知识回流到公司知识平台，并可在会话中反向检索</li></ul>,
+      id: "pieces", title: "系统由三部分组成",
+      body: <div className="simple-table"><div><b>项目内治理框架</b><span>规则、Hooks、Skills 和任务记录随项目版本管理。</span></div><div><b>本机后台服务</b><span>负责知识回流、身份签名和检索接入。</span></div><div><b>管理平台</b><span>展示知识元数据、审核状态、账号权限和运行情况。</span></div></div>,
     },
     {
-      id: "pieces", title: "你会用到的三件东西",
-      body: <><p>整套系统对用户呈现为三个入口，装一次之后各司其职：</p><div className="simple-table"><div><b>安装器</b><span>一个可视化向导，把治理框架装进项目、完成身份核验、注册后台同步与检索通路。Windows、Ubuntu/WSL、macOS 共用同一套向导。</span></div><div><b>项目里的 Claude 会话</b><span>日常工作发生的地方。治理规则自动加载，知识检索作为工具随会话可用。</span></div><div><b>AI 中台管理平台</b><span>浏览器里的后台：看知识回流情况、审核与归类知识、管理账号与运行状态。</span></div></div></>,
+      id: "boundary", title: "数据与权限边界",
+      body: <p>管理平台只展示知识元数据，不展示 Task 或 Transcript 正文。需要读取知识内容时，由会话中的受治理工具按用户和 Project 权限逐次查询。公共 Relay 只传递加密信封，不能读取其中内容。</p>,
     },
     {
-      id: "start", title: "从这里开始",
-      body: <div className="link-list"><a href={pageHref("installation")}><b>安装治理框架</b><span>Windows、Ubuntu/WSL 与 macOS 的完整安装步骤 →</span></a><a href={pageHref("account")}><b>平台账号与权限</b><span>组织成员首次登录即自动开通，角色如何授予 →</span></a><a href={pageHref("mcp")}><b>在会话里检索知识</b><span>六个受治理查询工具和一段示例会话 →</span></a><a href={pageHref("architecture")}><b>了解治理架构</b><span>理解 Law、Spec、Execution 和双流水 →</span></a></div>,
+      id: "start", title: "按你的目标继续",
+      body: <div className="link-list"><a href={pageHref("installation")}><b>我要安装治理框架</b><span>下载、校验、安装和验证 →</span></a><a href={pageHref("usage")}><b>我要开始使用</b><span>在项目中开始一次受治理的任务 →</span></a><a href={pageHref("console")}><b>我要登录管理平台</b><span>查看知识回流和授权功能 →</span></a><a href={pageHref("troubleshooting")}><b>我要排查问题</b><span>按错误现象查找处置方法 →</span></a><a href={pageHref("architecture")}><b>我负责部署和维护</b><span>了解架构、证据和运行边界 →</span></a></div>,
     },
   ],
 };
 
 export const installation: DocPage = {
-  group: "开始使用", label: "安装治理框架", title: "安装治理框架",
-  intro: "同一套可视化安装向导支持 Windows、Ubuntu / WSL 和 macOS，把 AIIGovernance、Wildskills、Hooks、Records Agent 与 MCP Bridge 一次性接入目标项目。",
+  group: "快速开始", label: "安装与验证", title: "安装并验证 AIIGovernance",
+  intro: "选择你的系统，下载并校验安装包，然后按照向导完成项目接入、身份核验和安装后验证。",
+  keywords: ["Windows", "Ubuntu", "WSL", "macOS", "SHA256", "安装器", "验证"],
   sections: [
     {
       id: "latest-release", title: `下载最新正式版本：${versionLabel}`,
@@ -63,6 +65,10 @@ export const installation: DocPage = {
         <p>上表的版本号、体积与 SHA256 直接来自 <code>{release.tag}</code> 这次 Release 的发布记录，可以逐字与 Release 页面核对。</p>
         <Note title="Private Release">请先登录拥有 BST-AII 权限的 GitHub 账号；未登录或无权限时 GitHub 会显示 404，这不是链接失效。安装包文件名带版本号，因此本站的下载入口一律使用不会过期的 <code>releases/latest</code>。</Note>
       </>,
+    },
+    {
+      id: "choose-platform", title: "选择你的系统",
+      body: <div className="link-list"><a href="#windows"><b>Windows 10 / 11</b><span>下载 EXE，使用 PowerShell 校验 →</span></a><a href="#linux"><b>Ubuntu 22.04 / 24.04 与 WSL2</b><span>安装 Git，解压后启动图形向导 →</span></a><a href="#macos"><b>macOS Intel 与 Apple Silicon</b><span>确认芯片架构，下载对应 ZIP →</span></a></div>,
     },
     {
       id: "requirements", title: "安装前准备",
@@ -158,8 +164,8 @@ QTWEBENGINE_CHROMIUM_FLAGS=--disable-gpu \\
       </>,
     },
     {
-      id: "autostart", title: "后台服务与自启动",
-      body: <>
+      id: "autostart", title: "维护者说明：后台服务与自启动",
+      body: <Maintainer title="查看后台服务、自启动与运行时路径">
         <p>安装器会把两类后台服务注册成随登录自启：Records Agent（知识回流）与 cc-connect（飞书机器人守护进程，仅在你选装机器人时出现）。三个平台用各自的系统机制。</p>
         <Matrix
           head={["平台", "Records Agent 自启", "cc-connect 自启", "检查命令"]}
@@ -180,11 +186,11 @@ launchctl print gui/$(id -u)/art.aiigovernance.records-agent
 tail -n 100 ~/Library/Logs/AIIGovernance/records-agent.stderr.log
 ~/.cc-connect/cc-connect/bin/cc-connect daemon status`}</Code>
         <p>共享运行时装在当前用户目录下，不会替换系统 Python：Linux 是 <code>~/.local/share/aiigovernance/runtime/&lt;版本&gt;/</code>，macOS 是 <code>~/Library/Application Support/AIIGovernance/Runtime/&lt;版本&gt;/</code>。</p>
-      </>,
+      </Maintainer>,
     },
     {
-      id: "codex", title: "Codex 接入与平台支持范围",
-      body: <>
+      id: "codex", title: "维护者说明：Codex 支持范围",
+      body: <Maintainer title="查看 Codex 接入状态与平台矩阵">
         <Warn title="发布状态">Codex 接线随 <b>0.3.54</b> 发布，当前正式版 {versionLabel} 的安装器<b>还不会</b>写入任何 Codex 配置。下面这张矩阵先行公布，用于选型与采购判断；等 0.3.54 正式发布后，本页会同步改成安装步骤。</Warn>
         <p>治理接入的锚点是 <b>codex 核心引擎</b>，不是前端形态。hooks、MCP 与 <code>AGENTS.md</code> 三个挂载面全部内建于共享 core，CLI 与 VSCode 插件只是同一个引擎的两个壳——因此一套治理配置同时覆盖两种会话，不需要为插件单独铺一条加载通道。</p>
         <Matrix
@@ -201,7 +207,7 @@ tail -n 100 ~/Library/Logs/AIIGovernance/records-agent.stderr.log
           ]}
         />
         <Note title="两个硬前置">其一，项目必须是 trusted：项目层 hooks 只在该项目被信任时加载，不信任时<b>静默不加载且没有报错</b>——这是最危险的失效点。其二，本机 codex 必须在 hooks 默认开启的版本区间内，验收口径统一为 <code>codex features list</code> 显示 <code>hooks stable true</code>。</Note>
-      </>,
+      </Maintainer>,
     },
     {
       id: "verify", title: "安装后验证",
@@ -222,15 +228,16 @@ tail -n 100 ~/Library/Logs/AIIGovernance/records-agent.stderr.log
         </ol>
         <div className="link-list"><a href={installerIssueHref} target="_blank" rel="noreferrer"><b>直接打开 Installer Issue 表单</b><span>用于安装器无法启动、或报告窗口不可用的情况 →</span></a></div>
         <Note title="隐私边界">不采集 App Secret、Token、对话内容、Records、Task 正文、真实 HOME 路径、完整项目路径或 Hook 命令全文；提交前始终由你预览确认。</Note>
-        <p>提交之前，可以先在<a href={pageHref("troubleshooting")}>常见故障对照表</a>里按症状查一遍，多数问题在那里有明确处置。</p>
+        <p>提交之前，可以先在<a href={pageHref("troubleshooting")}>排查问题</a>页面按现象检查，多数问题都有对应的处理方法。</p>
       </>,
     },
   ],
 };
 
 export const robot: DocPage = {
-  group: "开始使用", label: "安装飞书机器人", title: "为已有项目安装飞书机器人",
-  intro: "已有治理项目无需重装或升级框架，可从安装器首页直接进入飞书机器人配置链。",
+  group: "快速开始", label: "接入飞书机器人", title: "为项目接入飞书机器人",
+  intro: "已安装治理框架的项目可以单独接入飞书机器人，无需重新安装或升级框架。",
+  keywords: ["飞书", "机器人", "cc-connect", "App ID", "open_id"],
   sections: [
     {
       id: "entry", title: "从安装器进入",
@@ -245,7 +252,7 @@ export const robot: DocPage = {
       body: <ol><li>输入 App ID 和 App Secret，并执行真实凭据校验。</li><li>按提示向机器人发送第一条消息。</li><li>安装器通过隔离探针捕获你的 <code>open_id</code>。</li><li>把机器人的 <code>allow_from</code> 收窄到该身份。</li></ol>,
     },
     {
-      id: "binding", title: "一个机器人只绑一个项目",
+      id: "binding", title: "一个机器人对应一个项目",
       body: <>
         <p>同一个飞书 App ID 只能绑定一个治理项目。如果同一个 App ID 出现在多个项目配置里，每个项目都会各自处理并回复同一条消息，因此这种配置被明确禁止。</p>
         <p>安装器在凭据校验通过之后、启动探针之前会读取现有配置。发现该机器人已绑定其他项目时会停下来并列出绑定位置，此时你有两个选择：</p>

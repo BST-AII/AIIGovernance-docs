@@ -99,7 +99,7 @@ test("publishes cross-platform installation guidance", async () => {
 
 test("publishes the Codex platform support matrix", async () => {
   const installation = await read("installation/index.html");
-  assert.match(installation, /Codex 接入与平台支持范围/);
+  assert.match(installation, /Codex 接入状态与平台矩阵/);
   // 官方不支持的两个平台必须明确标注
   assert.match(installation, /WSL1/);
   assert.match(installation, /Android/);
@@ -113,10 +113,16 @@ test("publishes the Codex platform support matrix", async () => {
 test("upgrade page states the reinstall and upgrade semantics", async () => {
   const upgrade = await read("upgrade/index.html");
   assert.match(upgrade, /重装 = 全量重装/);
-  assert.match(upgrade, /升级 = 只装版本号提升的组件/);
-  assert.match(upgrade, /每次改代码的发布必须提升版本号/);
-  assert.match(upgrade, /整机重接线/);
+  assert.match(upgrade, /升级 = 只安装版本号提升的组件/);
+  assert.match(upgrade, /代码变化必须对应版本变化/);
+  assert.match(upgrade, /更新本机已登记项目的接线/);
   assert.match(upgrade, /即使版本号完全相同/);
+  for (const mode of ["fresh", "upgrade", "overwrite_managed", "repair", "resume", "uninstall"]) {
+    assert.ok(upgrade.includes(mode), `升级页缺少安装模式 ${mode}`);
+  }
+  for (const preserved of ["Task/frozen", "Agent Outbox", "Project identity", "device identity", "第三方 Hook"]) {
+    assert.ok(upgrade.includes(preserved), `升级页缺少保留边界：${preserved}`);
+  }
 });
 
 /* MCP 工具的表述闸：实际是七个（六云端 + 一本地），
@@ -175,7 +181,7 @@ test("account provisioning is documented as it actually behaves", async () => {
   // 实情：组织成员首次登录即自动拿到 active 账号，同一次登录直接放行。
   assert.match(account, /首次登录/);
   assert.match(account, /自动开通/);
-  assert.match(account, /没有人工介入，也没有排队/);
+  assert.match(account, /不进入申请或审批队列/);
 
   // 旧说法要显式否掉，不能只是删掉——读者可能正是带着"要申请"的印象来的。
   assert.match(account, /没有「提交申请」/);
@@ -244,10 +250,9 @@ test("no page presents approval-gated provisioning as a step users take", async 
    说清楚，否则读者会以为自己将来能在这里看到待批申请。 */
 test("the account-request panel is labelled as not in use on this deployment", async () => {
   const consoleHtml = await read("console/index.html");
-  assert.match(consoleHtml, /待开通申请/);
+  assert.match(consoleHtml, /当前生产未启用账号申请流程/);
   assert.match(consoleHtml, /AIIG_CONSOLE_REQUIRE_ACCOUNT_APPROVAL/);
-  assert.match(consoleHtml, /恒为空/);
-  assert.match(consoleHtml, /不会产生任何待批申请/);
+  assert.match(consoleHtml, /不会出现待审批申请/);
 });
 
 /* 权限边界的如实闸（2026-08-16 第二轮对抗核查）。
@@ -327,7 +332,7 @@ test("the deploy-list route to system admin is disclosed alongside the dual revi
      提升对该 ID 的全部会话持续生效，从名单删掉则下一次请求即掉档。 */
   assert.match(account, /每一个请求校验会话时都重算/,
     "账号页没写清旁路是每次请求重算的：写成「这一次的会话」会让人以为重新登录能甩掉它。");
-  assert.match(account, /下一次请求就掉回/,
+  assert.match(account, /权限会在下一次请求时恢复为/,
     "账号页没写清从名单删掉之后何时失效——是下一次请求，不必等会话过期。");
   assert.match(account, /不落库/,
     "账号页没写清这次提升不写进账号表，账号行仍是 console_admin。");
