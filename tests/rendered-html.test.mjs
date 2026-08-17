@@ -157,6 +157,25 @@ test("publishes the console and account guides", async () => {
   assert.match(consoleHtml, /运维总览/);
   assert.match(consoleHtml, /系统诊断/);
 
+  /* 平台的两个对外入口，逐字钉住。它们错了不会报任何错，只会把读者送到
+     404 或送进一条直奔 GitHub OAuth 的 302。
+     · 站点根必须带尾斜杠：宿主 nginx 的 location 写的是
+       `/AIIknowledgeService/`，前缀匹配对无斜杠的 URI 不成立。
+     · 登录入口必须是 SPA 的登录屏 /admin/app/signin，不是后端的
+       /admin/login——后者上面没有任何可点的东西。 */
+  assert.match(consoleHtml,
+    /href="https:\/\/service\.pikso\.art\/AIIknowledgeService\/"/,
+    "平台根地址缺尾斜杠");
+  assert.match(consoleHtml,
+    /href="https:\/\/service\.pikso\.art\/AIIknowledgeService\/admin\/app\/signin"/,
+    "登录入口没指向 SPA 的登录屏");
+  assert.doesNotMatch(consoleHtml,
+    /href="https:\/\/service\.pikso\.art\/AIIknowledgeService"/,
+    "还有无尾斜杠的平台地址");
+  assert.doesNotMatch(consoleHtml,
+    /href="[^"]*\/AIIknowledgeService\/admin\/login"/,
+    "登录入口直奔 OAuth，页面上没有可点的东西");
+
   const account = await read("account/index.html");
   assert.match(account, /系统管理员/);
   assert.match(account, /知识审核员/);

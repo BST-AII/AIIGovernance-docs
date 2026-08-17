@@ -28,13 +28,21 @@ export const installerIssueHref =
 export const domesticMirrorHref = "https://service.pikso.art/AIIGovernance-docs/";
 
 /* 管理平台（AI 中台）线上地址。来源：records-service
- * docs/CONFIGURATION_GUIDE.md 的 AIIG_CONSOLE_PUBLIC_URL。 */
-export const consoleHref = "https://service.pikso.art/AIIknowledgeService";
+ * docs/CONFIGURATION_GUIDE.md 的 AIIG_CONSOLE_PUBLIC_URL。
+ *
+ * 对外链接一律带尾斜杠。宿主 nginx 的 location 写的是 `/AIIknowledgeService/`
+ * （带斜杠），前缀匹配对无斜杠的 URI 不成立：那条地址会落到宿主的兜底 location
+ * 上，或者被 nginx 自己发一条补斜杠的 301——而那条 301 由 nginx 按它看到的
+ * host 与端口拼装，同一类问题在网关那一层已经实测过一次（把内网 9000 端口抛
+ * 给了公网）。带上斜杠就一次到位，也与本文件里的国内镜像地址写法一致。
+ * 拼子路径用 consoleBase，避免拼出 `//admin/...`。 */
+const consoleBase = "https://service.pikso.art/AIIknowledgeService";
+export const consoleHref = `${consoleBase}/`;
 /* 登录入口指向 SPA 首屏，而不是后端的 /admin/login。
    /admin/login 是一条直奔 GitHub OAuth 的 302：浏览器打开它只会闪一下就跳走，
    页面上没有任何可点的东西，正文里"点『通过 GitHub 授权登录』"就对不上。
    带那颗按钮的是 SPA 的登录屏（截图 signin.png 即出自此处）。 */
-export const consoleLoginHref = `${consoleHref}/admin/app/signin`;
+export const consoleLoginHref = `${consoleBase}/admin/app/signin`;
 
 export const Code = ({ children }: { children: string }) => (
   <pre className="code-block">
