@@ -2,7 +2,10 @@ name: deploy-github-pages
 
 on:
   push:
-    branches: [main]
+    # dev 上跑测试但**不部署**——下面三个作业都卡着
+    # `github.ref == 'refs/heads/main'`，所以推 dev 只验证、推 main 才上线。
+    # 这正是 owner 要的语义（main = 已上线），不必再加别的开关。
+    branches: [main, dev]
   pull_request:
   workflow_dispatch:
     inputs:
