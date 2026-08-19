@@ -41,38 +41,38 @@ export type ReleaseData = {
 };
 
 export const release: ReleaseData = {
-  version: "0.3.53",
-  tag: "installer-v0.3.53",
-  publishedAt: "2026-08-14T06:25:00Z",
-  releaseDate: "2026-08-14",
+  version: "0.3.55",
+  tag: "installer-v0.3.55",
+  publishedAt: "2026-08-19T09:56:01Z",
+  releaseDate: "2026-08-19",
   assets: [
     {
       platform: "Windows x64",
-      file: "AIIGovernance-Setup-installer-v0.3.53.exe",
-      sha256: "0ec231d0f3db08ff9612583a3c192f825c37630e8f9d8df2e6f9ed3a53052f32",
-      bytes: 144136627,
+      file: "AIIGovernance-Setup-installer-v0.3.55.exe",
+      sha256: "9edefaa510499f41bc962d01d18f5e8c4a62bac67dbc169bc3dabd98862feb4e",
+      bytes: 144325792,
     },
     {
       platform: "Ubuntu / WSL x64",
-      file: "AIIGovernance-Setup-linux-x64-v0.3.53.tar.gz",
-      sha256: "3f9fc38f22cacd48bdf4feef7984cfa9383fe0cfea1fef420f4758711ca60eed",
-      bytes: 322259784,
+      file: "AIIGovernance-Setup-linux-x64-v0.3.55.tar.gz",
+      sha256: "e97645aa022463f6d3c56de23eda87e05e211bce7939037b4feb78c93f5ec8a7",
+      bytes: 322451088,
     },
     {
       platform: "macOS Apple Silicon",
-      file: "AIIGovernance-Setup-macos-arm64-v0.3.53.zip",
-      sha256: "48192dfca6ddd4fe262d1accb980fe175e745839cd346648f1dac0c9379e8183",
-      bytes: 96639054,
+      file: "AIIGovernance-Setup-macos-arm64-v0.3.55.zip",
+      sha256: "37581ce9b4d6e5bca897bdcfe6a99b1342a4c5635887ce92a9072b4cefcadc3b",
+      bytes: 96825669,
     },
     {
       platform: "macOS Intel",
-      file: "AIIGovernance-Setup-macos-x64-v0.3.53.zip",
-      sha256: "0beed37ebadccf064352f90fd09147de62990a530c2eec1744e49ff300700b6b",
-      bytes: 95826531,
+      file: "AIIGovernance-Setup-macos-x64-v0.3.55.zip",
+      sha256: "69d0a03a85eb4f39a2abcc48df49bf781233a974756148b753eeb9b0394b3a60",
+      bytes: 96014758,
     },
   ],
   source: "github-release",
-  syncedAt: "2026-08-16T05:30:00Z",
+  syncedAt: "2026-08-19T09:57:56Z",
 };
 
 /** "0.3.53" → "v0.3.53" */
