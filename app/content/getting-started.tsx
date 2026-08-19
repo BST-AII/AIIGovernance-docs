@@ -205,7 +205,7 @@ tail -n 100 ~/Library/Logs/AIIGovernance/records-agent.stderr.log
     {
       id: "codex", title: "维护者说明：Codex 支持范围",
       body: <Maintainer title="查看 Codex 接入状态与平台矩阵">
-        <Warn title="装完 Codex 之后还有两步，只能你自己在 Codex 里点">安装器写完 <code>AGENTS.md</code>、项目级 <code>.codex/hooks.json</code> 与 Governance MCP 之后，Codex 出于安全<b>不会自动启用它们</b>。两步不做，治理<b>静默不工作</b>——不报错，只是什么都不记录，而你看到的报错（“治理分诊服务不可用”“未提供 session_id”）指向的地方跟真实原因毫无关系。</Warn>
+        <Warn title="装完 Codex 之后还有两步，只能你自己在 Codex 里点">安装器写完 <code>AGENTS.md</code>、项目级 <code>.codex/hooks.json</code> 与项目级 <code>.codex/config.toml</code> 里的 Governance MCP 之后，Codex 出于安全<b>不会自动启用它们</b>。两步不做，治理<b>静默不工作</b>——不报错，只是什么都不记录，而你看到的报错（“治理分诊服务不可用”“未提供 session_id”）指向的地方跟真实原因毫无关系。</Warn>
         <p>治理接入的锚点是 <b>codex 核心引擎</b>，不是前端形态。hooks、MCP 与 <code>AGENTS.md</code> 三个挂载面全部内建于共享 core，CLI 与 VSCode 插件只是同一个引擎的两个壳——因此一套治理配置同时覆盖两种会话，不需要为插件单独铺一条加载通道。</p>
         <Matrix
           head={["平台", "Codex CLI", "接入形态建议", "备注"]}
@@ -223,7 +223,7 @@ tail -n 100 ~/Library/Logs/AIIGovernance/records-agent.stderr.log
         <h4>装完必须做的两步</h4>
         <ol>
           <li><b>逐个信任项目钩子并重启会话。</b>打开 <b>Codex Settings → Hooks</b>，在 <b>From Projects</b> 下找到你的项目，把列出的五个钩子逐个打开，然后<b>重启 Codex 会话</b>。Codex 按钩子文件内容的哈希记信任，所以<b>每次升级治理框架之后要重新信任一次</b>——升级会重写钩子文件，旧信任随即失效，而且没有任何提示。</li>
-          <li><b>放行 Governance MCP。</b>Codex 首次用到 <code>aiig-governance</code> 时会询问权限，选 <b>always allow</b>（一律允许）。也可以在 <b>Settings → MCP servers</b> 里查看它的状态。Claude Code 那边会问同样的问题，同样选“一律允许”；两边各问各的，互不影响。</li>
+          <li><b>放行 Governance MCP。</b>Codex 首次用到 <code>aiig-governance</code> 时会询问权限，选 <b>always allow</b>（一律允许）。也可以在 <b>Settings → MCP servers</b> 里查看它的状态。这条配置写在<b>项目自己的</b> <code>.codex/config.toml</code> 里，所以你在几台机器上装几个项目都互不影响；从旧版本升级时，安装器会把此前写在用户级 <code>~/.codex/config.toml</code> 的那一条收走。Claude Code 那边会问同样的问题，同样选“一律允许”；两边各问各的，互不影响。</li>
         </ol>
         <Note title="两个硬前置">其一，项目必须是 trusted：项目层 hooks 只在该项目被信任时加载，不信任时<b>静默不加载且没有报错</b>——这是最危险的失效点，也正是上面第一步要解决的。其二，本机 codex 必须在 hooks 默认开启的版本区间内，验收口径统一为 <code>codex features list</code> 显示 <code>hooks stable true</code>。</Note>
       </Maintainer>,
