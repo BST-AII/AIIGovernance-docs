@@ -154,6 +154,7 @@ QTWEBENGINE_CHROMIUM_FLAGS=--disable-gpu \\
           <li>首页选择首次安装、升级、卸载，或为已有项目添加机器人。</li>
           <li>环境检查：图形后端、Python、Git 和 Claude Code。Linux/macOS 不显示 Windows 的 PortableGit 按钮，而是给出系统包管理器命令。</li>
           <li>选择项目目录；首次安装时如果目录还不是 Git 仓库，会先征求你的同意再执行 <code>git init</code>。</li>
+          <li>选择这个目录所属的<b>产品线</b>（下一节详述）。可以不选。</li>
           <li>完成 GitHub Device Flow 与 BST-AII 组织成员核验。安装器申请的是最小权限 <code>read:org</code>，用于独立核验组织成员身份，不授予仓库写入或组织管理权限。</li>
           <li>离线挂载治理框架与 Wildskills，建立用户级运行时，渲染 <code>CLAUDE.md</code>、settings 与 skills。</li>
           <li>注册 Records Agent 与项目 <code>.mcp.json</code>，运行 lint 与 selftest。</li>
@@ -161,6 +162,19 @@ QTWEBENGINE_CHROMIUM_FLAGS=--disable-gpu \\
           <li>完成页列出<b>已验证项与未验证项</b>、版本号和本次更新说明。</li>
         </ol>
         <Note title="一台电脑一个后台 Agent">同一个用户只运行一个共享的 Sync Agent。该用户的多个项目通过稳定的 Project ID 分开同步 <code>records/events.jsonl</code>，互不覆盖；多个 Claude 会话可以同时写入，Agent 只上传完整的 JSONL 行，并在公司侧确认入库后才推进游标。</Note>
+      </>,
+    },
+    {
+      id: "catalog", title: "装机时选产品线",
+      body: <>
+        <p>选完目录之后，安装器会让你选这个目录属于哪条<b>产品线</b>。产品线由管理员在管理平台上统一维护，装机时只能从中选，不能新建。选中之后，这台机器上这个目录产生的知识与数据都会归到它名下。</p>
+        <p><b>文件夹名从此只是二级记录。</b>此前一行记录等于“某台电脑上的某个文件夹”，所以同一个真实项目换台电脑、换个目录名，在管理平台上就成了两个项目——生产库里同一个项目最多碎成过四行。选了产品线之后，同一条产品线下的多个工作目录在管理平台上合并显示为一行，展开才看到它们分别在哪台机器上。</p>
+        <ul>
+          <li><b>可以不选。</b>装机照常完成，之后由管理员在管理平台上补挂。0.3.55 之前装的机器都是未归类状态，它们不受影响，也不需要重装。</li>
+          <li><b>不联网也能装。</b>连不上管理平台时，下拉会自动改用安装包内置的清单，页面上会明说这批是离线的——如果你要的产品线不在里面，多半是清单旧了（内置清单在出包时导出），先不选、装完再补挂即可。</li>
+          <li><b>升级与重装会记住上次的选择。</b>选择记在项目目录下的 <code>.governance/aiig-install.json</code> 里，<b>会随仓库提交</b>——同事克隆这个仓库后首次装机，下拉会自动停在同一条产品线上。它是随仓走的项目属性，不是本机偏好。</li>
+        </ul>
+        <Note title="改名不会打断归属">管理员在管理平台上给产品线改名之后，已经归到它名下的历史数据不受影响：归属记的是产品线的稳定标识，不是名字。新装的机器会拿到新名字。</Note>
       </>,
     },
     {
@@ -191,7 +205,7 @@ tail -n 100 ~/Library/Logs/AIIGovernance/records-agent.stderr.log
     {
       id: "codex", title: "维护者说明：Codex 支持范围",
       body: <Maintainer title="查看 Codex 接入状态与平台矩阵">
-        <Warn title="发布状态">Codex 接线随 <b>0.3.54</b> 发布，当前正式版 {versionLabel} 的安装器<b>还不会</b>写入任何 Codex 配置。下面这张矩阵先行公布，用于选型与采购判断；等 0.3.54 正式发布后，本页会同步改成安装步骤。</Warn>
+        <Warn title="装完 Codex 之后还有两步，只能你自己在 Codex 里点">安装器写完 <code>AGENTS.md</code>、项目级 <code>.codex/hooks.json</code> 与 Governance MCP 之后，Codex 出于安全<b>不会自动启用它们</b>。两步不做，治理<b>静默不工作</b>——不报错，只是什么都不记录，而你看到的报错（“治理分诊服务不可用”“未提供 session_id”）指向的地方跟真实原因毫无关系。</Warn>
         <p>治理接入的锚点是 <b>codex 核心引擎</b>，不是前端形态。hooks、MCP 与 <code>AGENTS.md</code> 三个挂载面全部内建于共享 core，CLI 与 VSCode 插件只是同一个引擎的两个壳——因此一套治理配置同时覆盖两种会话，不需要为插件单独铺一条加载通道。</p>
         <Matrix
           head={["平台", "Codex CLI", "接入形态建议", "备注"]}
@@ -206,7 +220,12 @@ tail -n 100 ~/Library/Logs/AIIGovernance/records-agent.stderr.log
             ["Android / Termux", <Level key="l" kind="no" />, "不纳入支持范围", "npm 直接以 EBADPLATFORM 拒绝安装，官方从未声明支持"],
           ]}
         />
-        <Note title="两个硬前置">其一，项目必须是 trusted：项目层 hooks 只在该项目被信任时加载，不信任时<b>静默不加载且没有报错</b>——这是最危险的失效点。其二，本机 codex 必须在 hooks 默认开启的版本区间内，验收口径统一为 <code>codex features list</code> 显示 <code>hooks stable true</code>。</Note>
+        <h4>装完必须做的两步</h4>
+        <ol>
+          <li><b>逐个信任项目钩子并重启会话。</b>打开 <b>Codex Settings → Hooks</b>，在 <b>From Projects</b> 下找到你的项目，把列出的五个钩子逐个打开，然后<b>重启 Codex 会话</b>。Codex 按钩子文件内容的哈希记信任，所以<b>每次升级治理框架之后要重新信任一次</b>——升级会重写钩子文件，旧信任随即失效，而且没有任何提示。</li>
+          <li><b>放行 Governance MCP。</b>Codex 首次用到 <code>aiig-governance</code> 时会询问权限，选 <b>always allow</b>（一律允许）。也可以在 <b>Settings → MCP servers</b> 里查看它的状态。Claude Code 那边会问同样的问题，同样选“一律允许”；两边各问各的，互不影响。</li>
+        </ol>
+        <Note title="两个硬前置">其一，项目必须是 trusted：项目层 hooks 只在该项目被信任时加载，不信任时<b>静默不加载且没有报错</b>——这是最危险的失效点，也正是上面第一步要解决的。其二，本机 codex 必须在 hooks 默认开启的版本区间内，验收口径统一为 <code>codex features list</code> 显示 <code>hooks stable true</code>。</Note>
       </Maintainer>,
     },
     {

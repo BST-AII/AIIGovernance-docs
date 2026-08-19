@@ -105,8 +105,32 @@ test("publishes the Codex platform support matrix", async () => {
   assert.match(installation, /Android/);
   assert.match(installation, /不支持/);
   assert.match(installation, /best-effort/);
-  // 未发布的能力必须标状态，不能写成已经能用
-  assert.match(installation, /0\.3\.54/);
+  /* 这条断言原先钉的是「随 0.3.54 发布」那句预告。能力随 0.3.55 实际出货后，
+     版本号不再是它要防的东西，但它防的那个坑还在：**装完不等于能用**。Codex
+     出于安全不自动启用项目钩子与 MCP，两步不点，治理静默不工作，而用户看到的
+     报错指向完全无关的地方。所以改钉那两步的落点——少写一步，用户就会照着
+     页面装完然后以为装好了。 */
+  assert.match(installation, /Settings\s*→\s*Hooks/);
+  assert.match(installation, /From Projects/);
+  assert.match(installation, /重启 Codex 会话/);
+  assert.match(installation, /always allow/);
+  // 升级会重写钩子文件、按内容哈希记的信任随即失效，且没有任何提示
+  assert.match(installation, /每次升级治理框架之后要重新信任一次/);
+});
+
+/* 批次十四：装机选产品线。写入侧做完不等于用户知道怎么用——这一节要同时
+   回答"能不选吗"和"没网怎么办"，这两问不写清，装机现场就会卡住。 */
+test("installation page explains picking a product line at install time", async () => {
+  const installation = await read("installation/index.html");
+  assert.match(installation, /装机时选产品线/);
+  // 可以不选、事后由管理员补挂——存量机器全是未归类，不说清会被当成装错了
+  assert.match(installation, /可以不选/);
+  assert.match(installation, /补挂/);
+  // 无网降级到内置清单，且页面上会明说
+  assert.match(installation, /内置的清单|内置清单/);
+  // 这个选择随仓库走，不是本机偏好——性质说错会让人以为同事装机互不影响
+  assert.match(installation, /aiig-install\.json/);
+  assert.match(installation, /随仓走的项目属性/);
 });
 
 /* 0.3.53 起生效的三条版本法必须出现在升级页——这是此前的内容缺口。 */
