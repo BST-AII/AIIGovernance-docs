@@ -161,13 +161,28 @@ export const troubleshooting: DocPage = {
     },
     {
       id: "identity", title: "GitHub 身份与授权",
-      body: <div className="simple-table">
+      body: <>
+      <div className="simple-table">
+        <div><b>一直停在“等待 GitHub 与公司身份核验”，看不到授权码</b><span>本机没有可用的浏览器，授权页打不开。日志里会看到 <code>xdg-open: no method available</code>，前面还有一串 <code>not found</code>。<b>这不是必须装浏览器</b>：GitHub 的设备授权流程本来就允许在任意一台设备上完成，详见下方处置方法。0.3.56 起授权码与网址直接显示在安装器页面上，不再只落在日志里。</span></div>
         <div><b>Device Code 返回 400 / device_flow_disabled</b><span>组织的 OAuth App 没有启用 Device Flow。这不是用户名拼错，此时还没走到用户名比对那一步，需要管理员在 OAuth App 设置里开启。</span></div>
         <div><b>授权之后一直等待</b><span>保持安装器开着。公司侧核验严格关联页面上显示的 Enrollment ID；超时后可以直接重试。</span></div>
         <div><b>提示身份被拒，但你确实是组织成员</b><span>先确认安装器版本申请了 <code>read:org</code> 权限——没有这个权限就无法独立核验组织成员身份。</span></div>
         <div><b>GitHub 显示 404 打不开 Release</b><span>安装包在 Private 仓库。先登录 GitHub，并确认账号有 <code>BST-AII/AIIGovernance-releases</code> 的访问权限。</span></div>
         <div><b>组织要求批准 OAuth App</b><span>组织启用了 OAuth App 访问限制，需要组织管理员批准该应用一次。</span></div>
-      </div>,
+      </div>
+      <Note title="本机打不开浏览器时，这样完成授权（0.3.53 / 0.3.55 适用）">
+        <p>授权码其实已经生成了，只是落在安装日志里。<b>不需要在这台机器上装浏览器</b>，也不需要重装：</p>
+        <ol>
+          <li>展开安装器底部的“安装日志·实时”面板，往上翻，找到形如
+            <code>{'{"event": "github_device_code", "user_code": "XXXX-XXXX", …}'}</code> 的那一行。
+            它可能被紧随其后的一串 <code>not found</code> 顶出了可视区。</li>
+          <li>用手机或另一台电脑打开 <code>https://github.com/login/device</code>，输入那八位授权码并授权。</li>
+          <li>安装器几秒内就会接上，继续往下走。<b>授权码有效期约十分钟</b>，超时就重新点一次“验证身份并安装”换一个新码。</li>
+        </ol>
+        <p>另外确认用户名框里没有重复粘贴（例如 <code>name</code> 被写成 <code>namename</code>）：
+          授权成功后安装器会拿 GitHub 的实际登录名和这里比对，不一致会在授权之后才报错。</p>
+      </Note>
+      </>,
     },
     {
       id: "hooks", title: "Hook 故障决策树",

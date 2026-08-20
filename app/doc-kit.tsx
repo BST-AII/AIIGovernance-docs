@@ -104,7 +104,10 @@ export const Figure = ({
   /** 像素出处。必填：见上方注释。 */
   source: FigureSource;
 }) => (
-  <figure className="figure">
+  // data-source 让"每张图都表过态"这件事**对三种来源都可机读**。可见的出处说明
+  // 只有造数据才需要（真机截图没有要免责的东西），所以内容闸不能拿它当唯一判据：
+  // 站上第一批真机截图进来时，那条一刀切的断言就把构建卡住了。
+  <figure className="figure" data-source={source}>
     <img src={`${basePath}/${src}`} alt={alt} loading="lazy" />
     <figcaption>
       {caption}

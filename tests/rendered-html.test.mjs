@@ -427,6 +427,19 @@ test("publishes the user-facing troubleshooting table", async () => {
   assert.match(html, /diagnostic_logs/);
 });
 
+/* 2026-08-20：一位用户在没装桌面浏览器的 Ubuntu 上装 0.3.53，界面停在"等待
+   GitHub 与公司身份核验"直到授权码过期。0.3.56 起授权码显示在安装器页面上，
+   但**已经装了旧版的机器只能靠这一段自救**——所以它必须一直在站上，而且必须
+   同时给出"码在哪"和"去哪输"，少一样都完不成授权。 */
+test("tells browserless machines how to finish GitHub authorization", async () => {
+  const html = await read("troubleshooting/index.html");
+  assert.match(html, /xdg-open: no method available/);
+  assert.match(html, /github_device_code/);          // 码在日志里长什么样
+  assert.match(html, /github\.com\/login\/device/);   // 去哪输
+  assert.match(html, /手机或另一台电脑/);              // 不必在本机装浏览器
+  assert.match(html, /0\.3\.56/);                     // 哪一版起不用这么绕
+});
+
 /* 出处标注的回归闸。
    站点上的截图目前全部出自自动化流水的造数据：Console 走 dev 夹具，
    安装器走假 pywebview 桥。安装器界面自己还常驻一行「所有进度与日志

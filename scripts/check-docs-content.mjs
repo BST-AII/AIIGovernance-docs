@@ -62,7 +62,16 @@ for (const [routePath, html] of htmlByPath) {
     screenshots += 1;
     const image = /<img[^>]*alt="([^"]*)"[^>]*>/.exec(figure[0]);
     assert.ok(image?.[1]?.trim(), `截图缺少有效 alt：${figure[1]}`);
-    assert.match(figure[0], /class="figure-source"/, `截图缺少来源标识：${figure[1]}`);
+    // 每张图都必须表明像素从哪来。**可见的出处说明只有造数据才有**——真机截图
+    // 没有要免责的东西，硬给它加一句反而是噪音。所以判据是机读的 data-source，
+    // 而"造数据必须在图注里说出来"作为附加条件单独断言。
+    const source = /<figure[^>]*data-source="([^"]*)"/.exec(figure[0])?.[1];
+    assert.ok(["console-fixture", "installer-stub", "real-capture"].includes(source),
+      `截图缺少来源标识 data-source：${figure[1]}`);
+    if (source !== "real-capture") {
+      assert.match(figure[0], /class="figure-source"/,
+        `演示数据截图必须在图注里写明出处：${figure[1]}`);
+    }
   }
 }
 
