@@ -431,6 +431,17 @@ test("publishes the user-facing troubleshooting table", async () => {
    GitHub 与公司身份核验"直到授权码过期。0.3.56 起授权码显示在安装器页面上，
    但**已经装了旧版的机器只能靠这一段自救**——所以它必须一直在站上，而且必须
    同时给出"码在哪"和"去哪输"，少一样都完不成授权。 */
+/* 2026-08-20 第二起：0.3.53 及更早的 POSIX 机器升级时，pip 卸旧组件误删新协议包
+   文件，报 aiig_protocol.canonical 缺失且后台同步随后崩溃循环。0.3.57 起自愈，
+   但已装旧版的机器只能靠这一条自救——修复重装的指引必须在站上。 */
+test("tells pre-split machines the upgrade crash has a repair path", async () => {
+  const html = await read("troubleshooting/index.html");
+  assert.match(html, /aiig_protocol\.canonical/);
+  assert.match(html, /重装当前版本（修复）/);
+  assert.match(html, /崩溃循环/);       // 不修的后果：回流停摆，不是只影响升级
+  assert.match(html, /0\.3\.57/);       // 哪一版起自动自愈
+});
+
 test("tells browserless machines how to finish GitHub authorization", async () => {
   const html = await read("troubleshooting/index.html");
   assert.match(html, /xdg-open: no method available/);
