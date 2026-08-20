@@ -110,12 +110,24 @@ test("publishes the Codex platform support matrix", async () => {
      出于安全不自动启用项目钩子与 MCP，两步不点，治理静默不工作，而用户看到的
      报错指向完全无关的地方。所以改钉那两步的落点——少写一步，用户就会照着
      页面装完然后以为装好了。 */
-  assert.match(installation, /Settings\s*→\s*Hooks/);
-  assert.match(installation, /From Projects/);
-  assert.match(installation, /重启 Codex 会话/);
+  /* 第一步在两个前端里长得完全不一样，页面必须把两条路都给全。
+     2026-08-19 实测：CLI 弹的是一段文本菜单（选第 2 项），插件是设置面板里
+     逐个事件的 Trust 按钮加开关。只写其中一种，用另一个前端的人会照着找不到
+     那个入口，然后以为自己装错了——而真实后果是治理静默不工作。 */
+  assert.match(installation, /Hooks need review/);       // CLI 的菜单标题
+  assert.match(installation, /Trust all and continue/);  // CLI 要选的那一项
+  assert.match(installation, /逐个/);                     // 插件要逐个点
+  for (const event of ["PreToolUse", "PermissionRequest", "PostToolUse",
+                       "SessionStart", "UserPromptSubmit"]) {
+    assert.match(installation, new RegExp(event), `插件那一路少了事件 ${event}`);
+  }
+  assert.match(installation, /重启会话/);
   assert.match(installation, /always allow/);
   // 升级会重写钩子文件、按内容哈希记的信任随即失效，且没有任何提示
   assert.match(installation, /每次升级治理框架之后要重新信任一次/);
+  // 两张真机截图必须真的渲染出来——它们是这一节说清楚"点哪里"的全部依据
+  assert.match(installation, /screenshots\/codex\/trust-hooks-cli\.png/);
+  assert.match(installation, /screenshots\/codex\/trust-hooks-vscode\.png/);
 });
 
 /* 批次十四：装机选产品线。写入侧做完不等于用户知道怎么用——这一节要同时

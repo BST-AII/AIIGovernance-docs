@@ -1,5 +1,5 @@
 import {
-  Code, DocPage, Figure, Level, Maintainer, Matrix, Note, Warn,
+  Code, DocPage, Figure, FigureRow, Level, Maintainer, Matrix, Note, Warn,
   installerIssueHref, latestReleaseHref, pageHref, releaseHistoryHref,
 } from "../doc-kit";
 import { assetSize, placeholderName, release, versionLabel } from "../release-data";
@@ -221,8 +221,13 @@ tail -n 100 ~/Library/Logs/AIIGovernance/records-agent.stderr.log
           ]}
         />
         <h4>装完必须做的两步</h4>
+        <p><b>第一步在两个前端里长得完全不一样</b>，所以下面分开写、各配一张真机截图。CLI 是启动会话时弹出的一段文本菜单，插件是设置面板里逐个事件的开关。</p>
+        <FigureRow>
+          <Figure src="screenshots/codex/trust-hooks-cli.png" alt="Codex CLI 启动时的钩子信任提示" caption="CLI：会话启动时弹出这段菜单，选第 2 项「Trust all and continue」。选第 3 项会继续但钩子不运行。" source="real-capture" />
+          <Figure src="screenshots/codex/trust-hooks-vscode.png" alt="Codex VS Code 插件的钩子信任面板" caption="VS Code 插件：按事件分组列出，每组各有一个 Trust 按钮和一个开关，要逐个点。图中 PreToolUse 已经打开（蓝色），其余四个还是灰的。" source="real-capture" />
+        </FigureRow>
         <ol>
-          <li><b>逐个信任项目钩子并重启会话。</b>打开 <b>Codex Settings → Hooks</b>，在 <b>From Projects</b> 下找到你的项目，把列出的五个钩子逐个打开，然后<b>重启 Codex 会话</b>。Codex 按钩子文件内容的哈希记信任，所以<b>每次升级治理框架之后要重新信任一次</b>——升级会重写钩子文件，旧信任随即失效，而且没有任何提示。</li>
+          <li><b>信任项目钩子并重启会话。</b><br /><b>CLI</b>：启动会话时会弹出「Hooks need review」，选 <b>2. Trust all and continue</b>，然后<b>重启会话</b>。<br /><b>VS Code 插件</b>：在钩子面板里把五个事件（PreToolUse / PermissionRequest / PostToolUse / SessionStart / UserPromptSubmit）<b>逐个</b> Trust 并打开开关。<br />Codex 按钩子文件内容的哈希记信任，所以<b>每次升级治理框架之后要重新信任一次</b>——升级会重写钩子文件，旧信任随即失效，而且没有任何提示。</li>
           <li><b>放行 Governance MCP。</b>Codex 首次用到 <code>aiig-governance</code> 时会询问权限，选 <b>always allow</b>（一律允许）。也可以在 <b>Settings → MCP servers</b> 里查看它的状态。这条配置写在<b>项目自己的</b> <code>.codex/config.toml</code> 里，所以你在几台机器上装几个项目都互不影响；从旧版本升级时，安装器会把此前写在用户级 <code>~/.codex/config.toml</code> 的那一条收走。Claude Code 那边会问同样的问题，同样选“一律允许”；两边各问各的，互不影响。</li>
         </ol>
         <Note title="两个硬前置">其一，项目必须是 trusted：项目层 hooks 只在该项目被信任时加载，不信任时<b>静默不加载且没有报错</b>——这是最危险的失效点，也正是上面第一步要解决的。其二，本机 codex 必须在 hooks 默认开启的版本区间内，验收口径统一为 <code>codex features list</code> 显示 <code>hooks stable true</code>。</Note>
