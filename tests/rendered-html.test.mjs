@@ -439,7 +439,8 @@ test("tells pre-split machines the upgrade crash has a repair path", async () =>
   assert.match(html, /aiig_protocol\.canonical/);
   assert.match(html, /重装当前版本（修复）/);
   assert.match(html, /崩溃循环/);       // 不修的后果：回流停摆，不是只影响升级
-  assert.match(html, /0\.3\.57/);       // 哪一版起自动自愈
+  assert.match(html, /再运行一次即可/); // 0.3.57 及更早：force 首跑也会自伤一次
+  assert.match(html, /0\.3\.58/);       // 哪一版起一次操作收敛
 });
 
 test("tells browserless machines how to finish GitHub authorization", async () => {

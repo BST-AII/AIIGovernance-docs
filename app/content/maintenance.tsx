@@ -152,7 +152,7 @@ export const troubleshooting: DocPage = {
       id: "install", title: "安装与启动",
       body: <div className="simple-table">
         <div><b>Windows：Access is denied</b><span>项目可能在系统目录、只读网络盘或其他账号目录下；也可能有进程仍占用旧安装器或载荷缓存。先换目录、关掉占用进程再试。计划任务被公司策略拒绝时，新版会自动改用当前用户启动项，不需要提权。</span></div>
-        <div><b>Ubuntu/macOS 升级报 No module named <code>aiig_protocol.canonical</code></b><span>从 0.3.53 或更早版本升级时的已知缺陷：卸载旧组件时误删了新协议包的文件。<b>用「重装当前版本（修复）」代替「升级」即可修好</b>（0.3.57 起升级路径会自动自愈，不再需要手动绕行）。<b>撞上之后请尽快修复重装</b>：后台同步服务下次重启会进入崩溃循环，放着不管这台机器就停止回流了。全新安装不受影响。</span></div>
+        <div><b>Ubuntu/macOS 升级或修复报 No module named <code>aiig_protocol.canonical</code></b><span>从 0.3.53 或更早版本升上来时的已知缺陷：卸载旧组件时误删了新协议包的文件。<b>0.3.58 起升级和修复都会自动自愈，一次操作修好。</b>用 0.3.57 及更早的安装器时：选「重装当前版本（修复）」，<b>若第一次仍报同样的错误，再运行一次即可</b>（第一次会清掉旧组件，第二次就能装干净）。<b>撞上之后请尽快处理</b>：后台同步服务下次重启会进入崩溃循环，放着不管这台机器就停止回流了。全新安装不受影响；曾退回 0.3.53 的机器再升级时，安装过程会自动多做一次重装，属正常现象。</span></div>
         <div><b>Ubuntu：Could not initialize GLX</b><span>Qt 找不到可用的 GLX 或显卡配置，<b>不是 CPU 架构不匹配</b>。用<a href={pageHref("installation")}>安装页的应急变量</a>启动即可；这些变量只影响本次启动。</span></div>
         <div><b>Ubuntu：窗口根本不出现</b><span>确认在 Ubuntu 桌面或已启用 WSLg，并检查 <code>echo $DISPLAY</code> 有值。纯 SSH / headless 会话不会有 GUI。</span></div>
         <div><b>Ubuntu：提示需要 GLIBC_2.38</b><span>拿到的是在 24.04 上构建的包。请使用标注支持 22.04+ 的正式安装包。</span></div>
