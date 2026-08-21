@@ -17,6 +17,16 @@ export type ReleaseNote = {
 };
 
 export const releaseNotes: Record<string, ReleaseNote> = {
+  "0.3.61": {
+    summary:
+      "修复版本：Linux/macOS 上 Codex 里检索工具报 CREDENTIALS_UNAVAILABLE、" +
+      "同一台机器 Claude 却正常的问题（凭据存储方式更换）。",
+    highlights: [
+      "修复 Linux/macOS 上 Codex 里检索工具报 CREDENTIALS_UNAVAILABLE 的问题。此前凭据优先存进系统密钥环，而密钥环跟着桌面登录会话走：Codex 以精简环境启动检索工具的后台进程，读不到密钥环，凭据取不出来；Claude 会把完整环境传给子进程，所以同一台机器它能用。并且令牌每次自动续期都会按同样规则重写凭据文件——手工修好也会被下一次续期改回去。",
+      "这一版起 Linux/macOS 凭据一律直接存在权限收紧的文件里（仅本用户可读；Windows 的 DPAPI 存储不变、不受影响）。已经写成密钥环引用的旧机器，升级后第一次成功使用会自动迁移回文件形态、并清掉密钥环里的废条目，不需要手工处理。",
+      "后台 Agent 升到 0.4.7（即上述修复；升级会真正安装它）。",
+    ],
+  },
   "0.3.60": {
     summary:
       "修复版本：Codex 里检索工具报「connection closed」的启动问题，" +

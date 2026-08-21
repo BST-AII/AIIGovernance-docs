@@ -206,6 +206,7 @@ export const troubleshooting: DocPage = {
         <div><b>结果里有中文就断开连接</b><span>同为 {versionLabel} 之前的缺陷，非 ASCII 结果在部分终端编码下会打断连接。升级即可。</span></div>
         <div><b>升级后问题仍然存在（Linux/macOS）</b><span>可能受到旧版本升级未落地缺陷的影响。改用“重装当前版本（修复）”重新安装受管组件，详见<a href={pageHref("upgrade")}>三条版本规则</a>。</span></div>
         <div><b>多项目机器上某个项目检索坏了</b><span>该项目的配置可能仍指向旧载荷。{versionLabel} 起升级/重装会自动重接线本机全部项目；先升级再看。</span></div>
+        <div><b>Codex 里检索工具报 CREDENTIALS_UNAVAILABLE，同一台机器 Claude 却正常（Linux/macOS）</b><span>0.3.60 及更早版本把凭据优先存进系统密钥环，而密钥环跟着桌面登录会话走：Codex 以精简环境启动检索工具，读不到密钥环；Claude 传递完整环境所以能用。手工修文件也会被令牌自动续期改回去。0.3.61 起凭据一律存在仅本用户可读的受限文件里，旧机器升级后第一次成功使用会自动迁移，不需要手工处理。升级根治。</span></div>
         <div><b>一条知识都查不到</b><span>先用 <code>knowledge_status</code> 看回流是否到位、有没有待处理批次，再用 <code>list_projects</code> 确认可见项目范围。也可能是知识仍在待审核或已被归档。</span></div>
         <div><b>怀疑本机没在同步</b><span>用 <code>diagnostic_logs</code> 读本机近期的 Sync Agent 错误。它不联网，可以安全地先自查。</span></div>
       </div>,
