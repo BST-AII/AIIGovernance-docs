@@ -17,6 +17,16 @@ export type ReleaseNote = {
 };
 
 export const releaseNotes: Record<string, ReleaseNote> = {
+  "0.3.59": {
+    summary:
+      "修复版本：Ubuntu/macOS 上 Codex 的钩子被误删、" +
+      "以及新版 Codex 连接检索工具报 MCP failed 的问题。",
+    highlights: [
+      "修复 Ubuntu/macOS 上 Codex 钩子被「能力探测」误删的问题。安装器此前只在 PATH 和桌面版目录里找 codex——装在 ~/.local/bin（Linux 官方安装位）的 codex 从图形界面启动的安装器里探测不到，安装器误以为这台机器没有支持钩子的 codex，把刚写好的钩子文件又删掉了。两处都改了：探测会查官方安装位；就算真探测不到，也不再删钩子文件——装上或升级 codex 后信任一次即可生效，不需要重装。",
+      "修复新版 Codex（0.148 及以上）连接检索工具时报 MCP failed 的问题。后台桥在建立连接的版本应答上有一处不一致，新版 Codex 会判定连接失败——九个知识工具与两个数据工具全部不可用。这个缺陷从 0.3.56 引入时就存在，此前的验证恰好没覆盖新版 Codex 的握手方式。现已改为对任何版本 Codex 都成立的应答方式。",
+      "后台 Agent 升到 0.4.5（含上一条的修复；升级会真正安装它）。装完后在 Codex 里重新信任一次钩子、并对 aiig-records 选「一律允许」，两组工具即可用。",
+    ],
+  },
   "0.3.58": {
     summary:
       "修复版本：老机器「重装修复」第一次会失败的问题，" +
