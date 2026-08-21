@@ -17,6 +17,17 @@ export type ReleaseNote = {
 };
 
 export const releaseNotes: Record<string, ReleaseNote> = {
+  "0.3.60": {
+    summary:
+      "修复版本：Codex 里检索工具报「connection closed」的启动问题，" +
+      "已在 Ubuntu 真机 Codex 会话完整验收。",
+    highlights: [
+      "修复 Codex 里 records 检索工具报「connection closed: initialize response」的问题。后台桥此前在进程启动时就读本机凭据（系统密钥环）；Codex 启动子进程的环境和时序下这一步可能失败或过慢，桥在完成连接握手前就退出了。现在凭据推迟到第一次真正调用工具时才读：连接与工具列表永远先成功；凭据真读不到时返回一条写明原因与处置的错误信息，而不是整个连接消失。",
+      "已在 Ubuntu 真机的 Codex 会话完整验收：治理 15 个工具与检索 9 个工具全部列出，真实调用返回数据。",
+      "提示：首次使用新钩子的会话可能出现「MCP startup interrupted」提示——那是信任钩子的对话框打断了初始化，属一次性现象；用 /mcp 查看，两个 server 连上即为正常。",
+      "后台 Agent 升到 0.4.6（即上述修复；升级会真正安装它）。",
+    ],
+  },
   "0.3.59": {
     summary:
       "修复版本：Ubuntu/macOS 上 Codex 的钩子被误删、" +
