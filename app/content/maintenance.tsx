@@ -152,6 +152,10 @@ export const troubleshooting: DocPage = {
       id: "install", title: "安装与启动",
       body: <div className="simple-table">
         <div><b>Windows：Access is denied</b><span>项目可能在系统目录、只读网络盘或其他账号目录下；也可能有进程仍占用旧安装器或载荷缓存。先换目录、关掉占用进程再试。计划任务被公司策略拒绝时，新版会自动改用当前用户启动项，不需要提权。</span></div>
+        <div><b>Windows：明明有 git（或点了自动安装）还是提示「缺少 Git」</b><span>机器上另有一个低于 2.38 的旧 git 排在系统 PATH 前面，0.3.61 及更早版本会陷入"装好了但检测不过"的循环。0.3.62 起检测页会如实显示找到的 git 路径与版本、并自动兜底使用便携 Git。自查一行：命令行跑 <code>where git</code> 和 <code>git --version</code>——第一行如果是个旧版本，升级它或从 PATH 移除即可立即解除；升级安装器到 0.3.62 根治。</span></div>
+        <div><b>Linux：点「复制授权码」后安装器闪退</b><span>0.3.61 及更早的 Linux 包在页面发起权限请求（复制按钮触发剪贴板权限）时会整个进程退出、无任何提示。0.3.62 已双层修复。旧包临时绕开办法：不点复制按钮，手抄授权码到另一台设备输入。</span></div>
+        <div><b>升级报「20 秒内没有看到当前项目状态…只看到安装前的旧心跳」</b><span>Windows 升级时旧的后台 Agent 进程未被完全接替。<b>即时解法：重启机器后再跑一遍升级即可过</b>（重启清掉一切旧进程）；不便重启就先在任务管理器结束 <code>aiig-lite-installer-payload</code> 路径下的 pythonw.exe 再重试。0.3.62 起升级一律"停旧起新"并在启动后直接确认进程存活，此问题根治。</span></div>
+        <div><b>安装器启动报「内置载荷解压失败 WinError 5」</b><span>缓存目录残留了无效内容，或杀毒软件正在扫描刚解压的文件。即时解法：关闭安装器，删除 <code>%LOCALAPPDATA%\aiig-lite-installer-payload</code> 下对应的 <code>payload-v2-…</code> 目录（含 .tmp）后重试；删不掉说明有进程占用，先重启机器。0.3.62 起会自动清理残骸并延长等待，报错会写明路径与处置。</span></div>
         <div><b>Ubuntu/macOS 升级或修复报 No module named <code>aiig_protocol.canonical</code></b><span>从 0.3.53 或更早版本升上来时的已知缺陷：卸载旧组件时误删了新协议包的文件。<b>0.3.58 起升级和修复都会自动自愈，一次操作修好。</b>用 0.3.57 及更早的安装器时：选「重装当前版本（修复）」，<b>若第一次仍报同样的错误，再运行一次即可</b>（第一次会清掉旧组件，第二次就能装干净）。<b>撞上之后请尽快处理</b>：后台同步服务下次重启会进入崩溃循环，放着不管这台机器就停止回流了。全新安装不受影响；曾退回 0.3.53 的机器再升级时，安装过程会自动多做一次重装，属正常现象。</span></div>
         <div><b>Ubuntu：Could not initialize GLX</b><span>Qt 找不到可用的 GLX 或显卡配置，<b>不是 CPU 架构不匹配</b>。用<a href={pageHref("installation")}>安装页的应急变量</a>启动即可；这些变量只影响本次启动。</span></div>
         <div><b>Ubuntu：窗口根本不出现</b><span>确认在 Ubuntu 桌面或已启用 WSLg，并检查 <code>echo $DISPLAY</code> 有值。纯 SSH / headless 会话不会有 GUI。</span></div>
