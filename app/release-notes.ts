@@ -110,6 +110,16 @@ export const releaseNotes: Record<string, ReleaseNote> = {
       "管理平台的概览页现在并排给出两个数：工作目录数与产品线数。上报端还不支持产品线时显示「—」，支持但一条都没归类时显示 0——两种「没有」不再混为一谈。",
     ],
   },
+  "0.3.54": {
+    summary:
+      "Codex CLI 治理支持的首个版本，四平台同步出包。" +
+      "（Codex 的 MCP 配置在本版写在用户级文件里，0.3.55 起改为项目级并会自动回收旧配置。）",
+    highlights: [
+      "首次支持把 Codex CLI 接入治理框架：安装器写入 AGENTS.md 与 Codex 钩子/MCP 配置，与 Claude Code 并列成为第二个受治理前端。",
+      "Windows、Ubuntu/WSL、macOS（Intel 与 Apple Silicon）四平台同步出包。",
+      "本版的 Codex MCP 配置为用户级（~/.codex/config.toml）——多项目机器上有局限，0.3.55 已改为项目级；如果你还停在 0.3.54，直接升级到最新版即可，无需先处理旧配置，安装器会自动回收。",
+    ],
+  },
   "0.3.53": {
     summary:
       "纯修复版本，主题是打通 Ubuntu 与 macOS 上的知识检索通路，" +
