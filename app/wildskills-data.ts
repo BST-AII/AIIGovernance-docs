@@ -528,14 +528,14 @@ export const wildSkills: WildSkill[] = [
   },
   {
     "name": "framework-sync",
-    "description": "同步治理框架(.governance/AIIGovernance)与 skills(.governance/Wildskills)两 submodule 至最新版本 tag。tag 比对为主(无新版即跳过);本地脏则拒更新(先解决冲突);更新后提示跑熵检查;有本地改动需上游化时转 governance-pr skill。触发:session_start 超期兜底(sync_period_days 默认 7)+手动。",
+    "description": "把治理框架(.governance/AIIGovernance)与技能库(.governance/Wildskills)的内容增量同步到上游最新，不必重装整个安装包。默认 dry-run 只报告；--apply 才更新。只刷协议块、技能接线与 records 骨架，因而零重启、零重新信任；hooks/MCP/权限基线一律退回安装器。判据是远端默认分支的 HEAD，且必须是快进。触发：手动（用户说\"同步治理框架\"\"更新技能\"之类）。",
     "category": "version-mgmt",
     "path": "skills/version-mgmt/framework-sync/SKILL.md",
     "href": "https://github.com/BST-AII/Wildskills/blob/main/skills/version-mgmt/framework-sync/SKILL.md"
   },
   {
     "name": "governance-pr",
-    "description": "当业务 repo 内治理框架 submodule 相对上游有本地提交(需回流到治理框架 repo)时,引导生成 PR。挂熵检查链:熵检查未通过一律不建 PR(fail-closed)。用 gh pr create;对外动作默认 dry-run,--apply 才真建。",
+    "description": "把本地改过的治理框架(.governance/AIIGovernance→lite)与技能(.governance/Wildskills→main)内容回流成 PR。能把\"改了还没提交\"和\"游离 HEAD 没有上游\"这两种最常见的现场直接变成可提的分支；熵检查 fail-closed；commit message 不代写，必须由用户定；没有直推权限就回退到 fork。默认 dry-run，--apply 才动手。触发：手动（用户说\"把我的改动提上去\"\"提个 PR\"之类）。",
     "category": "version-mgmt",
     "path": "skills/version-mgmt/governance-pr/SKILL.md",
     "href": "https://github.com/BST-AII/Wildskills/blob/main/skills/version-mgmt/governance-pr/SKILL.md"

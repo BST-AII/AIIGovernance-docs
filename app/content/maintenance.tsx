@@ -189,6 +189,25 @@ export const troubleshooting: DocPage = {
       </>,
     },
     {
+      id: "sync", title: "同步框架与技能更新",
+      body: <>
+        <p>
+          0.3.63 起，治理框架与技能的更新可以就地同步，不必重装整包：在会话里说一句
+          「更新治理框架」即可。它只刷新内容（协议块、技能接线、records 骨架），
+          不碰 hook 接线与 MCP 配置，所以通常同步完不需要重启会话。
+        </p>
+        <div className="simple-table">
+          <div><b>第一次同步报「凭据缺失」</b><span>内容此前一直是随安装包离线铺下来的，机器上从没配过 git 凭据。装了 GitHub CLI 就跑 <code>gh auth login</code>，再跑 <code>gh auth setup-git</code>；没装也行，在一个<b>交互式终端</b>里手动跑一次 <code>git fetch</code>，让系统的凭据管理器弹出登录框。你的账号需要是组织成员才看得到这两个私有仓。</span></div>
+          <div><b>报「无访问权限」或 not found</b><span>GitHub 对没有权限的私有仓一律报 not found，不会说「无权限」。先 <code>gh auth status</code> 看当前登录的是哪个账号；账号没错就找管理员开权限。<b>不要去改 remote 地址</b>——那不会解决问题，只会把仓指向别处。</span></div>
+          <div><b>公司网络下报证书问题</b><span>公司代理在中间换了证书。把公司根证书装进系统信任库，或设 <code>http.sslCAInfo</code> 指向它。<b>不要关闭 sslVerify</b>，那等于把校验整个丢掉。</span></div>
+          <div><b>报「git 锁残留 / index.lock」</b><span>上一次操作被中断（Ctrl+C 或会话被打断）留下了锁文件。先确认没有别的 git 进程在跑，再手动删掉报错里提到的那个 <code>.lock</code>。工具不会替你删——万一真有并发进程，删了会毁掉对方正在做的事。</span></div>
+          <div><b>同步说成功了，但技能还是旧的</b><span>你的技能目录里那一项是<b>普通目录而不是链接</b>——早期版本是直接拷贝过去的。这类目录同步和安装器升级都会跳过（无法区分它是不是你自己写的同名技能），所以永远停在旧版。同步报告会列出具体是哪几个名字：确认是旧版遗留后，删掉 <code>.claude/skills/</code> 下那个目录再同步一次，它就会换成链接。</span></div>
+          <div><b>CLAUDE.md 的 diff 突然变得很大</b><span>0.3.63 把治理协议块挪到了文件最开头（此前追加在末尾）。升级后第一次运行会一次性完成这个搬迁，所以看起来像大改——实际上块的内容和你自己写的内容都逐字节没动，只是顺序变了。</span></div>
+          <div><b>提示「hook 接线的形状变了」</b><span>这一版上游改的东西超出了就地同步的范围（新增了 hook 事件之类）。就地同步刻意不碰这些，因为它们一动就要求重启会话并在 Codex 里重新信任。跑一次安装器升级即可完整生效。</span></div>
+        </div>
+      </>,
+    },
+    {
       id: "hooks", title: "Hook 故障决策树",
       body: <>
         <p>治理未生效时，请按以下顺序定位。每一层对应不同的处理方式。</p>
