@@ -138,8 +138,26 @@ gh auth setup-git`}</Code>
           你本地改完之后的真实状态通常是：submodule 处于<b>游离 HEAD、没有上游追踪</b>，
           而且<b>改动还没提交</b>。它会直接从当前版本建一个工作分支
           （<code>contrib/&lt;用户名&gt;-&lt;日期&gt;-&lt;commit前8位&gt;</code>）、
-          提交、推送、开 PR。没有直推权限时自动改走 fork。
+          提交、推送、开 PR，然后<b>把工作区切回同步基线</b>——这样之后的就地同步照常
+          可用。代价是你的改动在 PR 合并前<b>本地暂不可用</b>（都在那个分支上，
+          <code>git switch</code> 随时回去）；合并后跑一次就地同步就全回来了。
         </p>
+        <Note title="只读权限也能提——会自动走 fork">
+          <p>
+            多数成员对这两个内容仓只有读权限，这不挡路：推分支被拒时它会自动
+            fork（查你已有的 fork → 没有才建 → 等就绪 → 推到 fork → 开跨仓 PR），
+            全程不需要你操作，也不需要你知道 fork 是什么。
+          </p>
+        </Note>
+        <h3>改动要放在哪里才提得上去</h3>
+        <p>
+          三条定位，放错了是<b>静默失败</b>：
+        </p>
+        <div className="simple-table">
+          <div><b>改已有技能</b><span>两处等价：<code>.claude/skills/&lt;名&gt;/</code> 是链接，指向 <code>.governance/Wildskills/skills/…</code> 的真身，改哪边都是同一份文件。</span></div>
+          <div><b>新建技能</b><span>只能建在 <code>.governance/Wildskills/skills/&lt;组&gt;/&lt;名&gt;/</code> 下，且<b>必须用 skill-creator 生成</b>（治理法条要求，回流前会核验它的校验凭证）。<b>绝不要建在 <code>.claude/skills/</code> 下</b>——那里的新目录只是项目的本地目录，不在技能库里，提不上去且没有任何提示。</span></div>
+          <div><b>改治理框架（法条 / Spec / 工具）</b><span>只能在 <code>.governance/AIIGovernance/</code> 下改，它没有链接到别处。</span></div>
+        </div>
         <Note title="提交说明必须你来写">
           <code>--apply</code> 时不给 <code>--message</code> 会被拒绝，它只会给一句
           建议文案。改动的理由只有你知道，工具推断出来的东西不配当提交记录。
