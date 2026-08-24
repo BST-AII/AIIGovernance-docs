@@ -5,9 +5,150 @@ import {
 
 export const upgrade: DocPage = {
   group: "维护", label: "升级、重装与修复", title: "升级、重装与修复",
-  intro: "安装器会识别项目当前状态，并根据所选模式更新受管组件，同时保留业务代码、记录和项目身份。",
-  keywords: ["升级", "重装", "修复", "覆盖", "恢复安装", "安装模式"],
+  intro: "多数更新不必重装：0.3.63 起，框架与技能的内容可以就地同步。真正需要跑安装器的，是 hook 接线、MCP 配置、运行时这些结构面的变化。",
+  keywords: ["升级", "重装", "修复", "覆盖", "恢复安装", "安装模式",
+             "同步", "framework-sync", "governance-pr", "PR", "回流"],
   sections: [
+    {
+      id: "sync-first", title: "先看这里：多数更新不用重装",
+      body: <>
+        <p>
+          0.3.63 起有两条路，先分清你要的是哪一条。绝大多数日常更新走第一条，
+          几秒钟的事，也不需要重启会话。
+        </p>
+        <Matrix
+          head={["你想要的", "走哪条", "代价"]}
+          rows={[
+            ["拿到别人合入的法条、Spec、文档、技能改动",
+             "在会话里说一句「更新治理框架」（framework-sync 技能）",
+             "几秒钟，无需重启会话，无需在 Codex 里重新信任"],
+            ["把自己改过的框架内容提回上游",
+             "在会话里说一句「把我的改动提上去」（governance-pr 技能）",
+             "生成一个 PR，等上游 review"],
+            ["hook 接线变了、MCP 配置变了、后台组件要升级",
+             "跑安装器（本页下面各节）",
+             "需要重启会话；Codex 侧还要重新信任一次"],
+          ]}
+        />
+        <Note title="怎么判断该走哪条">
+          <p>
+            不用自己判断。跑一次就地同步，它会告诉你：如果这次的改动超出了它的范围
+            （比如上游新增了 hook 事件），它会明确说「这次没应用，要完整生效请跑一次
+            安装器升级」，而不是假装做完了。
+          </p>
+        </Note>
+      </>,
+    },
+    {
+      id: "sync-howto", title: "就地同步：把框架与技能拉到最新",
+      body: <>
+        <p>
+          在此之前，别人给治理框架或技能库提的改动合入后，你拿到它的唯一办法是重新
+          下载安装包装一遍——为了几 KB 的文本改动重装一次。现在不用了。
+        </p>
+        <h3>怎么用</h3>
+        <p>
+          在会话里说一句<b>「更新治理框架」</b>或<b>「同步一下技能」</b>即可，
+          Claude 会调用 <code>framework-sync</code> 技能。想自己跑也可以：
+        </p>
+        <Code>{`# 先看会改什么，不动任何东西
+<自带python> .claude/skills/framework-sync/scripts/sync.py
+
+# 确认没问题再真的更新
+<自带python> .claude/skills/framework-sync/scripts/sync.py --apply`}</Code>
+        <p>
+          <b>「自带 python」指的是安装器给这台机器铺的那一个</b>，它不在 PATH 里：
+          Windows 在 <code>&lt;项目&gt;\tools\python\python.exe</code>，
+          Linux 在 <code>~/.local/share/aiigovernance/runtime/0.4.0/bin/python</code>，
+          macOS 在 <code>~/Library/Application Support/AIIGovernance/Runtime/0.4.0/bin/python</code>。
+        </p>
+        <h3>它会做什么、不会做什么</h3>
+        <Matrix
+          head={["会", "不会"]}
+          rows={[
+            ["把两个内容仓拉到上游最新（法条、Spec、文档、技能正文）",
+             "不碰 hook 接线（`.claude/settings.local.json`）"],
+            ["刷新 CLAUDE.md / AGENTS.md 里的治理协议块",
+             "不碰 `.mcp.json`——MCP 接口面由安装器维护"],
+            ["重新接好技能链接，清掉上游已删技能的残骸",
+             "不碰 `settings.json` 的权限基线，也不碰 `project_profile.yaml`"],
+            ["补齐 `records/` 骨架里缺的空文件",
+             "不动你自己的任何代码、记录或配置"],
+          ]}
+        />
+        <p>
+          右边这些一改就要求你重启会话、在 Codex 里重新信任——所以它刻意不碰，
+          这正是「同步完什么都不用做」的来源。同步的成果会在下次跑安装器升级时被
+          覆盖回包里的版本，这是预期行为：安装器始终是权威。
+        </p>
+        <h3>第一次要先配 GitHub 凭据</h3>
+        <p>
+          内容此前一直是随安装包离线铺下来的，所以这台机器很可能<b>从没配过 git 凭据</b>。
+          第一次跑会提示凭据缺失，按提示做即可：
+        </p>
+        <Code>{`gh auth login
+gh auth setup-git`}</Code>
+        <p>
+          没装 GitHub CLI 也行：在一个<b>交互式终端</b>里手动跑一次 <code>git fetch</code>，
+          让系统的凭据管理器弹出登录框。你的账号需要是组织成员才看得到这两个私有仓。
+          取不到远端时它会按六种情形（没配凭据、账号无权限、凭据过期、离线、公司代理
+          换证书、上次中断留下锁文件）分别给出能照做的指引，不会含糊地跳过。
+        </p>
+        <h3>跑完之后</h3>
+        <p>
+          它最后会打印一节「接下来你要做什么」。常见的几种：内容没变就是
+          「什么都不用做」；协议块更新了是「下次新开会话生效」；技能名单有增减是
+          「新开会话才看得到」（已有技能的正文改动本轮就生效，因为接线是链接）。
+        </p>
+        <Warn title="第一次同步后 CLAUDE.md 的 diff 会变大">
+          0.3.63 把治理协议块挪到了文件最开头（此前追加在末尾），升级或首次同步会
+          一次性完成这个搬迁。看起来像大改，实际上块的内容和你自己写的内容都逐字节
+          没动，只是顺序变了。
+        </Warn>
+      </>,
+    },
+    {
+      id: "pr-howto", title: "回流：把本地改动提成 PR",
+      body: <>
+        <p>
+          在本地改过框架内容（法条、Spec、文档，或者技能的 SKILL.md）之后，
+          用 <code>governance-pr</code> 技能把它提回上游。在会话里说一句
+          <b>「把我的改动提上去」</b>即可，或者自己跑：
+        </p>
+        <Code>{`# 先看会提什么，不动任何东西
+<自带python> .claude/skills/governance-pr/scripts/pr.py
+
+# 确认后真的建分支、提交、推送、开 PR
+<自带python> .claude/skills/governance-pr/scripts/pr.py --apply --message "改了什么、为什么"`}</Code>
+        <p>
+          治理框架的 PR 提到 <code>lite</code>，技能库的提到 <code>main</code>，
+          默认两个都扫。
+        </p>
+        <h3>它能处理最常见的那个现场</h3>
+        <p>
+          你本地改完之后的真实状态通常是：submodule 处于<b>游离 HEAD、没有上游追踪</b>，
+          而且<b>改动还没提交</b>。它会直接从当前版本建一个工作分支
+          （<code>contrib/&lt;用户名&gt;-&lt;日期&gt;-&lt;commit前8位&gt;</code>）、
+          提交、推送、开 PR。没有直推权限时自动改走 fork。
+        </p>
+        <Note title="提交说明必须你来写">
+          <code>--apply</code> 时不给 <code>--message</code> 会被拒绝，它只会给一句
+          建议文案。改动的理由只有你知道，工具推断出来的东西不配当提交记录。
+        </Note>
+        <h3>改协议块是个例外</h3>
+        <p>
+          如果你改的是 CLAUDE.md / AGENTS.md 里治理标记<b>之间</b>那段，
+          <b>那个改动不会存活</b>——它是治理仓 <code>tool/bootstrap.py</code> 里
+          <code>governance_block()</code> 生成的，下次运行会整段重建覆盖回去。
+          真要改协议，去改那个函数（并同步更新测试里的 sha256 基线），再用本技能提上去。
+          工具检测到这种情况会当面警告你。
+        </p>
+        <p>
+          至于 <code>.claude/skills/&lt;名&gt;/SKILL.md</code>——改它就等于直接改了技能库的
+          工作区（接线是链接，指向的是真身），改动天然落在该回流的地方，很顺。
+        </p>
+      </>,
+    },
     {
       id: "check", title: "检测版本",
       body: <>
