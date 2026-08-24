@@ -17,6 +17,16 @@ export type ReleaseNote = {
 };
 
 export const releaseNotes: Record<string, ReleaseNote> = {
+  "0.3.66": {
+    summary:
+      "修复版本：系统 PATH 损坏（丢了 System32 条目）的机器此前会在最后一步" +
+      "「完成验证」报一句不知所云的 FileNotFoundError——现在这样的机器也能装完。",
+    highlights: [
+      "修复系统 PATH 损坏的机器装到第七步报 FileNotFoundError 的问题。真机现场：一台机器的系统 PATH 丢了 System32 条目，GitHub 授权、身份核验全部成功后，注册后台同步服务时炸出一句「系统找不到指定的文件」，连缺哪个文件都不说。原因是 Windows 找程序时会隐式搜索 System32 根目录（所以前面的步骤全部侥幸通过），而 PowerShell 恰好住在子目录里、只能靠 PATH。现在安装器调用系统工具一律用绝对路径，不再依赖 PATH。",
+      "「找不到文件」的报错现在会说出找不到的是谁，并提示检查系统 PATH。此前那句报错连文件名都没有，只能靠维护者对着日志猜。",
+      "顺带提醒：PATH 损坏影响的不只是本安装器，机器上其他命令行工具照样受害。「升级、重装与修复」页新增了自查与修复方法（cmd 里跑 echo %PATH% 看有没有 C:\\Windows\\system32，没有就在环境变量里补回四条标准条目）。",
+    ],
+  },
   "0.3.65": {
     summary:
       "内容版本：只读权限的成员现在真的能「把本地改动提成 PR」了（fork 通道四处修复），" +
