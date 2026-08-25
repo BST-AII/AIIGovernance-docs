@@ -149,6 +149,19 @@ gh auth setup-git`}</Code>
             fork（查你已有的 fork → 没有才建 → 等就绪 → 推到 fork → 开跨仓 PR），
             全程不需要你操作，也不需要你知道 fork 是什么。
           </p>
+          <p>
+            <b>前提是 gh 登录的令牌能看到公司的仓库</b>，两个真机踩过的坑：
+            令牌是在 <b>Fine-grained</b> 入口生成的（<code>github_pat_</code> 开头，
+            要一个仓一个仓授权，默认看不到公司仓库——git 拉代码可能正常，但 fork
+            和建 PR 全会失败）；<code>gh auth login</code> 选浏览器方式<b>一直转圈到
+            超时</b>（不少公司网络连不上那个登录接口）。两个坑一个解法：在网页上
+            github.com → Settings → Developer settings → Personal access tokens →
+            <b> Tokens (classic)</b> 生成一个勾了 <code>repo</code> 和
+            <code>read:org</code> 的令牌，<code>gh auth login</code> 时选
+            <b> Paste an authentication token</b> 粘进去。验证：
+            <code>gh repo view BST-AII/Wildskills</code> 能显示仓库介绍就绪。
+            0.3.67 起技能卡在令牌上时会直接把这三步打在输出里带你修。
+          </p>
         </Note>
         <h3>改动要放在哪里才提得上去</h3>
         <p>
@@ -338,6 +351,7 @@ export const troubleshooting: DocPage = {
       body: <>
       <div className="simple-table">
         <div><b>一直停在“等待 GitHub 与公司身份核验”，看不到授权码</b><span>本机没有可用的浏览器，授权页打不开。日志里会看到 <code>xdg-open: no method available</code>，前面还有一串 <code>not found</code>。<b>这不是必须装浏览器</b>：GitHub 的设备授权流程本来就允许在任意一台设备上完成，详见下方处置方法。0.3.56 起授权码与网址直接显示在安装器页面上，不再只落在日志里。</span></div>
+        <div><b>gh auth login 选浏览器方式一直转圈，最后报连接超时（wsarecv / connection failed）</b><span>公司网络挡住了 GitHub 的登录接口（github.com/login/device/code），这台机器上浏览器方式走不通，但<b>不影响别的路</b>：在网页上 github.com → Settings → Developer settings → Personal access tokens → <b>Tokens (classic)</b>（不要选 Fine-grained，那种默认看不到公司的仓库）生成一个勾了 <code>repo</code> 和 <code>read:org</code> 的令牌，<code>gh auth login</code> 时选 <b>Paste an authentication token</b> 粘进去。验证：<code>gh repo view BST-AII/Wildskills</code> 能显示仓库介绍即成功。</span></div>
         <div><b>Device Code 返回 400 / device_flow_disabled</b><span>组织的 OAuth App 没有启用 Device Flow。这不是用户名拼错，此时还没走到用户名比对那一步，需要管理员在 OAuth App 设置里开启。</span></div>
         <div><b>授权之后一直等待</b><span>保持安装器开着。公司侧核验严格关联页面上显示的 Enrollment ID；超时后可以直接重试。</span></div>
         <div><b>提示身份被拒，但你确实是组织成员</b><span>先确认安装器版本申请了 <code>read:org</code> 权限——没有这个权限就无法独立核验组织成员身份。</span></div>
