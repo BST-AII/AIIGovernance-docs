@@ -351,6 +351,7 @@ export const troubleshooting: DocPage = {
       body: <>
       <div className="simple-table">
         <div><b>一直停在“等待 GitHub 与公司身份核验”，看不到授权码</b><span>本机没有可用的浏览器，授权页打不开。日志里会看到 <code>xdg-open: no method available</code>，前面还有一串 <code>not found</code>。<b>这不是必须装浏览器</b>：GitHub 的设备授权流程本来就允许在任意一台设备上完成，详见下方处置方法。0.3.56 起授权码与网址直接显示在安装器页面上，不再只落在日志里。</span></div>
+        <div><b>重装时重新选了产品线，装完发现没变</b><span><b>这是设计，不是故障。</b>产品线归属现在由管理员统一维护：<b>第一次装机时你选的那条算数，之后再改只能由管理员在管理台改</b>。原因是安装器会把你上次的选择记在项目仓的 <code>.governance/aiig-install.json</code> 里，每次重装都原样送回服务端——如果客户端说了算，管理员刚改好的归属会被一次重装悄悄退回去，而且没有任何人会发现。要改归属：在管理台「项目」页找到你的工作目录点「申请改挂」，管理员批准后生效（管理员自己可以直接改）。真的不属于任何产品线的，挂到「其他」。</span></div>
         <div><b>gh auth login 选浏览器方式一直转圈，最后报连接超时（wsarecv / connection failed）</b><span>公司网络挡住了 GitHub 的登录接口（github.com/login/device/code），这台机器上浏览器方式走不通，但<b>不影响别的路</b>：在网页上 github.com → Settings → Developer settings → Personal access tokens → <b>Tokens (classic)</b>（不要选 Fine-grained，那种默认看不到公司的仓库）生成一个勾了 <code>repo</code> 和 <code>read:org</code> 的令牌，<code>gh auth login</code> 时选 <b>Paste an authentication token</b> 粘进去。验证：<code>gh repo view BST-AII/Wildskills</code> 能显示仓库介绍即成功。</span></div>
         <div><b>Device Code 返回 400 / device_flow_disabled</b><span>组织的 OAuth App 没有启用 Device Flow。这不是用户名拼错，此时还没走到用户名比对那一步，需要管理员在 OAuth App 设置里开启。</span></div>
         <div><b>授权之后一直等待</b><span>保持安装器开着。公司侧核验严格关联页面上显示的 Enrollment ID；超时后可以直接重试。</span></div>
