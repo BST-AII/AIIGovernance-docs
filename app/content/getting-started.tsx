@@ -74,6 +74,7 @@ export const installation: DocPage = {
       id: "requirements", title: "安装前准备",
       body: <>
         <p>三个平台的共同前提只有三条：一个需要治理的项目目录、一个已加入 BST-AII 的 GitHub 账号、以及已安装并登录的 Claude Code。目标电脑<b>不需要预装 Python</b>——Hooks、Sync Agent 与 MCP Bridge 使用安装包内自带的可重定位 CPython 3.12。</p>
+        <div className="simple-table"><div><b>国内网络：用 npm 安装 Claude Code</b><span>官网的 <code>irm https://claude.ai/install.ps1 | iex</code> 在国内直连会拿到一张网页而不是脚本，满屏「不支持 var 关键字」式红字（排障页有对应条目），不要照它装。国内同事按四步来：① 安装 Node.js 18+（可下载 <code>node-v24.14.0-x64.msi</code>，一路默认）；② PowerShell 执行 <code>npm install -g @anthropic-ai/claude-code</code>；③ 运行 <code>claude --version</code>，能打印版本号即成功；<b>版本低于 2.1.196 就重跑第 ② 步升级到最新</b>；④ 导入 API Key：向管理员索取 <code>setup.ps1</code>（脚本含内部接入配置，不放公开站），用 PowerShell 运行；若提示执行策略限制，先运行 <code>Set-ExecutionPolicy -Scope CurrentUser RemoteSigned</code> 再重跑。</span></div></div>
         <Matrix
           head={["平台", "系统要求", "必须先装", "安装包已自带"]}
           rows={[
