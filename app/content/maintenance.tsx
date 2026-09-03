@@ -64,6 +64,11 @@ export const upgrade: DocPage = {
           Linux 在 <code>~/.local/share/aiigovernance/runtime/0.4.0/bin/python</code>，
           macOS 在 <code>~/Library/Application Support/AIIGovernance/Runtime/0.4.0/bin/python</code>。
         </p>
+        <p>
+          一次真实同步长这样——先 dry-run 把「会改什么」汇报清楚，确认后才真正
+          <code>--apply</code>，两步的报告必须一致：
+        </p>
+        <Figure src="screenshots/framework-sync/dry_run_apply.jpeg" alt="framework-sync 在 Claude Code 会话里的一次真实同步：dry-run 报告、确认、apply 交付物与验证结果" caption="这一次上游只新增了一个 bst-code-review 技能：dry-run 先讲明「只新增、不动现有内容」，确认后 apply 完成，交付物、验证结果与后续动作同屏交代。注意最后三条：新技能要新开会话才可见；业务仓会因 submodule 指针变化显示为脏，提交即可固化；日后同步若被「技能库显示为脏」挡住，跑一次 git submodule update --init --recursive 收敛。" source="real-capture" />
         <h3>它会做什么、不会做什么</h3>
         <Matrix
           head={["会", "不会"]}
