@@ -87,6 +87,17 @@ export const installation: DocPage = {
       </>,
     },
     {
+      id: "display-name", title: "设置你的显示名（GitHub 昵称）",
+      body: <>
+        <p>管理台此前各页面显示的是 GitHub 用户名（如 <code>Victor-Yuan-1224</code>），团队里对不上人。自 2026-09-04 起，管理台<b>全站改为显示你的 GitHub「昵称（Name）」</b>——请把昵称设置成 <b><code>BST-名.姓</code></b>（即公司邮箱前缀加 BST- 前缀，示例：<code>BST-victor.yuan</code>）。</p>
+        <div className="simple-table">
+          <div><b>怎么改</b><span>打开 <code>github.com</code> → 右上角头像 → <b>Settings</b> → Public profile 的 <b>Name</b> 一栏填入 <code>BST-名.姓</code> → 点 <b>Update profile</b>。整个过程不到一分钟。</span></div>
+          <div><b>不要改用户名</b><span>要改的是「昵称（Name）」，不是「用户名（Username）」。用户名不需要动——它也不允许包含点号，且贸然改名会让旧链接与 @ 提及失效。</span></div>
+          <div><b>什么时候生效</b><span>管理台每 6 小时自动同步一次昵称，改完最迟当天可见；没设昵称的同事继续显示 GitHub 用户名，功能不受影响。</span></div>
+        </div>
+      </>,
+    },
+    {
       id: "verify-download", title: "校验安装包",
       body: <>
         <p>每个安装包旁边都有同名的 <code>.sha256</code> 文件。下载后先核对再运行，核对通过才双击。</p>
