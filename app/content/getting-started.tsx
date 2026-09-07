@@ -173,6 +173,15 @@ QTWEBENGINE_CHROMIUM_FLAGS=--disable-gpu \\
           <li>可选配置飞书机器人；同一个机器人已绑定其他项目时，要求你明确选择迁移或改用新机器人。</li>
           <li>完成页列出<b>已验证项与未验证项</b>、版本号和本次更新说明。</li>
         </ol>
+        <FigureRow>
+          <Figure src="screenshots/installer/wizard_mode_select.jpg" alt="向导首页的三个入口" caption="第 1 步：首页选择首次安装、升级已有项目，或为已有项目添加机器人。" source="real-capture" />
+          <Figure src="screenshots/installer/wizard_pick_project.jpg" alt="选择目标项目目录" caption="第 3 步：选中项目根目录。框架挂载到项目的 .governance/ 目录，不修改已有文件。" source="real-capture" />
+        </FigureRow>
+        <FigureRow>
+          <Figure src="screenshots/installer/wizard_security_profile.jpg" alt="确认项目治理配置表单" caption="安全配置：临时目录、允许写入目录、测试命令等逐项确认，红字标注的是预填占位、需要你改成真实值。" source="real-capture" />
+          <Figure src="screenshots/installer/wizard_permission_baseline.jpg" alt="权限基线勾选页" caption="权限基线：哪些操作免弹窗自己勾，写入 .claude/settings.json，装完可以直接打开文件核对。" source="real-capture" />
+        </FigureRow>
+        <Figure src="screenshots/installer/wizard_finish_next_steps.jpg" alt="安装完成页的后续动作" caption="完成页的「下一步」：提交挂载 commit、确认 project_profile.yaml、重启会话看到「治理已加载」。向导没有验证过的事项会标注「未验证」。" source="real-capture" />
         <Note title="一台电脑一个后台 Agent">同一个用户只运行一个共享的 Sync Agent。该用户的多个项目通过稳定的 Project ID 分开同步 <code>records/events.jsonl</code>，互不覆盖；多个 Claude 会话可以同时写入，Agent 只上传完整的 JSONL 行，并在公司侧确认入库后才推进游标。</Note>
       </>,
     },
@@ -243,6 +252,12 @@ tail -n 100 ~/Library/Logs/AIIGovernance/records-agent.stderr.log
           <li><b>放行 Governance MCP。</b>Codex 首次用到 <code>aiig-governance</code> 时会询问权限，选 <b>always allow</b>（一律允许）。也可以在 <b>Settings → MCP servers</b> 里查看它的状态。这条配置写在<b>项目自己的</b> <code>.codex/config.toml</code> 里，所以你在几台机器上装几个项目都互不影响；从旧版本升级时，安装器会把此前写在用户级 <code>~/.codex/config.toml</code> 的那一条收走。Claude Code 那边会问同样的问题，同样选“一律允许”；两边各问各的，互不影响。</li>
         </ol>
         <Note title="两个硬前置">其一，项目必须是 trusted：项目层 hooks 只在该项目被信任时加载，不信任时<b>静默不加载且没有报错</b>——这是最危险的失效点，也正是上面第一步要解决的。其二，本机 codex 必须在 hooks 默认开启的版本区间内，验收口径统一为 <code>codex features list</code> 显示 <code>hooks stable true</code>。</Note>
+        <h4>装完怎么核对（Claude Code 侧）</h4>
+        <p>不看安装器的提示，直接看 Claude 自己的输出：在会话里输入 <code>/hooks</code>，四类钩子都列出即为接线到位；点进 PreToolUse 能看到它拦截的工具清单。再发一条消息，首行回复出现「治理已加载」即为全链生效。</p>
+        <FigureRow>
+          <Figure src="screenshots/claude/hooks_menu.jpg" alt="/hooks 菜单显示四类钩子" caption="/hooks：PreToolUse、PostToolUse、SessionStart、UserPromptSubmit 都在列即为接线到位。" source="real-capture" />
+          <Figure src="screenshots/claude/hooks_pretooluse_matchers.jpg" alt="PreToolUse 匹配器明细" caption="点进 PreToolUse：匹配器列出它拦截的全部工具，exit code 0/2 的行为在页内有说明。" source="real-capture" />
+        </FigureRow>
       </Maintainer>,
     },
     {
