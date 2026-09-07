@@ -174,14 +174,14 @@ QTWEBENGINE_CHROMIUM_FLAGS=--disable-gpu \\
           <li>完成页列出<b>已验证项与未验证项</b>、版本号和本次更新说明。</li>
         </ol>
         <FigureRow>
-          <Figure src="screenshots/installer/wizard_mode_select.jpg" alt="向导首页的三个入口" caption="第 1 步：首页选择首次安装、升级已有项目，或为已有项目添加机器人。" source="real-capture" />
-          <Figure src="screenshots/installer/wizard_pick_project.jpg" alt="选择目标项目目录" caption="第 3 步：选中项目根目录。框架挂载到项目的 .governance/ 目录，不修改已有文件。" source="real-capture" />
+          <Figure src="screenshots/install-walkthrough/wizard_mode_select.jpg" alt="向导首页的三个入口" caption="第 1 步：首页选择首次安装、升级已有项目，或为已有项目添加机器人。" source="real-capture" />
+          <Figure src="screenshots/install-walkthrough/wizard_pick_project.jpg" alt="选择目标项目目录" caption="第 3 步：选中项目根目录。框架挂载到项目的 .governance/ 目录，不修改已有文件。" source="real-capture" />
         </FigureRow>
         <FigureRow>
-          <Figure src="screenshots/installer/wizard_security_profile.jpg" alt="确认项目治理配置表单" caption="安全配置：临时目录、允许写入目录、测试命令等逐项确认，红字标注的是预填占位、需要你改成真实值。" source="real-capture" />
-          <Figure src="screenshots/installer/wizard_permission_baseline.jpg" alt="权限基线勾选页" caption="权限基线：哪些操作免弹窗自己勾，写入 .claude/settings.json，装完可以直接打开文件核对。" source="real-capture" />
+          <Figure src="screenshots/install-walkthrough/wizard_security_profile.jpg" alt="确认项目治理配置表单" caption="安全配置：临时目录、允许写入目录、测试命令等逐项确认，红字标注的是预填占位、需要你改成真实值。" source="real-capture" />
+          <Figure src="screenshots/install-walkthrough/wizard_permission_baseline.jpg" alt="权限基线勾选页" caption="权限基线：哪些操作免弹窗自己勾，写入 .claude/settings.json，装完可以直接打开文件核对。" source="real-capture" />
         </FigureRow>
-        <Figure src="screenshots/installer/wizard_finish_next_steps.jpg" alt="安装完成页的后续动作" caption="完成页的「下一步」：提交挂载 commit、确认 project_profile.yaml、重启会话看到「治理已加载」。向导没有验证过的事项会标注「未验证」。" source="real-capture" />
+        <Figure src="screenshots/install-walkthrough/wizard_finish_next_steps.jpg" alt="安装完成页的后续动作" caption="完成页的「下一步」：提交挂载 commit、确认 project_profile.yaml、重启会话看到「治理已加载」。向导没有验证过的事项会标注「未验证」。" source="real-capture" />
         <Note title="一台电脑一个后台 Agent">同一个用户只运行一个共享的 Sync Agent。该用户的多个项目通过稳定的 Project ID 分开同步 <code>records/events.jsonl</code>，互不覆盖；多个 Claude 会话可以同时写入，Agent 只上传完整的 JSONL 行，并在公司侧确认入库后才推进游标。</Note>
       </>,
     },
