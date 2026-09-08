@@ -1,4 +1,4 @@
-import { Code, DocPage, Note, pageHref } from "../doc-kit";
+import { Code, DocPage, Figure, Note, pageHref } from "../doc-kit";
 import { SkillCatalog } from "../skill-catalog";
 
 export const architecture: DocPage = {
@@ -27,6 +27,14 @@ export const architecture: DocPage = {
       body: <>
         <p>项目内的记录不会自己跑到云上。后台 Sync Agent 只上传完整的 JSONL 行，在你的电脑上签名并用公司公钥端到端加密，公共 Relay 只承担密文队列的角色——它看不到内容。公司侧独立核验设备绑定与数据权限后入库，Agent 收到入库确认才推进游标。</p>
         <p>入库之后的知识去两个地方：一是<a href={pageHref("console")}>管理平台</a>供人查看与审核，二是通过<a href={pageHref("mcp")}>受治理的检索工具</a>回到会话里被复用。</p>
+      </>,
+    },
+    {
+      id: "vision", title: "建设全貌与展望",
+      body: <>
+        <p>两张图放在一起看这套系统在组织里的位置：一张讲循环怎么转，一张讲能力栈怎么叠。</p>
+        <Figure src="screenshots/vision/knowledge_flywheel.jpg" alt="Harness 与知识飞轮循环图" caption="专家定义任务，中台编排执行并沉淀知识，知识再反哺专家与 Agent——AI 中台是这个循环的枢纽。" source="real-capture" />
+        <Figure src="screenshots/vision/org_ai_pyramid.jpg" alt="组织 AI 能力金字塔" caption="从基础模型到领域专家共六层，中台一层打通编排与调用，逐层放大组织的 AI 杠杆。" source="real-capture" />
       </>,
     },
   ],

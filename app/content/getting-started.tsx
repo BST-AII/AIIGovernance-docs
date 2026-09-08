@@ -320,5 +320,19 @@ export const robot: DocPage = {
         <Note title="已有 cc-connect">如果本机已有的二进制与安装包内的一致，安装器会直接安全复用，不覆盖正在运行的程序；版本不同且文件被占用时，会提示先停止 <code>cc-connect</code> 再重试。</Note>
       </>,
     },
+    {
+      id: "help-commands", title: "机器人常用命令（/help）",
+      body: <>
+        <p>接入后在飞书里对机器人发 <code>/help</code>，会得到分四个页签的命令卡：会话管理、Agent 配置、工具与自动化、系统。命令支持前缀匹配，例如 <code>/pro l</code> 等于 <code>/provider list</code>。</p>
+        <FigureRow>
+          <Figure src="screenshots/feishu-bot/help_sessions.jpg" alt="/help 会话管理页签" caption="会话管理：新建、列出、切换、搜索、删除、命名会话。" source="real-capture" />
+          <Figure src="screenshots/feishu-bot/help_agent.jpg" alt="/help Agent 配置页签" caption="Agent 配置：模型、推理强度、权限模式、语言、记忆与预授权工具。" source="real-capture" />
+        </FigureRow>
+        <FigureRow>
+          <Figure src="screenshots/feishu-bot/help_tools.jpg" alt="/help 工具与自动化页签" caption="工具与自动化：Shell、查看文件、定时任务、自定义命令与技能列表。" source="real-capture" />
+          <Figure src="screenshots/feishu-bot/help_system.jpg" alt="/help 系统页签" caption="系统：状态、诊断、用量、配置、工作目录、版本与升级重启。" source="real-capture" />
+        </FigureRow>
+      </>,
+    },
   ],
 };
