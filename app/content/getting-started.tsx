@@ -221,6 +221,15 @@ launchctl print gui/$(id -u)/art.aiigovernance.records-agent
 tail -n 100 ~/Library/Logs/AIIGovernance/records-agent.stderr.log
 ~/.cc-connect/cc-connect/bin/cc-connect daemon status`}</Code>
         <p>共享运行时装在当前用户目录下，不会替换系统 Python：Linux 是 <code>~/.local/share/aiigovernance/runtime/&lt;版本&gt;/</code>，macOS 是 <code>~/Library/Application Support/AIIGovernance/Runtime/&lt;版本&gt;/</code>。</p>
+        <Note title="Windows：两个任务的运行时限应为「已禁用」（0.3.69 起自动）">
+          <p>
+            Windows 对没写运行时限的计划任务默认「运行超过 72 小时停止」，常驻服务会在登录第三天被停掉且不再拉起。
+            0.3.69 起安装器注册后会自动去掉这条时限和两项电池限制；装完想核对，PowerShell 跑
+            <code>C:\Windows\System32\schtasks.exe /query /tn cc-connect /v /fo list</code>
+            （同步代理换任务名 <code>&quot;AIIGovernance Records Sync Agent&quot;</code>），
+            「Stop Task If Runs X Hours and X Mins」显示 <code>Disabled</code> 即正确；显示 <code>72:00:00</code> 见排障页「每隔三天准时消失」条目。
+          </p>
+        </Note>
       </Maintainer>,
     },
     {
