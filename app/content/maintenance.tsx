@@ -364,7 +364,10 @@ chmod +x ~/aiig-fix/systemctl`}</Code>然后<b>从同一个终端</b>、带着�
         <div><b>重装时重新选了产品线，装完发现没变</b><span><b>这是设计，不是故障。</b>产品线归属现在由管理员统一维护：<b>第一次装机时你选的那条算数，之后再改只能由管理员在管理台改</b>。原因是安装器会把你上次的选择记在项目仓的 <code>.governance/aiig-install.json</code> 里，每次重装都原样送回服务端——如果客户端说了算，管理员刚改好的归属会被一次重装悄悄退回去，而且没有任何人会发现。要改归属：在管理台「项目」页找到你的工作目录点「申请改挂」，管理员批准后生效（管理员自己可以直接改）。真的不属于任何产品线的，挂到「其他」。</span></div>
         <div><b>gh auth login 选浏览器方式一直转圈，最后报连接超时（wsarecv / connection failed）</b><span>公司网络挡住了 GitHub 的登录接口（github.com/login/device/code），这台机器上浏览器方式走不通，但<b>不影响别的路</b>：在网页上 github.com → Settings → Developer settings → Personal access tokens → <b>Tokens (classic)</b>（不要选 Fine-grained，那种默认看不到公司的仓库）生成一个勾了 <code>repo</code> 和 <code>read:org</code> 的令牌，<code>gh auth login</code> 时选 <b>Paste an authentication token</b> 粘进去。验证：<code>gh repo view BST-AII/Wildskills</code> 能显示仓库介绍即成功。</span></div>
         <div><b>Device Code 返回 400 / device_flow_disabled</b><span>组织的 OAuth App 没有启用 Device Flow。这不是用户名拼错，此时还没走到用户名比对那一步，需要管理员在 OAuth App 设置里开启。</span></div>
-        <div><b>授权之后一直等待</b><span>保持安装器开着。公司侧核验严格关联页面上显示的 Enrollment ID；超时后可以直接重试。</span></div>
+        <div><b>授权之后一直等待</b><span>保持安装器开着。公司侧核验严格关联页面上显示的 Enrollment ID；超时后可以直接重试。<b>0.3.70 起这一步不该再出现长时间等待</b>：公司侧无论通过还是拒绝都会当场回话。若仍然一直转到超时，说明这台机器上的安装器还是旧版，升级即可。</span></div>
+        <div><b>安装器显示「公司侧拒绝：⋯」</b><span>这是终态，不必再等，按它给出的原因处置。<b>组织成员资格失效或设备被吊销</b> → 找管理员恢复你在 BST-AII 的成员资格后重试。<b>本机密钥与公司库对不上</b> → 本机状态目录里的身份和公司侧记录不一致，重跑一次安装器重新完成入册即可。<b>请求重放 / 信封损坏</b> → 记下页面上的 Enrollment ID 报障。0.3.70 之前看不到这句话，只会一直等到 15 分钟超时。</span></div>
+        <div><b>安装器报 <code>project registration result is malformed</code></b><span><b>这不是程序坏了，是安装器太旧。</b>公司侧现在会把拒绝连同原因回传，而 0.3.70 之前的安装器不认识这种回话、按旧格式解析失败就报了这一句。升级到 0.3.70 及以上，就会显示真正的拒绝原因。</span></div>
+        <div><b>装完后知识回流一直失败，日志里是「项目未登记」</b><span>多半是这台机器的设备身份被重新生成过（本机状态目录里的身份文件丢失后程序会自动重建一套），而公司侧那条项目登记还挂在旧身份上。<b>升级到 0.3.70 即自愈</b>：后台代理会自己重新登记并把积压的内容重新发出，不需要人工处理，也不需要把项目重装一遍。你手动重装的那个项目会立刻恢复，其余项目在下次有任务归档时恢复。如果升级后这条反复出现，说明设备身份在反复丢失，请报障。</span></div>
         <div><b>提示身份被拒，但你确实是组织成员</b><span>先确认安装器版本申请了 <code>read:org</code> 权限——没有这个权限就无法独立核验组织成员身份。</span></div>
         <div><b>GitHub 显示 404 打不开 Release</b><span>安装包在 Private 仓库。先登录 GitHub，并确认账号有 <code>BST-AII/AIIGovernance-releases</code> 的访问权限。</span></div>
         <div><b>组织要求批准 OAuth App</b><span>组织启用了 OAuth App 访问限制，需要组织管理员批准该应用一次。</span></div>
