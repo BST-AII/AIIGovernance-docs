@@ -5,14 +5,14 @@ import { basePath, domesticMirrorHref, pageHref, type DocPage } from "./doc-kit"
 import { DocsControls, type NavGroup, type SearchEntry } from "./docs-controls";
 import { installation, overview, robot } from "./content/getting-started";
 import { architecture, laws, skills, usage } from "./content/framework";
-import { account, consolePage, mcp } from "./content/platform";
+import { account, consolePage, dataPlatform, mcp } from "./content/platform";
 import { troubleshooting, uninstall, upgrade } from "./content/maintenance";
 import { releases } from "./content/reference";
 
 const pages: Record<string, DocPage> = {
   overview, installation, robot,
   architecture, laws, skills, usage,
-  console: consolePage, account, mcp,
+  console: consolePage, account, mcp, data: dataPlatform,
   upgrade, uninstall, troubleshooting,
   releases,
 };
@@ -25,7 +25,7 @@ const groups = ["快速开始", "使用指南", "管理平台", "维护", "参�
 const order = [
   "overview", "installation", "robot",
   "usage", "architecture", "laws", "skills",
-  "console", "account", "mcp",
+  "console", "account", "mcp", "data",
   "upgrade", "uninstall", "troubleshooting",
   "releases",
 ];
