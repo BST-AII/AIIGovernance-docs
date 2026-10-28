@@ -280,6 +280,30 @@ export const dataPlatform: DocPage = {
         <Maintainer title="这条通道怎么保证路径和 IP 不外泄"><p>数据平台的工具与知识检索工具走同一种端到端加密：请求在本机签名，用公司公钥加密，云端只转发密文；公司内网的数据服务器核实是哪台设备、哪个人之后才查库或写库，结果签名后加密返回。路径和服务器 IP 只出现在密文里。</p></Maintainer>
       </>,
     },
+    {
+      id: "data-only", title: "只装数据工具（不装治理框架）",
+      body: <>
+        <p>v0.3.79 起，安装器首页有「只装数据工具」按钮。只想在 Claude Code 或 Codex 里查数据、登记数据，不需要治理框架时用它。</p>
+        <ul>
+          <li>不选项目目录，不装治理框架，不建后台同步任务，不要求装 Git。</li>
+          <li>填 GitHub 用户名，按页面上的授权码完成授权。公司服务器核验你是 BST-AII 成员后，工具写进 Claude Code 和 Codex 的用户级配置。</li>
+          <li>装完后，在任意目录新开一个会话就能用，工具与完整安装相同。</li>
+          <li>再运行一次就是升级。本机已经注册过的，不再弹授权。</li>
+          <li>同一页有「卸载数据工具」：删掉两处用户级配置，本机身份保留。</li>
+        </ul>
+        <Matrix
+          head={["写入位置", "内容"]}
+          rows={[
+            ["Claude Code 用户级配置", <>用 <code key="c">claude mcp add-json --scope user</code> 写入 <code key="n">aiigovernance-records</code></>],
+            ["Codex 用户级配置", <><code key="p">~/.codex/config.toml</code> 中 <code key="n">aiig-records</code> 一段（本机有 Codex 时）</>],
+            ["本机身份目录", "设备身份与登录状态"],
+          ]}
+        />
+        <Note title="找不到 claude 命令时">完成页会给出一条 <code>claude mcp add-json --scope user …</code> 命令。装好 Claude Code 后，在终端运行这一条即可。</Note>
+        <Note title="连续 30 天不用要重新授权">只装数据工具的电脑没有后台任务，登录状态只在使用工具时续期。连续 30 天不用，再用时工具会提示重新运行安装器；重新运行一次「只装数据工具」即可。</Note>
+        <p>以后在同一台电脑上做完整安装，项目里会照常装上治理框架和工具，用户级那一条也会跟着更新，不需要先卸载。</p>
+      </>,
+    },
   ],
 };
 
