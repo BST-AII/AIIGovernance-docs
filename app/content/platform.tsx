@@ -268,6 +268,14 @@ export const dataPlatform: DocPage = {
             [<code key="t">set_data_project_member</code>, "加成员或改角色（负责人、成员、只读）", "项目负责人"],
             [<code key="t">register_data_record</code>, "登记一条数据。别名在模块里已存在时，返回已有的那条，不重复登记", "负责人、成员"],
             [<code key="t">register_data_records</code>, "一次最多登记 200 条，每条单独检查，错的那条不影响其他条", "负责人、成员"],
+            [<code key="t">list_data_assets</code>, "列出模块里的数据集版本、训练、模型、测试或对比（v0.3.80 起）", "项目成员"],
+            [<code key="t">get_data_asset</code>, "看一个对象的详情：路径、清单状态、血缘、说明，对比还带对齐报告（v0.3.80 起）", "项目成员"],
+            [<code key="t">list_manifest_entries</code>, "翻看冻结清单里的文件（v0.3.80 起）", "项目成员"],
+            [<code key="t">manage_dataset_manifest</code>, "冻结或复核文件清单。不复制文件，大数据集要跑几个小时（v0.3.80 起）", "负责人、成员"],
+            [<code key="t">set_dataset_lineage</code>, "写清数据从哪个版本来、输入和目标怎么配对（v0.3.80 起）", "负责人、成员"],
+            [<code key="t">update_asset_doc</code>, "写数据集、训练、模型的说明，每次保存留一个修订（v0.3.80 起）", "负责人、成员"],
+            [<code key="t">register_data_asset</code>, "登记训练、模型、测试或对比（v0.3.80 起）", "负责人、成员"],
+            [<code key="t">update_data_asset</code>, "修改训练、模型或测试。已冻结的结果目录不能改路径（v0.3.80 起）", "负责人、成员"],
           ]}
         />
         <ul>
@@ -275,6 +283,7 @@ export const dataPlatform: DocPage = {
           <li><b>每个写入都要写原因</b>，会记进审计，审计里记的是你本人。</li>
           <li>AI 第一次调用写入工具时，Claude Code 或 Codex 会弹窗问你要不要允许，按自己的习惯选。</li>
           <li>被平台拒绝时（没有权限、名字重复、路径写法不对），工具会返回一句中文说明，AI 照着改了再试。</li>
+          <li><b>冻结清单前，数据位置要填好 NAS 共享名。</b>数据管理员在「数据位置」页填写。没填的位置会被当成不在 NAS 上，冻结时报 <code>ssh_not_configured</code>。</li>
         </ul>
         <Note title="AI 的写入不在「操作记录」页里">网页上的修改会在数据平台的「操作记录」页留一行；AI 通过工具做的修改走另一条加密通道，记录在公司内网数据服务器的审计里，不出现在那一页。</Note>
         <Maintainer title="这条通道怎么保证路径和 IP 不外泄"><p>数据平台的工具与知识检索工具走同一种端到端加密：请求在本机签名，用公司公钥加密，云端只转发密文；公司内网的数据服务器核实是哪台设备、哪个人之后才查库或写库，结果签名后加密返回。路径和服务器 IP 只出现在密文里。</p></Maintainer>

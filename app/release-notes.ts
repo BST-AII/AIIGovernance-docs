@@ -17,6 +17,17 @@ export type ReleaseNote = {
 };
 
 export const releaseNotes: Record<string, ReleaseNote> = {
+  "0.3.80": {
+    summary:
+      "功能版本：数据中台的 MCP 工具从 18 个变成 26 个，可以在 Claude Code 和 Codex 里归档数据，登记训练、模型、测试和对比。",
+    highlights: [
+      "manage_dataset_manifest 冻结或复核一份数据的文件清单。归档只记录清单，不复制文件。",
+      "set_dataset_lineage 写清这份数据从哪个版本来、输入和目标怎么配对；update_asset_doc 写数据集、训练、模型的说明。",
+      "register_data_asset 和 update_data_asset 登记和修改训练、模型、测试、对比；list_data_assets、get_data_asset、list_manifest_entries 用来查。",
+      "冻结 NAS 上的数据之前，数据管理员要在「数据位置」页给这个位置填好 NAS 共享名。",
+      "后台同步程序升到 0.4.15，治理框架没有变，安装和升级的流程没有变。只装数据工具的电脑重新运行一次「只装数据工具」就能升级。",
+    ],
+  },
   "0.3.79": {
     summary:
       "功能版本：新增「只装数据工具」，不选项目、不装治理框架也能在 Claude Code 和 Codex 里用数据中台的工具。后台同步程序 0.4.12 → 0.4.14，需要用新安装包升级。",
