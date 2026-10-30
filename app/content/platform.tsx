@@ -276,6 +276,10 @@ export const dataPlatform: DocPage = {
             [<code key="t">update_asset_doc</code>, "写数据集、训练、模型的说明，每次保存留一个修订（v0.3.80 起）", "负责人、成员"],
             [<code key="t">register_data_asset</code>, "登记训练、模型、测试或对比（v0.3.80 起）", "负责人、成员"],
             [<code key="t">update_data_asset</code>, "修改训练、模型或测试。已冻结的结果目录不能改路径（v0.3.80 起）", "负责人、成员"],
+            [<code key="t">get_review_bundle</code>, "查对比的摘要：样本数、总大小、类别分布、对齐报告、血缘（v0.3.81 起）", "项目成员"],
+            [<code key="t">list_review_notes</code>, "读评审备注（v0.3.81 起）", "项目成员"],
+            [<code key="t">open_review_viewer</code>, "把选中的样本从 NAS 拷到本机并打开查看器。先报方案，你点头才拷（v0.3.81 起）", "项目成员"],
+            [<code key="t">close_review_viewer</code>, "关掉本机查看器，可以顺带清缓存（v0.3.81 起）", "本机"],
           ]}
         />
         <ul>
@@ -283,6 +287,7 @@ export const dataPlatform: DocPage = {
           <li><b>每个写入都要写原因</b>，会记进审计，审计里记的是你本人。</li>
           <li>AI 第一次调用写入工具时，Claude Code 或 Codex 会弹窗问你要不要允许，按自己的习惯选。</li>
           <li>被平台拒绝时（没有权限、名字重复、路径写法不对），工具会返回一句中文说明，AI 照着改了再试。</li>
+          <li><b>看图要能访问 NAS。</b>Windows 上先在资源管理器里打开一次共享；macOS 和 Linux 要先挂载，并在身份目录的 <code>nas_mounts.json</code> 里写上共享名和挂载点。第一次打开评审页时，浏览器会问是否允许访问本地网络，点允许。</li>
           <li><b>冻结清单前，数据位置要填好 NAS 共享名。</b>数据管理员在「数据位置」页填写。没填的位置会被当成不在 NAS 上，冻结时报 <code>ssh_not_configured</code>。</li>
         </ul>
         <Note title="AI 的写入不在「操作记录」页里">网页上的修改会在数据平台的「操作记录」页留一行；AI 通过工具做的修改走另一条加密通道，记录在公司内网数据服务器的审计里，不出现在那一页。</Note>
