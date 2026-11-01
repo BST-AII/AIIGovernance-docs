@@ -10,6 +10,7 @@ export const docsRoutes = [
   { slug: "account", path: "/account/", title: "账号、角色与访问权限" },
   { slug: "mcp", path: "/mcp/", title: "在会话中检索团队知识" },
   { slug: "data", path: "/data/", title: "登记和查找数据集" },
+  { slug: "data-review", path: "/data-review/", title: "查看数据和结果对比" },
   { slug: "upgrade", path: "/upgrade/", title: "升级、重装与修复" },
   { slug: "uninstall", path: "/uninstall/", title: "安全卸载治理组件" },
   { slug: "troubleshooting", path: "/troubleshooting/", title: "按现象排查问题" },

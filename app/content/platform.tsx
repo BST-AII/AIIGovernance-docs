@@ -229,7 +229,7 @@ export const dataPlatform: DocPage = {
           rows={[
             ["项目负责人", "管理成员、建模块、改模块名、归档和恢复模块，以及成员能做的一切"],
             ["成员", "登记、修改、删除数据记录，用 CSV 批量导入"],
-            ["只读成员", "查看数据记录、复制路径、导出总览；不能改任何东西"],
+            ["只读成员", "查看数据记录、复制路径、导出总览，看图并写评审备注；不能改数据"],
             ["数据管理员", "看得到全部项目；维护「数据位置」（服务器和共享盘的清单）"],
           ]}
         />
@@ -287,7 +287,7 @@ export const dataPlatform: DocPage = {
           <li><b>每个写入都要写原因</b>，会记进审计，审计里记的是你本人。</li>
           <li>AI 第一次调用写入工具时，Claude Code 或 Codex 会弹窗问你要不要允许，按自己的习惯选。</li>
           <li>被平台拒绝时（没有权限、名字重复、路径写法不对），工具会返回一句中文说明，AI 照着改了再试。</li>
-          <li><b>不用记工具名。</b>在 Claude Code 里说「我想看数据对比」，agent 会一步步问清楚，最后给出对比网页（v0.3.82 起）。评审页面对项目成员开放。</li>
+          <li><b>看图和对比</b>的完整流程见<a href={pageHref("data-review")}>查看数据和结果对比</a>。评审页面对项目成员开放。</li>
           <li><b>看图要能访问 NAS。</b>Windows 上先在资源管理器里打开一次共享；macOS 和 Linux 要先挂载，并在身份目录的 <code>nas_mounts.json</code> 里写上共享名和挂载点。第一次打开评审页时，浏览器会问是否允许访问本地网络，点允许。</li>
           <li><b>冻结清单前，数据位置要填好 NAS 共享名。</b>数据管理员在「数据位置」页填写。没填的位置会被当成不在 NAS 上，冻结时报 <code>ssh_not_configured</code>。</li>
         </ul>
@@ -302,7 +302,7 @@ export const dataPlatform: DocPage = {
         <ul>
           <li>不选项目目录，不装治理框架，不建后台同步任务，不要求装 Git。</li>
           <li>填 GitHub 用户名，按页面上的授权码完成授权。公司服务器核验你是 BST-AII 成员后，工具写进 Claude Code 和 Codex 的用户级配置。</li>
-          <li>装完后，在任意目录新开一个会话就能用，工具与完整安装相同。</li>
+          <li>装完后，在任意目录新开一个会话就能用，工具与完整安装相同。可以先说一句「我想看数据对比」，见<a href={pageHref("data-review")}>查看数据和结果对比</a>。</li>
           <li>再运行一次就是升级。本机已经注册过的，不再弹授权。</li>
           <li>同一页有「卸载数据工具」：删掉两处用户级配置，本机身份保留。</li>
         </ul>
@@ -317,6 +317,154 @@ export const dataPlatform: DocPage = {
         <Note title="找不到 claude 命令时">完成页会给出一条 <code>claude mcp add-json --scope user …</code> 命令。装好 Claude Code 后，在终端运行这一条即可。</Note>
         <Note title="连续 30 天不用要重新授权">只装数据工具的电脑没有后台任务，登录状态只在使用工具时续期。连续 30 天不用，再用时工具会提示重新运行安装器；重新运行一次「只装数据工具」即可。</Note>
         <p>以后在同一台电脑上做完整安装，项目里会照常装上治理框架和工具，用户级那一条也会跟着更新，不需要先卸载。</p>
+      </>,
+    },
+  ],
+};
+
+export const dataReview: DocPage = {
+  group: "管理平台", label: "查看数据和结果对比", title: "查看数据和结果对比",
+  intro: "在 Claude Code 里说要看什么，agent 查出已有的数据和对比，缺的部分登记好，再把选中的图拷到本机，给出对比网页地址。不需要记工具名，也不需要填网页表单。",
+  keywords: ["数据对比", "结果对比", "查看器", "评审", "open_review_viewer", "register_data_asset", "get_review_bundle", "备注"],
+  sections: [
+    {
+      id: "before", title: "使用前提",
+      body: <>
+        <Matrix
+          head={["条件", "要求", "不满足时"]}
+          rows={[
+            ["安装器", "v0.3.82 起带提问引导。v0.3.81 起有查看器", <>重新运行安装器。不用治理框架的电脑选<a key="a" href={pageHref("data") + "#data-only"}>只装数据工具</a></>],
+            ["账号", "是这个项目的成员。负责人、成员、只读成员都能看图和写备注；登记数据要负责人或成员", "找项目负责人加成员"],
+            ["访问 NAS", "Windows 在资源管理器里打开过一次共享；macOS、Linux 已挂载，并在身份目录的 nas_mounts.json 写上共享名和挂载点", "工具会提示先打开共享"],
+            ["数据位置", "数据所在的位置填好了 NAS 共享名", "数据管理员在「数据位置」页补填"],
+            ["浏览器", "Chrome 或 Edge。第一次打开页面时允许访问本地网络", "地址栏左侧的站点设置里打开「本地网络访问」"],
+          ]}
+        />
+        <Note title="项目目录里的配置优先">完整安装会在项目里写 <code>.mcp.json</code>，它优先于用户级配置。老项目目录里的 <code>.mcp.json</code> 可能指向旧版本，这时在该项目重新安装一次，或者到没有 <code>.mcp.json</code> 的目录开新会话。</Note>
+      </>,
+    },
+    {
+      id: "start", title: "开始方式",
+      body: <>
+        <p>新开一个会话，说要看什么。知道多少说多少，已经说清楚的内容 agent 不再问。</p>
+        <Matrix
+          head={["情况", "可以这样说"]}
+          rows={[
+            ["还不确定看什么", "我想看数据对比"],
+            ["已经有对比", "打开项目 data-platform-acceptance 里对比 ab-test2 的查看器，全部看"],
+            ["只看一份数据", "打开数据集 test1 的查看器，随机看 50 个"],
+            ["从头建一个结果对比", "在 data-platform-acceptance 的 phase2 里，把 <测试集路径> 登记成测试数据 testset2 并冻结。把 <结果目录 A>、<结果目录 B> 登记成两次测试，都用 testset2，建结果对比 ab-test2，然后打开查看器全部看"],
+          ]}
+        />
+        <Note title="引导不是固定程序">提问顺序是写给 agent 的说明，agent 可能合并或跳过某一步。跳错了直接说要做什么。Codex 是否读这份说明还没有验证，用 Codex 时按上表第二到第四行直接说清楚。</Note>
+      </>,
+    },
+    {
+      id: "flow", title: "提问顺序",
+      body: <>
+        <Matrix
+          head={["步骤", "agent 问什么", "用到的工具"]}
+          rows={[
+            ["1. 范围", "看哪个项目、哪个模块", <><code key="a">list_data_projects</code>、<code key="b">list_data_modules</code></>],
+            ["2. 目标", "看单份数据、同一原始数据的多个版本，还是同一测试集的多次结果", "无"],
+            ["3. 现有内容", "列出已有的对比和数据。有合适的就直接用，跳到第 6 步", <code key="a">list_data_assets</code>],
+            ["4. 补数据", "缺数据时要路径和位置，先列出要写入的内容，等你确认后再登记、冻结", <><code key="a">register_data_record</code>、<code key="b">manage_dataset_manifest</code>、<code key="c">set_dataset_lineage</code>、<code key="d">register_data_asset</code></>],
+            ["5. 建对比", "建好后报告匹配了多少样本、有什么问题", <><code key="a">register_data_asset</code>、<code key="b">get_review_bundle</code></>],
+            ["6. 查看", "看全部还是随机几个。原样报出拷贝方案，确认后拷贝，给出网页地址", <code key="a">open_review_viewer</code>],
+          ]}
+        />
+        <Chat title="示例：结果对比已经存在">
+          <You>我想看数据对比</You>
+          <ToolCall tool="list_data_projects" args="" />
+          <Agent>你要看哪个项目？你负责的有 data-platform-acceptance 和 mcp-selftest，其他项目列在下面。</Agent>
+          <You>data-platform-acceptance，比较两次测试结果</You>
+          <ToolCall tool="list_data_assets" args='project: "data-platform-acceptance", module: "phase2", kind: "comparison"' />
+          <Agent>phase2 里有结果对比 ab-test2，10 个样本全部匹配。看全部还是随机几个？</Agent>
+          <You>全部</You>
+          <ToolCall tool="open_review_viewer" args='kind: "comparison", sampling: {mode: "all"}' />
+          <Agent>将从 NAS 拷贝 10 个样本、30 个文件，共 29.6 MB，到本机缓存。确认后才开始拷贝。</Agent>
+          <You>确认</You>
+          <Agent>拷贝完成，打开这个地址查看：https://service.pikso.art/…</Agent>
+        </Chat>
+      </>,
+    },
+    {
+      id: "kinds", title: "两种对比",
+      body: <>
+        <Matrix
+          head={["", "结果对比", "数据对比"]}
+          rows={[
+            ["用途", "同一测试集上的多次测试", "同一原始数据派生的多个版本"],
+            ["基准", "已冻结的测试数据", "已冻结的原始数据"],
+            ["成员", "至少两次测试，结果目录都已冻结", "至少两个训练数据版本，都已冻结，来源是这份原始数据，都有配对规则"],
+            ["配对规则", <>测试的 <code key="a">pairing_rule</code>：<code key="b">same_stem</code>（同名）、<code key="c">pattern</code>、<code key="d">strip</code>、<code key="e">mapping</code></>, <>版本的 <code key="a">pair_rule</code>：<code key="b">dirs</code>（如 lq 和 gt 两个目录）、<code key="c">suffix</code>、<code key="d">mapping</code></>],
+            ["页面的列", "测试输入，加上每次测试的结果", "原图，加上每个版本的输入和目标"],
+          ]}
+        />
+        <p>建对比时平台会按规则逐个样本配对，报告匹配数、缺失、多余、一对多和尺寸不符。对比建好后不能修改，建错了就新建一个。基准数据重新冻结后，旧对比的报告不会重算。</p>
+      </>,
+    },
+    {
+      id: "fill", title: "补登记缺少的数据",
+      body: <>
+        <ul>
+          <li><b>路径写完整。</b>服务器写法（/…）、Windows 共享地址（\\主机\共享名\…）或盘符（X:\…）。路径要在所选位置的根目录之下。</li>
+          <li><b>名字在模块内不能重复。</b>重名时 agent 应该问你换什么名字。</li>
+          <li><b>冻结只记录文件清单，不复制文件。</b>冻结在后台运行，大数据集可能要几个小时。<code>Thumbs.db</code>、<code>desktop.ini</code> 这类系统文件不进清单。</li>
+          <li><b>测试带结果路径时，结果目录会自动冻结</b>，不用再单独冻结。</li>
+          <li><b>数据对比的每个版本都要设来源和配对规则。</b>版本目录下分 lq、gt 时，配对规则是 <code>{`{mode: dirs, input: lq, target: gt}`}</code>。</li>
+          <li><b>写入都要写原因</b>，记进审计。经 MCP 的写入不会出现在云端「操作记录」页。</li>
+        </ul>
+      </>,
+    },
+    {
+      id: "viewer", title: "拷贝与查看",
+      body: <>
+        <ul>
+          <li><b>拷贝前先报方案。</b>工具先报样本数、文件数和大小，你确认后才拷贝。默认随机 100 个，单次超过 5 GB 要再确认一次。</li>
+          <li><b>图拷到本机缓存并逐个核对。</b>缓存上限 20 GB，最久没用的先淘汰。页面在数据平台上，图从你自己的电脑读取。</li>
+          <li><b>页面地址只在当前查看期间有效。</b>半小时没人取图，本机小服务自动退出；刷新页面后也要重新打开。这时在 Claude Code 里再说一次「打开对比 X 的查看器」，已经拷过的文件不再拷。</li>
+          <li><b>写在某张图上的备注</b>：点图片右上角的「备注」。备注会记下这张图和当前查看位置。</li>
+          <li><b>写给整个对比或数据集的备注</b>：点右侧的「写整体备注」，写完自动收起。</li>
+          <li><b>同项目成员能看到备注。</b>备注记在写的人的账号下。网页上能看，也可以让 agent 用 <code>list_review_notes</code> 查。</li>
+        </ul>
+        <p>TIFF、EXR 看不了。支持 PNG、JPG、BMP、WebP、PFM 和裸 YUV。配对规则用 <code>mapping</code> 的测试结果也看不了图，要看图就换成其他三种规则。</p>
+      </>,
+    },
+    {
+      id: "limits", title: "MCP 不支持的操作",
+      body: <>
+        <Matrix
+          head={["操作", "在哪里做"]}
+          rows={[
+            ["写备注、删备注", "查看页面"],
+            ["修改、删除已登记的数据记录", "数据平台网页"],
+            ["登记、修改数据位置", "数据平台「数据位置」页，只有数据管理员能进"],
+            ["同步到 NAS", "数据平台网页。NAS 平台区还没有配置，目前不能使用"],
+          ]}
+        />
+      </>,
+    },
+    {
+      id: "trouble", title: "常见问题",
+      body: <>
+        <Matrix
+          head={["现象", "原因", "处理"]}
+          rows={[
+            ["agent 没有主动提问，或说没有这些工具", "安装器版本低，或当前目录的 .mcp.json 指向旧版本", "升级到 v0.3.82，开新会话；老项目在该目录重新安装"],
+            ["提示路径必须是绝对路径", "路径写法不对", "按上文的三种写法写完整路径"],
+            ["「有一次测试的结果按它的配对规则一个样本都配不上」", "结果文件名和测试集文件名对不上", "检查文件命名，或换一种配对规则"],
+            ["提示请先在资源管理器里打开共享", "Windows 还没有对这个共享认证", "在资源管理器打开一次，再让 agent 重试"],
+            ["工具回 not_on_nas", "位置没填 NAS 共享名，或数据在训练机本地盘", "前者找数据管理员补填；后者目前看不了图"],
+            ["页面提示没有小服务", "小服务已退出，或页面刷新后地址失效", "在 Claude Code 里重新打开查看器"],
+            ["小服务在跑但图片全空", "浏览器没有允许访问本地网络", "地址栏左侧的站点设置里打开「本地网络访问」"],
+            ["进评审页提示没有权限", "账号不属于任何项目", "找项目负责人加成员"],
+          ]}
+        />
+        <Maintainer title="引导流程写在哪里">
+          <p>提问顺序写在 records 仓 <code>src/aiig_bridge/server.py</code> 的 <code>SERVER_INSTRUCTIONS</code>，由 MCP 的 <code>server/discover</code> 和 <code>initialize</code> 返回。它跟工具一起到每台电脑，所以没有做成技能文件：只装数据工具的电脑没有技能。改它要发同步程序和安装器。Claude Code 只读前 2048 个字符，测试钉了长度上限和里面提到的工具名。</p>
+          <p>评审页对项目成员开放靠云端配置 <code>AIIG_DATA_CONSOLE_REVIEW_OPEN=1</code>，每个对象仍按项目成员校验。</p>
+        </Maintainer>
       </>,
     },
   ],
