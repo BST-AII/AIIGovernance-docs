@@ -17,6 +17,15 @@ export type ReleaseNote = {
 };
 
 export const releaseNotes: Record<string, ReleaseNote> = {
+  "0.3.82": {
+    summary:
+      "功能版本：在 Claude Code 里说「我想看数据对比」，agent 会一步步问清楚，最后给出对比网页。MCP 工具还是 30 个。",
+    highlights: [
+      "agent 会问看哪个项目和模块、看什么、有没有现成的对比、缺的数据怎么登记、看全部还是随机几个。写入前会先列出要写什么，等你确认。",
+      "评审页面已经对项目成员开放，能看自己项目的数据和对比，并写备注。这是平台上的设置，不升级也能用。",
+      "Codex 是否会读这份引导还没有验证。后台同步程序升到 0.4.17，治理框架没有变。",
+    ],
+  },
   "0.3.81": {
     summary:
       "功能版本：可以在 Claude Code 或 Codex 里打开查看器，把 NAS 上的样本拷到本机，在评审页面上并排看图、写备注。MCP 工具从 26 个变成 30 个。",

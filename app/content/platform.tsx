@@ -287,6 +287,7 @@ export const dataPlatform: DocPage = {
           <li><b>每个写入都要写原因</b>，会记进审计，审计里记的是你本人。</li>
           <li>AI 第一次调用写入工具时，Claude Code 或 Codex 会弹窗问你要不要允许，按自己的习惯选。</li>
           <li>被平台拒绝时（没有权限、名字重复、路径写法不对），工具会返回一句中文说明，AI 照着改了再试。</li>
+          <li><b>不用记工具名。</b>在 Claude Code 里说「我想看数据对比」，agent 会一步步问清楚，最后给出对比网页（v0.3.82 起）。评审页面对项目成员开放。</li>
           <li><b>看图要能访问 NAS。</b>Windows 上先在资源管理器里打开一次共享；macOS 和 Linux 要先挂载，并在身份目录的 <code>nas_mounts.json</code> 里写上共享名和挂载点。第一次打开评审页时，浏览器会问是否允许访问本地网络，点允许。</li>
           <li><b>冻结清单前，数据位置要填好 NAS 共享名。</b>数据管理员在「数据位置」页填写。没填的位置会被当成不在 NAS 上，冻结时报 <code>ssh_not_configured</code>。</li>
         </ul>
