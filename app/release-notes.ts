@@ -17,6 +17,15 @@ export type ReleaseNote = {
 };
 
 export const releaseNotes: Record<string, ReleaseNote> = {
+  "0.3.85": {
+    summary:
+      "修复版本：Windows 上 Codex 桌面版用数据工具时不再弹 Python 窗口。",
+    highlights: [
+      "安装器给 Codex 写的数据工具和治理服务改用不带窗口的 pythonw.exe，升级时已有的配置会自动改写。Claude Code 本来就不弹，它的配置不变。",
+      "安装或升级时不会再结束正在用的 Codex 会话里的工具。",
+      "Codex 桌面版自带的 node.exe、node_repl.exe 等窗口是 Codex 自己的进程，这一版不处理。后台同步程序还是 0.4.19，治理框架没有变。",
+    ],
+  },
   "0.3.84": {
     summary:
       "功能版本：看过的对比可以导出成本地 HTML 报告发给别人；Codex 不用再手动加规则。MCP 工具从 30 个变成 31 个。",
