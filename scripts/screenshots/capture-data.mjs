@@ -30,6 +30,12 @@ const OUT = process.env.AIIG_SHOTS_OUT
 
 const ROOT = "/CE_Data/member/weili/data/AiScene";
 const COMPARE_ID = "f4000000-0000-4000-8000-000000000001";
+/* 演示数据里的 seg-v1 模块：多来源的训练集、虚拟合并的测试集、只有 .npy 的数据，
+   和一个标着「数据已更新」的对比。编号与 console 的 mocks/assetsStore.ts 一致。 */
+const PROJECT_ID = "11111111-1111-4111-8111-111111111111";
+const SEG_MODULE_ID = "aaaaaaaa-2222-4222-8222-aaaaaaaaaaaa";
+const SEG_NPY_ID = "c5000000-0000-4000-8000-000000000007";
+const SEG_COMPARE_ID = "f4000000-0000-4000-8000-000000000011";
 
 /* 页面里的小工具。控件都按用户看得到的文字找，和教程写的一致。 */
 const HELPERS = `
@@ -91,6 +97,14 @@ window.__t = {
     for (const root of this.roots()) {
       const box = root.querySelector('input[aria-label="' + ariaLabel + '"]');
       if (box) { if (!box.checked) box.click(); return true; }
+    }
+    return false;
+  },
+  /* 没有可见文字标签、只有 aria-label 的输入框，比如合并对话框里的来源名。 */
+  fillAria(ariaLabel, value) {
+    for (const root of this.roots()) {
+      const box = root.querySelector('input[aria-label="' + ariaLabel + '"]');
+      if (box && this.visible(box)) { this.set(box, value); return true; }
     }
     return false;
   },
@@ -265,6 +279,7 @@ async function main() {
   const fill = (label, value) => act(`window.__t.fill(${JSON.stringify(label)}, ${JSON.stringify(value)})`, `填写「${label}」`);
   const choose = (label, text) => act(`window.__t.choose(${JSON.stringify(label)}, ${JSON.stringify(text)})`, `选择「${label}」的「${text}」`);
   const reveal = (text) => act(`window.__t.reveal(${JSON.stringify(text)})`, `滚动到「${text}」`);
+  const fillAria = (label, value) => act(`window.__t.fillAria(${JSON.stringify(label)}, ${JSON.stringify(value)})`, `填写「${label}」`);
   const version = (alias) => act(`window.__t.version(${JSON.stringify(alias)})`, `打开「${alias}」的版本详情`);
   const scroll = (text) => act(`window.__t.scrollTo(${JSON.stringify(text)})`, `滚动到「${text}」`);
   const shot = async (file, options = {}) => {
@@ -354,11 +369,10 @@ async function main() {
     await until("设置来源");
     await sleep(600);
     await click("设置来源");
-    await until("派生自");
+    await until("添加来源", "设置来源对话框");
     await choose("派生自", "night-raw-v1");
-    await fill("怎么派生的", "去掉过曝样本，长边缩到 1024");
+    await fill("处理说明", "去掉过曝样本，长边缩到 1024");
     await fill("原因", "写明来源");
-    await shot("web-set-source.png");
     await click("保存");
     await sleep(1500);
     await freeze();
@@ -387,9 +401,9 @@ async function main() {
     await until("设置来源");
     await sleep(600);
     await click("设置来源");
-    await until("派生自");
+    await until("添加来源", "设置来源对话框");
     await choose("派生自", "night-train-v1");
-    await fill("怎么派生的", "补充雨夜样本");
+    await fill("处理说明", "补充雨夜样本");
     await fill("原因", "写明来源");
     await click("保存");
     await sleep(1500);
@@ -409,7 +423,7 @@ async function main() {
     await until("设置来源");
     await sleep(600);
     await click("设置来源");
-    await until("派生自");
+    await until("添加来源", "设置来源对话框");
     await choose("派生自", "night-raw-v1");
     await fill("原因", "写明来源");
     await click("保存");
@@ -504,6 +518,78 @@ async function main() {
     await until("导入数据记录");
     await shot("web-import.png");
     await click("✕");
+
+    // 多来源、虚拟合并、没有图片。演示数据的 seg-v1 模块里已经有这些数据，
+    // 重新打开页面后演示数据回到初始状态，前面登记的不在了，不影响这一段。
+    await page.goto(`${BASE}/projects`, { settle: 1500 });
+    await until("CE 检测");
+    await click("CE 检测", false);
+    await until("seg-v1");
+    await click("seg-v1", false);
+    await until("seg_train_mix");
+    await sleep(1500);
+
+    // 两个来源的训练数据：来源卡片和设置来源对话框。
+    await version("seg_train_mix");
+    await until("设置来源");
+    await sleep(1000);
+    await scroll("来源");
+    await shot("web-sources.png");
+    await click("设置来源");
+    await until("添加来源", "设置来源对话框");
+    await fill("原因", "补写处理说明");
+    await shot("web-set-source.png");
+    await click("取消");
+    await toModule();
+
+    // 合并数据对话框。只截图，不提交：模块里已经有合并好的 seg_test_all。
+    await act("window.__t.top()", "回到页面顶部");
+    await click("合并数据");
+    await until("合并后的名字", "合并数据对话框");
+    await fill("合并后的名字", "seg_test_day_night");
+    await act("window.__t.tick('seg_test_day')", "勾选 seg_test_day");
+    await act("window.__t.tick('seg_test_night')", "勾选 seg_test_night");
+    await fillAria("seg_test_day 的来源名", "白天");
+    await fillAria("seg_test_night 的来源名", "夜间");
+    await fill("描述", "白天、夜间两份测试集原样合并");
+    await fill("原因", "两份测试集一起评测");
+    await shot("web-merge-dialog.png");
+    await click("取消");
+    await sleep(500);
+
+    // 合并集的版本页：成员、重新合成。
+    await version("seg_test_all");
+    await until("虚拟合并 · 2 个来源");
+    await until("成员原地不动", "成员卡片");
+    await sleep(1200);
+    await shot("web-merged-page.png");
+    await toModule();
+
+    // 重新冻结成员前，对话框列出用着它的地方。
+    await version("seg_test_day");
+    await until("重新冻结");
+    await sleep(1000);
+    await click("重新冻结");
+    await until("这些地方用着这份数据", "受影响的地方");
+    await fill("冻结原因", "补拍了几张");
+    await shot("web-refreeze.png");
+    await click("取消");
+    await sleep(400);
+
+    // 只有 .npy 的数据：版本页顶部的提示。这条只在演示数据的索引里，模块页没有卡片，直接打开。
+    await page.goto(`${BASE}/projects/${PROJECT_ID}/modules/${SEG_MODULE_ID}/datasets/${SEG_NPY_ID}`, { settle: 2000 });
+    await until("没有可看的图片");
+    await sleep(1000);
+    await shot("web-no-images.png");
+
+    // 合并测试集上的结果对比，数据已更新。
+    await page.goto(`${BASE}/review/compare/${SEG_COMPARE_ID}`, { settle: 2500 });
+    await until("数据已更新");
+    await until("重新对齐");
+    await sleep(1500);
+    await shot("review-merged-lineage.png");
+    await reveal("对齐报告");
+    await shot("review-stale.png");
 
     // 对比页：没有小服务时的样子。
     await page.goto(`${BASE}/review/compare/${COMPARE_ID}`, { settle: 2500 });
