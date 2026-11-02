@@ -532,7 +532,7 @@ export const dataAgent: DocPage = {
       id: "merge", title: "虚拟合并",
       body: <>
         <p>几份已冻结的数据原样放在一起用时，让 agent 建一个合并集。平台不建新目录，成员留在原来的位置，组成一个数据集。说：</p>
-        <Code>{`把 reg-test-set 和 reg-test-set2 原样合并成测试集 reg-test-mset`}</Code>
+        <Code>{`把 night-test-day 和 night-test-rain 原样合并成测试集 night-test-all`}</Code>
         <p>agent 用 <code>register_data_asset</code> 建（种类 <code>merged_dataset</code>），写入前会列出名字、类型、成员和来源名，等你确认。建好后平台在后台合成清单，不扫描文件，也不复制文件。</p>
         <Matrix
           head={["项", "说明"]}
