@@ -210,7 +210,7 @@ export const account: DocPage = {
 
 export const dataPlatform: DocPage = {
   group: "管理平台", label: "使用数据平台", title: "登记和查找数据集",
-  intro: "数据平台记录每个项目、每个模块用到的数据放在哪里：原始数据、训练集、测试集。数据本身不搬，平台只登记位置。可以在网页上操作，也可以让 AI 在会话里直接查和登记。",
+  intro: "数据平台记录每个项目、每个模块用到的数据放在哪里：原始数据、训练集、测试集，以及训练、模型、测试和它们之间的关系。数据本身不搬，平台只登记位置。可以在网页上操作，也可以让 agent 在会话里查和登记。",
   keywords: ["数据平台", "数据中心", "list_data_projects", "register_data_record", "search_data_records", "数据位置"],
   sections: [
     {
@@ -237,23 +237,34 @@ export const dataPlatform: DocPage = {
       </>,
     },
     {
-      id: "web", title: "在网页上登记数据",
+      id: "web", title: "两种登记方式",
       body: <>
+        <div className="link-list">
+          <a href={pageHref("data-web")}><b>网页登记教程</b><span>一步步点哪里、填什么，配截图 →</span></a>
+          <a href={pageHref("data-agent")}><b>对话登记教程</b><span>说一句「数据登记」，agent 一步步问 →</span></a>
+        </div>
+        <Matrix
+          head={["想做的事", "用哪种"]}
+          rows={[
+            ["不想记字段，让 agent 问", "对话"],
+            ["逐项核对、批量导入 CSV", "网页"],
+            ["修改、删除数据记录", "网页"],
+            ["来源在别的模块", "对话"],
+            ["看图", <>都要经 agent，见<a key="a" href={pageHref("data-review")}>查看数据和结果对比</a></>],
+          ]}
+        />
         <ul>
-          <li>进入项目，再进入模块，就是这个模块的数据中心：上面按原始数据、训练数据、测试数据分三栏列出已登记的记录，下面是登记表单。</li>
-          <li>登记时选数据位置、填完整路径和版本别名。<b>每一次修改都要写原因</b>，原因会记进审计。</li>
-          <li>提交后会先显示「已提交，等待数据服务器执行」，一两秒后变成「已生效」或「被拒绝」并写明原因。数据记录存在公司内网的数据服务器上，云端只转交请求。</li>
+          <li><b>每一次修改都要写原因</b>，原因会记进审计。</li>
+          <li>网页提交后先显示已提交，一两秒后变成「已生效」或「被拒绝」并写明原因。数据记录存在公司内网的数据服务器上，云端只转交请求。</li>
           <li>路径建议填训练服务器上的写法（以 <code>/</code> 开头）。Windows 共享地址和盘符写法也能登记，但训练服务器不能直接用。</li>
-          <li>要一次登记很多条，用「导入 CSV」：先下载导入模板和填写说明，填好后上传。有错的行会标出来，改好再整份提交；每一行各自给出结果。</li>
         </ul>
       </>,
     },
     {
       id: "mcp", title: "让 AI 在会话里查和登记",
       body: <>
-        <p>升级到 v0.3.76 或更高版本后，会话里有 11 个数据平台工具。直接用话说就行，例如：</p>
+        <p>直接用话说就行。登记数据说一句「数据登记」，agent 会一步步问，见<a href={pageHref("data-agent")}>对话登记教程</a>。查数据也一样，例如：</p>
         <Code>{`列出我能看到的数据平台项目，再看看 zoom-sr 下面有哪些模块。`}</Code>
-        <Code>{`把 /data/night/raw/2026q3 登记到 night-raw 项目的 denoise 模块，位置 Remote29，原始数据，原因：三季度夜景采集入库。`}</Code>
         <Matrix
           head={["工具", "做什么", "谁能用"]}
           rows={[
@@ -266,8 +277,8 @@ export const dataPlatform: DocPage = {
             [<code key="t">create_data_project</code>, "建项目，调用的人成为负责人", "所有人"],
             [<code key="t">create_data_module</code>, "在项目里建模块，要给一个英文标识，建好后不能改", "项目负责人"],
             [<code key="t">set_data_project_member</code>, "加成员或改角色（负责人、成员、只读）", "项目负责人"],
-            [<code key="t">register_data_record</code>, "登记一条数据。别名在模块里已存在时，返回已有的那条，不重复登记", "负责人、成员"],
-            [<code key="t">register_data_records</code>, "一次最多登记 200 条，每条单独检查，错的那条不影响其他条", "负责人、成员"],
+            [<code key="t">register_data_record</code>, "登记一条数据，必须给数据类型（v0.3.83 起）。别名在模块里已存在时不写入，返回已有的那条", "负责人、成员"],
+            [<code key="t">register_data_records</code>, "一次最多登记 200 条，每条都要给数据类型，每条单独检查，错的那条不影响其他条", "负责人、成员"],
             [<code key="t">list_data_assets</code>, "列出模块里的数据集版本、训练、模型、测试或对比（v0.3.80 起）", "项目成员"],
             [<code key="t">get_data_asset</code>, "看一个对象的详情：路径、清单状态、血缘、说明，对比还带对齐报告（v0.3.80 起）", "项目成员"],
             [<code key="t">list_manifest_entries</code>, "翻看冻结清单里的文件（v0.3.80 起）", "项目成员"],
@@ -324,8 +335,8 @@ export const dataPlatform: DocPage = {
 
 export const dataReview: DocPage = {
   group: "管理平台", label: "查看数据和结果对比", title: "查看数据和结果对比",
-  intro: "在 Claude Code 里说要看什么，agent 查出已有的数据和对比，缺的部分登记好，再把选中的图拷到本机，给出对比网页地址。不需要记工具名，也不需要填网页表单。",
-  keywords: ["数据对比", "结果对比", "查看器", "评审", "open_review_viewer", "register_data_asset", "get_review_bundle", "备注"],
+  intro: "在 Claude Code 里说要看什么，agent 查出已有的数据和对比，缺的部分登记好，再把选中的图拷到本机，给出对比网页地址。已经下载过的对比，再说一句就能接着看。",
+  keywords: ["数据对比", "结果对比", "查看器", "评审", "open_review_viewer", "register_data_asset", "get_review_bundle", "备注", "HTML 报告", "export_review_report", "lq", "gt"],
   sections: [
     {
       id: "before", title: "使用前提",
@@ -333,7 +344,7 @@ export const dataReview: DocPage = {
         <Matrix
           head={["条件", "要求", "不满足时"]}
           rows={[
-            ["安装器", "v0.3.82 起带提问引导。v0.3.81 起有查看器", <>重新运行安装器。不用治理框架的电脑选<a key="a" href={pageHref("data") + "#data-only"}>只装数据工具</a></>],
+            ["安装器", "v0.3.84 起能导出 HTML 报告。v0.3.83 起再次打开已下载的对比不用确认。v0.3.82 起带提问引导。v0.3.81 起有查看器", <>重新运行安装器。不用治理框架的电脑选<a key="a" href={pageHref("data") + "#data-only"}>只装数据工具</a></>],
             ["账号", "是这个项目的成员。负责人、成员、只读成员都能看图和写备注；登记数据要负责人或成员", "找项目负责人加成员"],
             ["访问 NAS", "Windows 在资源管理器里打开过一次共享；macOS、Linux 已挂载，并在身份目录的 nas_mounts.json 写上共享名和挂载点", "工具会提示先打开共享"],
             ["数据位置", "数据所在的位置填好了 NAS 共享名", "数据管理员在「数据位置」页补填"],
@@ -352,11 +363,14 @@ export const dataReview: DocPage = {
           rows={[
             ["还不确定看什么", "我想看数据对比"],
             ["已经有对比", "打开项目 data-platform-acceptance 里对比 ab-test2 的查看器，全部看"],
-            ["只看一份数据", "打开数据集 test1 的查看器，随机看 50 个"],
+            ["只看一份数据", "打开数据集 variant_a 看图"],
+            ["导出成报告发给别人", "把对比 ab-test2 导出成 HTML 报告"],
             ["从头建一个结果对比", "在 data-platform-acceptance 的 phase2 里，把 <测试集路径> 登记成测试数据 testset2 并冻结。把 <结果目录 A>、<结果目录 B> 登记成两次测试，都用 testset2，建结果对比 ab-test2，然后打开查看器全部看"],
+            ["装过本地的对比技能", "带上「数据平台」，比如：看数据平台上 phase2 的结果对比。否则「对比」这个词可能走到本地技能"],
           ]}
         />
-        <Note title="引导不是固定程序">提问顺序是写给 agent 的说明，agent 可能合并或跳过某一步。跳错了直接说要做什么。Codex 是否读这份说明还没有验证，用 Codex 时按上表第二到第四行直接说清楚。</Note>
+        <Note title="引导不是固定程序">提问顺序是写给 agent 的说明，agent 可能合并或跳过某一步。跳错了直接说要做什么。</Note>
+        <Note title="用 Codex 时">v0.3.84 起安装器会写好 Codex 要的规则。更早的版本只说「我想看数据对比」不会触发，要手动加一段规则，见<a href={pageHref("data-agent") + "#codex"}>在 Codex 里使用</a>。</Note>
       </>,
     },
     {
@@ -365,12 +379,11 @@ export const dataReview: DocPage = {
         <Matrix
           head={["步骤", "agent 问什么", "用到的工具"]}
           rows={[
-            ["1. 范围", "看哪个项目、哪个模块", <><code key="a">list_data_projects</code>、<code key="b">list_data_modules</code></>],
+            ["1. 范围", "看哪个项目、哪个模块。只有一个选项时不问", <><code key="a">list_data_projects</code>、<code key="b">list_data_modules</code></>],
             ["2. 目标", "看单份数据、同一原始数据的多个版本，还是同一测试集的多次结果", "无"],
-            ["3. 现有内容", "列出已有的对比和数据。有合适的就直接用，跳到第 6 步", <code key="a">list_data_assets</code>],
-            ["4. 补数据", "缺数据时要路径和位置，先列出要写入的内容，等你确认后再登记、冻结", <><code key="a">register_data_record</code>、<code key="b">manage_dataset_manifest</code>、<code key="c">set_dataset_lineage</code>、<code key="d">register_data_asset</code></>],
-            ["5. 建对比", "建好后报告匹配了多少样本、有什么问题", <><code key="a">register_data_asset</code>、<code key="b">get_review_bundle</code></>],
-            ["6. 查看", "看全部还是随机几个。原样报出拷贝方案，确认后拷贝，给出网页地址", <code key="a">open_review_viewer</code>],
+            ["3. 现有内容", "列出已有的对比和数据。有合适的就直接用，跳到第 5 步", <code key="a">list_data_assets</code>],
+            ["4. 补数据、建对比", <>缺数据时先登记，问法见<a key="a" href={pageHref("data-agent")}>对话登记教程</a>。建好后报告匹配了多少样本、有什么问题</>, <><code key="a">register_data_asset</code>、<code key="b">get_review_bundle</code></>],
+            ["5. 查看", "看全部还是随机几个。还要拷贝时原样报出方案，确认后拷贝；图都在本机时直接给网页地址", <code key="a">open_review_viewer</code>],
           ]}
         />
         <Chat title="示例：结果对比已经存在">
@@ -386,6 +399,16 @@ export const dataReview: DocPage = {
           <You>确认</You>
           <Agent>拷贝完成，打开这个地址查看：https://service.pikso.art/…</Agent>
         </Chat>
+      </>,
+    },
+    {
+      id: "page", title: "看懂对比页",
+      body: <>
+        <p>页面从上到下是血缘、成员、对齐报告、样本与备注。</p>
+        <Figure src="screenshots/data/lineage.png" alt="对比页的血缘图" caption="血缘：数据、训练、模型、测试之间的关系。衍生多次会逐级画出来，点节点能跳到对应页面。" source="console-fixture" />
+        <Figure src="screenshots/data/review-cards.png" alt="样本卡片，三列对比" caption="每个样本一张卡片。点上面的大图选位置，下面各列显示同一位置，放大倍数在顶部选。" source="console-fixture" />
+        <p>备注有两种，写的地方不同：</p>
+        <Figure src="screenshots/data/review-notes.png" alt="单图备注框和整体备注框" caption="写某张图：点卡片右上角的「备注」，框出现在这张卡片下面。写整个对比：点右侧的「写整体备注」。" source="console-fixture" />
       </>,
     },
     {
@@ -405,8 +428,25 @@ export const dataReview: DocPage = {
       </>,
     },
     {
+      id: "one-dataset", title: "只看一份数据",
+      body: <>
+        <p>对比至少要两个成员，只选一个时网页会提示「至少选两个成员」。只想看一个版本的 lq 和 gt，不用建对比，说「打开数据集 variant_a 看图」就行。</p>
+        <p>用的是同一个查看器：同样拷到本机，放大、锁定同一位置、切列都一样。和对比页的区别如下。</p>
+        <Matrix
+          head={["", "数据集", "对比"]}
+          rows={[
+            ["页面的列", "设了配对规则：输入、目标。没设：一列「文件」", "见上一节"],
+            ["血缘图、成员表、对齐报告", "没有。点页面右上角的「查看明细」看来源和清单", "有"],
+            ["备注标签", "问题、标记", "改善、持平、变差"],
+            ["条件", "已冻结", "所有成员已冻结"],
+          ]}
+        />
+      </>,
+    },
+    {
       id: "fill", title: "补登记缺少的数据",
       body: <>
+        <p>完整步骤见<a href={pageHref("data-agent")}>对话登记教程</a>和<a href={pageHref("data-web")}>网页登记教程</a>。</p>
         <ul>
           <li><b>路径写完整。</b>服务器写法（/…）、Windows 共享地址（\\主机\共享名\…）或盘符（X:\…）。路径要在所选位置的根目录之下。</li>
           <li><b>名字在模块内不能重复。</b>重名时 agent 应该问你换什么名字。</li>
@@ -421,14 +461,58 @@ export const dataReview: DocPage = {
       id: "viewer", title: "拷贝与查看",
       body: <>
         <ul>
-          <li><b>拷贝前先报方案。</b>工具先报样本数、文件数和大小，你确认后才拷贝。默认随机 100 个，单次超过 5 GB 要再确认一次。</li>
+          <li><b>拷贝前先报方案。</b>工具先报样本数、文件数和大小，已有一部分在本机时会写明还要拷多少，你确认后才拷贝。默认随机 100 个，还要拷的量超过 5 GB 时要再确认一次。</li>
           <li><b>图拷到本机缓存并逐个核对。</b>缓存上限 20 GB，最久没用的先淘汰。页面在数据平台上，图从你自己的电脑读取。</li>
-          <li><b>页面地址只在当前查看期间有效。</b>半小时没人取图，本机小服务自动退出；刷新页面后也要重新打开。这时在 Claude Code 里再说一次「打开对比 X 的查看器」，已经拷过的文件不再拷。</li>
           <li><b>写在某张图上的备注</b>：点图片右上角的「备注」。备注会记下这张图和当前查看位置。</li>
           <li><b>写给整个对比或数据集的备注</b>：点右侧的「写整体备注」，写完自动收起。</li>
           <li><b>同项目成员能看到备注。</b>备注记在写的人的账号下。网页上能看，也可以让 agent 用 <code>list_review_notes</code> 查。</li>
         </ul>
         <p>TIFF、EXR 看不了。支持 PNG、JPG、BMP、WebP、PFM 和裸 YUV。配对规则用 <code>mapping</code> 的测试结果也看不了图，要看图就换成其他三种规则。</p>
+      </>,
+    },
+    {
+      id: "reopen", title: "再次查看已下载的对比",
+      body: <>
+        <p><b>不用重新下载，也不用重新授权。</b>再说一句「打开对比 X」，拿到新地址就能接着看。图都在本机时 agent 不会问确认（v0.3.83 起）。</p>
+        <Matrix
+          head={["项", "情况"]}
+          rows={[
+            ["页面地址", "只在当前查看期间有效。半小时没人取图，本机小服务自动退出，旧地址失效；刷新页面后也要重新打开"],
+            ["下载过的图", "还在本机，不会重新拷贝"],
+            ["浏览器的本地网络权限", "允许过一次就不用再点"],
+            ["样本", "抽样方式相同才是同样的样本。换了样本数或抽样方式，会补拷没有的部分"],
+          ]}
+        />
+        <Figure src="screenshots/data/review-no-viewer.png" alt="小服务退出后的提示和复制按钮" caption="小服务没在运行时，血缘、对齐报告和备注照常显示，图片位置给出可以复制的那句话。" source="console-fixture" />
+        <p>两个限制：要能连上数据平台，因为页面在云端，图片清单也要向公司服务器取，不能完全离线；所有对比共用 20 GB 缓存，超过后最久没用的会被淘汰，再看时要重新拷贝。</p>
+      </>,
+    },
+    {
+      id: "report", title: "导出 HTML 报告",
+      body: <>
+        <p>v0.3.84 起，看过的对比、数据集或测试可以导出成一个本地网页，发给没有平台账号的人也能打开，不联网也能看。说「把对比 ab-test2 导出成 HTML 报告」。</p>
+        <ol>
+          <li>先在查看器里打开过这批样本。报告只用本机已有的图，没打开过时 agent 会让你先打开。</li>
+          <li>agent 报样本数、文件数、总大小和目录，你确认后才复制。默认收录上次在查看器里选中的全部样本，不再抽样。</li>
+          <li>复制完 agent 给出 <code>index.html</code> 的路径，双击打开。</li>
+        </ol>
+        <Figure src="screenshots/data/report-page.png" alt="报告顶部：内部资料提示、血缘图、成员表" caption="报告顶部：内部资料提示、血缘图、成员表和对齐报告。" source="console-fixture" />
+        <Figure src="screenshots/data/report-cards.png" alt="报告里的样本卡片，三列对比" caption="样本卡片：可以放大、点图选位置、切列、按类别筛选。备注只读，带位置的备注可以跳回当时的位置。" source="console-fixture" />
+        <Code>{`夜景两次测试-20261102-1530/     默认放在用户目录的 AIIGovernance-reports 下
+  index.html                    报告页面
+  images/                       原图
+  display/                      只有 PFM、裸 YUV 才有，转成 PNG 给页面显示`}</Code>
+        <Warn title="发给别人前">要发整个目录，只发 <code>index.html</code> 看不到图。报告里是真实样本图，发之前确认对方可以看这些数据。报告不含 NAS 路径和内部 IP。</Warn>
+        <Matrix
+          head={["现象", "原因", "处理"]}
+          rows={[
+            ["提示图不在本机", "没打开过查看器、抽样方式不同，或缓存已被淘汰", "先打开查看器，已有的不重拷"],
+            ["提示目录里已经有文件", "指定的输出目录不是空的", "换一个目录，或者不指定，自动生成新目录"],
+            ["发给别人后图不显示", "只发了 index.html", "发整个目录"],
+            ["某一列只有「原图」链接", "TIFF、EXR 或转不了的文件，浏览器显示不了", "点链接下载原图"],
+          ]}
+        />
+        <p>报告生成后不会更新，新写的备注不会进去，要最新内容就再导出一份。报告不计入 20 GB 缓存，用完自己删。备注只能在查看页面上写。</p>
       </>,
     },
     {
@@ -451,12 +535,12 @@ export const dataReview: DocPage = {
         <Matrix
           head={["现象", "原因", "处理"]}
           rows={[
-            ["agent 没有主动提问，或说没有这些工具", "安装器版本低，或当前目录的 .mcp.json 指向旧版本", "升级到 v0.3.82，开新会话；老项目在该目录重新安装"],
+            ["agent 没有主动提问，或说没有这些工具", "安装器版本低，或当前目录的 .mcp.json 指向旧版本；用 Codex 时没加规则", "升级到最新版，开新会话；老项目在该目录重新安装；Codex 见对话登记教程"],
             ["提示路径必须是绝对路径", "路径写法不对", "按上文的三种写法写完整路径"],
             ["「有一次测试的结果按它的配对规则一个样本都配不上」", "结果文件名和测试集文件名对不上", "检查文件命名，或换一种配对规则"],
             ["提示请先在资源管理器里打开共享", "Windows 还没有对这个共享认证", "在资源管理器打开一次，再让 agent 重试"],
             ["工具回 not_on_nas", "位置没填 NAS 共享名，或数据在训练机本地盘", "前者找数据管理员补填；后者目前看不了图"],
-            ["页面提示没有小服务", "小服务已退出，或页面刷新后地址失效", "在 Claude Code 里重新打开查看器"],
+            ["页面提示要打开查看器", "小服务已退出，或页面刷新后地址失效", "在 Claude Code 里再说一句「打开对比 X」，不会重新下载"],
             ["小服务在跑但图片全空", "浏览器没有允许访问本地网络", "地址栏左侧的站点设置里打开「本地网络访问」"],
             ["进评审页提示没有权限", "账号不属于任何项目", "找项目负责人加成员"],
           ]}
