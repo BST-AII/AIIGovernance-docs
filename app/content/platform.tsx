@@ -336,7 +336,7 @@ export const dataPlatform: DocPage = {
 export const dataReview: DocPage = {
   group: "管理平台", label: "查看数据和结果对比", title: "查看数据和结果对比",
   intro: "在 Claude Code 里说要看什么，agent 查出已有的数据和对比，缺的部分登记好，再把选中的图拷到本机，给出对比网页地址。已经下载过的对比，再说一句就能接着看。",
-  keywords: ["数据对比", "结果对比", "查看器", "评审", "open_review_viewer", "register_data_asset", "get_review_bundle", "备注"],
+  keywords: ["数据对比", "结果对比", "查看器", "评审", "open_review_viewer", "register_data_asset", "get_review_bundle", "备注", "HTML 报告", "export_review_report", "lq", "gt"],
   sections: [
     {
       id: "before", title: "使用前提",
@@ -344,7 +344,7 @@ export const dataReview: DocPage = {
         <Matrix
           head={["条件", "要求", "不满足时"]}
           rows={[
-            ["安装器", "v0.3.83 起再次打开已下载的对比不用确认。v0.3.82 起带提问引导。v0.3.81 起有查看器", <>重新运行安装器。不用治理框架的电脑选<a key="a" href={pageHref("data") + "#data-only"}>只装数据工具</a></>],
+            ["安装器", "v0.3.84 起能导出 HTML 报告。v0.3.83 起再次打开已下载的对比不用确认。v0.3.82 起带提问引导。v0.3.81 起有查看器", <>重新运行安装器。不用治理框架的电脑选<a key="a" href={pageHref("data") + "#data-only"}>只装数据工具</a></>],
             ["账号", "是这个项目的成员。负责人、成员、只读成员都能看图和写备注；登记数据要负责人或成员", "找项目负责人加成员"],
             ["访问 NAS", "Windows 在资源管理器里打开过一次共享；macOS、Linux 已挂载，并在身份目录的 nas_mounts.json 写上共享名和挂载点", "工具会提示先打开共享"],
             ["数据位置", "数据所在的位置填好了 NAS 共享名", "数据管理员在「数据位置」页补填"],
@@ -363,13 +363,14 @@ export const dataReview: DocPage = {
           rows={[
             ["还不确定看什么", "我想看数据对比"],
             ["已经有对比", "打开项目 data-platform-acceptance 里对比 ab-test2 的查看器，全部看"],
-            ["只看一份数据", "打开数据集 test1 的查看器，随机看 50 个"],
+            ["只看一份数据", "打开数据集 variant_a 看图"],
+            ["导出成报告发给别人", "把对比 ab-test2 导出成 HTML 报告"],
             ["从头建一个结果对比", "在 data-platform-acceptance 的 phase2 里，把 <测试集路径> 登记成测试数据 testset2 并冻结。把 <结果目录 A>、<结果目录 B> 登记成两次测试，都用 testset2，建结果对比 ab-test2，然后打开查看器全部看"],
             ["装过本地的对比技能", "带上「数据平台」，比如：看数据平台上 phase2 的结果对比。否则「对比」这个词可能走到本地技能"],
           ]}
         />
         <Note title="引导不是固定程序">提问顺序是写给 agent 的说明，agent 可能合并或跳过某一步。跳错了直接说要做什么。</Note>
-        <Note title="用 Codex 时">Codex 只说「我想看数据对比」不会触发，要先在项目的 <code>AGENTS.md</code> 里加一段规则，见<a href={pageHref("data-agent") + "#codex"}>在 Codex 里使用</a>。</Note>
+        <Note title="用 Codex 时">v0.3.84 起安装器会写好 Codex 要的规则。更早的版本只说「我想看数据对比」不会触发，要手动加一段规则，见<a href={pageHref("data-agent") + "#codex"}>在 Codex 里使用</a>。</Note>
       </>,
     },
     {
@@ -427,6 +428,22 @@ export const dataReview: DocPage = {
       </>,
     },
     {
+      id: "one-dataset", title: "只看一份数据",
+      body: <>
+        <p>对比至少要两个成员，只选一个时网页会提示「至少选两个成员」。只想看一个版本的 lq 和 gt，不用建对比，说「打开数据集 variant_a 看图」就行。</p>
+        <p>用的是同一个查看器：同样拷到本机，放大、锁定同一位置、切列都一样。和对比页的区别如下。</p>
+        <Matrix
+          head={["", "数据集", "对比"]}
+          rows={[
+            ["页面的列", "设了配对规则：输入、目标。没设：一列「文件」", "见上一节"],
+            ["血缘图、成员表、对齐报告", "没有。点页面右上角的「查看明细」看来源和清单", "有"],
+            ["备注标签", "问题、标记", "改善、持平、变差"],
+            ["条件", "已冻结", "所有成员已冻结"],
+          ]}
+        />
+      </>,
+    },
+    {
       id: "fill", title: "补登记缺少的数据",
       body: <>
         <p>完整步骤见<a href={pageHref("data-agent")}>对话登记教程</a>和<a href={pageHref("data-web")}>网页登记教程</a>。</p>
@@ -468,6 +485,34 @@ export const dataReview: DocPage = {
         />
         <Figure src="screenshots/data/review-no-viewer.png" alt="小服务退出后的提示和复制按钮" caption="小服务没在运行时，血缘、对齐报告和备注照常显示，图片位置给出可以复制的那句话。" source="console-fixture" />
         <p>两个限制：要能连上数据平台，因为页面在云端，图片清单也要向公司服务器取，不能完全离线；所有对比共用 20 GB 缓存，超过后最久没用的会被淘汰，再看时要重新拷贝。</p>
+      </>,
+    },
+    {
+      id: "report", title: "导出 HTML 报告",
+      body: <>
+        <p>v0.3.84 起，看过的对比、数据集或测试可以导出成一个本地网页，发给没有平台账号的人也能打开，不联网也能看。说「把对比 ab-test2 导出成 HTML 报告」。</p>
+        <ol>
+          <li>先在查看器里打开过这批样本。报告只用本机已有的图，没打开过时 agent 会让你先打开。</li>
+          <li>agent 报样本数、文件数、总大小和目录，你确认后才复制。默认收录上次在查看器里选中的全部样本，不再抽样。</li>
+          <li>复制完 agent 给出 <code>index.html</code> 的路径，双击打开。</li>
+        </ol>
+        <Figure src="screenshots/data/report-page.png" alt="报告顶部：内部资料提示、血缘图、成员表" caption="报告顶部：内部资料提示、血缘图、成员表和对齐报告。" source="console-fixture" />
+        <Figure src="screenshots/data/report-cards.png" alt="报告里的样本卡片，三列对比" caption="样本卡片：可以放大、点图选位置、切列、按类别筛选。备注只读，带位置的备注可以跳回当时的位置。" source="console-fixture" />
+        <Code>{`夜景两次测试-20261102-1530/     默认放在用户目录的 AIIGovernance-reports 下
+  index.html                    报告页面
+  images/                       原图
+  display/                      只有 PFM、裸 YUV 才有，转成 PNG 给页面显示`}</Code>
+        <Warn title="发给别人前">要发整个目录，只发 <code>index.html</code> 看不到图。报告里是真实样本图，发之前确认对方可以看这些数据。报告不含 NAS 路径和内部 IP。</Warn>
+        <Matrix
+          head={["现象", "原因", "处理"]}
+          rows={[
+            ["提示图不在本机", "没打开过查看器、抽样方式不同，或缓存已被淘汰", "先打开查看器，已有的不重拷"],
+            ["提示目录里已经有文件", "指定的输出目录不是空的", "换一个目录，或者不指定，自动生成新目录"],
+            ["发给别人后图不显示", "只发了 index.html", "发整个目录"],
+            ["某一列只有「原图」链接", "TIFF、EXR 或转不了的文件，浏览器显示不了", "点链接下载原图"],
+          ]}
+        />
+        <p>报告生成后不会更新，新写的备注不会进去，要最新内容就再导出一份。报告不计入 20 GB 缓存，用完自己删。备注只能在查看页面上写。</p>
       </>,
     },
     {
