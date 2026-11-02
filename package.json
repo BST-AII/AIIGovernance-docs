@@ -13,6 +13,7 @@
     "sync:release": "node scripts/sync-release-data.mjs",
     "shots:console": "node scripts/screenshots/capture-console.mjs",
     "shots:installer": "node scripts/screenshots/capture-installer.mjs",
+    "shots:data": "node scripts/screenshots/capture-data.mjs",
     "test": "npm run build:pages && npm run test:rendered && npm run test:content",
     "test:rendered": "node --test tests/rendered-html.test.mjs",
     "test:content": "node scripts/check-docs-content.mjs",

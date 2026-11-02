@@ -87,7 +87,7 @@ export type FigureSource = "console-fixture" | "installer-stub" | "real-capture"
 
 /** 各来源在图注里显示的出处说明。"real-capture" 无需说明，故不在表内。 */
 const SOURCE_NOTE: Record<Exclude<FigureSource, "real-capture">, string> = {
-  "console-fixture": "界面示意 · 开发夹具数据，非生产环境的真实统计",
+  "console-fixture": "界面示意 · 演示数据，不是生产环境的真实内容",
   "installer-stub": "界面示意 · 演示数据，非某一次真实安装的执行记录",
 };
 
