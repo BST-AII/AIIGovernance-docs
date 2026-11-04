@@ -283,7 +283,7 @@ export const dataPlatform: DocPage = {
             [<code key="t">list_data_assets</code>, "列出模块里的数据集版本、训练、模型、测试或对比（v0.3.80 起）。v0.3.87 起能按登记时间、名称、状态排序，数据集还能按大小、样本数排、按类型筛", "项目成员"],
             [<code key="t">get_data_asset</code>, "看一个对象的详情：路径、清单状态、血缘、说明，对比还带对齐报告（v0.3.80 起）", "项目成员"],
             [<code key="t">list_manifest_entries</code>, "翻看冻结清单里的文件（v0.3.80 起）。v0.3.87 起能按大小、文件类型排序，按类别筛（合并集的类别就是来源名）", "项目成员"],
-            [<code key="t">manage_dataset_manifest</code>, "冻结或复核文件清单。不复制文件，大数据集要跑几个小时（v0.3.80 起）", "负责人、成员"],
+            [<code key="t">manage_dataset_manifest</code>, "冻结或复核文件清单，不复制文件（v0.3.80 起）。v0.3.88 起冻结在开会话的这台机器上算校验值，数据服务器抽查；也能停止冻结", "负责人、成员"],
             [<code key="t">set_dataset_lineage</code>, "写清数据从哪几份数据来、输入和目标怎么配对（v0.3.80 起）。v0.3.86 起可以写多个来源，每个来源一段处理说明", "负责人、成员"],
             [<code key="t">update_asset_doc</code>, "写数据集、训练、模型的说明，每次保存留一个修订（v0.3.80 起）", "负责人、成员"],
             [<code key="t">register_data_asset</code>, "登记训练、模型、测试或对比（v0.3.80 起）。v0.3.86 起也能把几份已冻结的数据建成合并集", "负责人、成员"],
@@ -511,7 +511,9 @@ export const dataReview: DocPage = {
         <ul>
           <li><b>路径写完整。</b>服务器写法（/…）、Windows 共享地址（\\主机\共享名\…）或盘符（X:\…）。路径要在所选位置的根目录之下。</li>
           <li><b>名字在模块内不能重复。</b>重名时 agent 应该问你换什么名字。</li>
-          <li><b>冻结只记录文件清单，不复制文件。</b>冻结在后台运行，大数据集可能要几个小时。<code>Thumbs.db</code>、<code>desktop.ini</code> 这类系统文件不进清单。</li>
+          <li><b>冻结只记录文件清单，不复制文件。</b><code>Thumbs.db</code>、<code>desktop.ini</code> 这类系统文件不进清单。</li>
+          <li><b>在对话里冻结，校验值在开会话的这台机器上算（v0.3.88 起）。</b>算好交给数据服务器随机抽查，对上了才算冻结。读不到目录时 agent 会先问你。网页上冻结仍由数据服务器算，异地 NAS 上的大数据可能要几个小时。详见<a href={pageHref("data-agent") + "#freeze"}>对话登记教程的冻结一节</a>。</li>
+          <li><b>冻结可以停：</b>在对话里说「停掉这个冻结」。排队时 agent 和网页都会说排第几、前面谁在跑。</li>
           <li><b>测试带结果路径时，结果目录会自动冻结</b>，不用再单独冻结。</li>
           <li><b>数据对比的每个版本都要设来源和配对规则。</b>版本目录下分 lq、gt 时，配对规则是 <code>{`{mode: dirs, input: lq, target: gt}`}</code>。</li>
           <li><b>写入都要写原因</b>，记进审计。经 MCP 的写入不会出现在云端「操作记录」页。</li>
