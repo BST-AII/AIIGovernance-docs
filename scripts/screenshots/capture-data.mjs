@@ -609,9 +609,45 @@ async function main() {
       await sleep(2000);
       await reveal("样本与备注");
       await shot("review-cards.png", { settle: 1500 });
-      await click("备注（", false);
-      await click("写整体备注");
-      await shot("review-notes.png", { settle: 800 });
+      // 滑动对比：左半边是对比参照（默认第一列，测试输入）。
+      await act(`window.__t.tickRow("滑动对比")`, "勾选「滑动对比」");
+      await shot("review-wipe.png", { settle: 800 });
+      await act(`(() => {
+        const row = [...document.querySelectorAll("label")].find((el) => el.textContent.includes("滑动对比"));
+        row.querySelector("input").click();
+        return true;
+      })()`, "取消「滑动对比」");
+      // 框一块写备注，回到全图，再点「跳到这个区域」：所有窗口框出那块。
+      await act(`window.__t.tickRow("框选放大")`, "勾选「框选放大」");
+      await act(`(() => {
+        const canvas = document.querySelector('canvas[aria-label="窗口：夜景-基线"]');
+        if (!canvas) return "没有「夜景-基线」窗口";
+        const r = canvas.getBoundingClientRect();
+        const fire = (type, x, y) => canvas.dispatchEvent(new PointerEvent(type, {
+          bubbles: true, button: 0, pointerId: 1, clientX: r.left + x, clientY: r.top + y }));
+        fire("pointerdown", r.width * 0.45, r.height * 0.35);
+        fire("pointermove", r.width * 0.75, r.height * 0.65);
+        fire("pointerup", r.width * 0.75, r.height * 0.65);
+        return true;
+      })()`, "在窗口里框一块");
+      await until("区域：左上");
+      await act(`(() => {
+        const box = document.querySelector('textarea[aria-label="备注内容"]');
+        if (!box) return "没有备注框";
+        window.__t.set(box, "框里这块噪点少了，边缘没糊");
+        return true;
+      })()`, "写备注");
+      await click("改善");
+      await click("添加备注");
+      await until("跳到这个区域");
+      await act(`window.__t.tickRow("框选放大") && (() => {
+        const row = [...document.querySelectorAll("label")].find((el) => el.textContent.includes("框选放大"));
+        row.querySelector("input").click();
+        return true;
+      })()`, "取消「框选放大」");
+      await click("适应窗口");
+      await click("跳到这个区域", false);
+      await shot("review-notes.png", { settle: 1200 });
     } finally {
       server.close();
     }
