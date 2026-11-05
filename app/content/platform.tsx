@@ -234,6 +234,7 @@ export const dataPlatform: DocPage = {
           ]}
         />
         <p>你只看得到自己参与的项目。要加入某个项目，找它的负责人在「成员管理」里加你。</p>
+        <p>「成员管理」的账号下拉框只列用浏览器登录过网页的人。只装了同步程序、没登录过网页的人在里面找不到：让他用浏览器登录一次网页，或者负责人在 Claude Code 里说「把某某加进项目 X」，对话里能找到装过同步程序的人。</p>
       </>,
     },
     {
@@ -271,7 +272,7 @@ export const dataPlatform: DocPage = {
             [<code key="t">list_data_projects</code>, "列出我能看到的项目，带我的角色、模块数、记录数", "所有人"],
             [<code key="t">list_data_modules</code>, "列出某个项目的模块，带三类数据各多少条", "项目成员，含只读"],
             [<code key="t">list_data_locations</code>, "列出可以选的数据位置：名字、IP、服务器还是共享盘", "所有人"],
-            [<code key="t">search_data_records</code>, "按关键词、项目、模块、数据类型搜数据记录", "项目成员"],
+            [<code key="t">search_data_records</code>, "按关键词、项目、模块、数据类型搜数据记录，可以跨模块。v0.3.87 起能按登记时间、名称、模块、大小、样本数、类型排序", "项目成员"],
             [<code key="t">get_data_record</code>, "看一条记录的详情和修改历史", "项目成员"],
             [<code key="t">list_data_accounts</code>, "列出已开通的账号，加成员时从这里挑", "数据管理员"],
             [<code key="t">create_data_project</code>, "建项目，调用的人成为负责人", "所有人"],
@@ -279,10 +280,10 @@ export const dataPlatform: DocPage = {
             [<code key="t">set_data_project_member</code>, "加成员或改角色（负责人、成员、只读）", "项目负责人"],
             [<code key="t">register_data_record</code>, "登记一条数据，必须给数据类型（v0.3.83 起）。别名在模块里已存在时不写入，返回已有的那条", "负责人、成员"],
             [<code key="t">register_data_records</code>, "一次最多登记 200 条，每条都要给数据类型，每条单独检查，错的那条不影响其他条", "负责人、成员"],
-            [<code key="t">list_data_assets</code>, "列出模块里的数据集版本、训练、模型、测试或对比（v0.3.80 起）", "项目成员"],
+            [<code key="t">list_data_assets</code>, "列出模块里的数据集版本、训练、模型、测试或对比（v0.3.80 起）。v0.3.87 起能按登记时间、名称、状态排序，数据集还能按大小、样本数排、按类型筛", "项目成员"],
             [<code key="t">get_data_asset</code>, "看一个对象的详情：路径、清单状态、血缘、说明，对比还带对齐报告（v0.3.80 起）", "项目成员"],
-            [<code key="t">list_manifest_entries</code>, "翻看冻结清单里的文件（v0.3.80 起）", "项目成员"],
-            [<code key="t">manage_dataset_manifest</code>, "冻结或复核文件清单。不复制文件，大数据集要跑几个小时（v0.3.80 起）", "负责人、成员"],
+            [<code key="t">list_manifest_entries</code>, "翻看冻结清单里的文件（v0.3.80 起）。v0.3.87 起能按大小、文件类型排序，按类别筛（合并集的类别就是来源名）", "项目成员"],
+            [<code key="t">manage_dataset_manifest</code>, "冻结或复核文件清单，不复制文件（v0.3.80 起）。v0.3.88 起冻结在开会话的这台机器上算校验值，数据服务器抽查；也能停止冻结", "负责人、成员"],
             [<code key="t">set_dataset_lineage</code>, "写清数据从哪几份数据来、输入和目标怎么配对（v0.3.80 起）。v0.3.86 起可以写多个来源，每个来源一段处理说明", "负责人、成员"],
             [<code key="t">update_asset_doc</code>, "写数据集、训练、模型的说明，每次保存留一个修订（v0.3.80 起）", "负责人、成员"],
             [<code key="t">register_data_asset</code>, "登记训练、模型、测试或对比（v0.3.80 起）。v0.3.86 起也能把几份已冻结的数据建成合并集", "负责人、成员"],
@@ -408,9 +409,29 @@ export const dataReview: DocPage = {
       body: <>
         <p>页面从上到下是血缘、成员、对齐报告、样本与备注。</p>
         <Figure src="screenshots/data/lineage.png" alt="对比页的血缘图" caption="血缘：数据、训练、模型、测试之间的关系。衍生多次会逐级画出来，点节点能跳到对应页面。" source="console-fixture" />
-        <Figure src="screenshots/data/review-cards.png" alt="样本卡片，三列对比" caption="每个样本一张卡片。点上面的大图选位置，下面各列显示同一位置，放大倍数在顶部选。" source="console-fixture" />
+        <p>看图区一次看一个样本。用「上一张」「下一张」翻，也可以搜样本名、按类别筛，或在「样本」下拉框里直接选。</p>
+        <Figure src="screenshots/data/review-cards.png" alt="看图区：三个窗口显示同一个样本的三列" caption="勾几列就开几个窗口，最多 6 列。各窗口显示原图上同一块区域，一起缩放、一起拖动。" source="console-fixture" />
+        <Matrix
+          head={["想做的事", "怎么做"]}
+          rows={[
+            ["放大、缩小", "鼠标停在图上滚动滚轮，以鼠标所在的点为中心"],
+            ["移动", "在图上按住拖动"],
+            ["回到全图", "双击图，或点「适应窗口」"],
+            ["看原始像素", "点「100%」：一个原图像素对屏幕上一个像素。再往上放大只按整数倍（200%、300%……），每个原图像素画成一样大的方块，不做平滑"],
+            ["放大一块", "勾「框选放大」，在图上拖一个框"],
+            ["和参照比", "「对比参照」选一列，默认第一列。鼠标停在图上按住空格，所有窗口临时换成参照，松开换回来"],
+            ["左右对照着看", "勾「滑动对比」，每个窗口竖线左边显示参照，拖滑块改竖线位置"],
+          ]}
+        />
+        <Figure src="screenshots/data/review-wipe.png" alt="滑动对比：窗口左边是参照，右边是这一列" caption="滑动对比：竖线左边是参照（这里是测试输入），右边是这一列自己的图。" source="console-fixture" />
+        <p>各列尺寸不同时（比如超分的测试输入比结果小），小图按比例放大到和别的列对齐，窗口标题写「放大 ×2 显示」。不是按比例缩放来的图（长宽比不同，或者补过边）不画，窗口里写明它的尺寸。</p>
         <p>备注有两种，写的地方不同：</p>
-        <Figure src="screenshots/data/review-notes.png" alt="单图备注框和整体备注框" caption="写某张图：点卡片右上角的「备注」，框出现在这张卡片下面。写整个对比：点右侧的「写整体备注」。" source="console-fixture" />
+        <ul>
+          <li><b>写在这张图上</b>：用图下面的备注框。默认勾着「带上当前查看区域」：框选过就记框的那块，没框就记当时窗口里看到的那块，旁边写着是原图上哪一块。</li>
+          <li><b>写给整个对比</b>：点右侧的「写整体备注」，写完自动收起。</li>
+        </ul>
+        <Figure src="screenshots/data/review-notes.png" alt="点备注跳回后，各窗口用虚线框出当时那块" caption="点备注上的「跳到这个区域」，换到那个样本，所有窗口用虚线框出写备注时的那块。" source="console-fixture" />
+        <p>改版以前写的备注只记了中心和倍数，点「跳到这个位置」回到当时的中心和倍数，不框。</p>
       </>,
     },
     {
@@ -471,7 +492,7 @@ export const dataReview: DocPage = {
       id: "one-dataset", title: "只看一份数据",
       body: <>
         <p>对比至少要两个成员，只选一个时网页会提示「至少选两个成员」。只想看一个版本的 lq 和 gt，不用建对比，说「打开数据集 variant_a 看图」就行。</p>
-        <p>用的是同一个查看器：同样拷到本机，放大、锁定同一位置、切列都一样。和对比页的区别如下。</p>
+        <p>用的是同一个查看器：同样拷到本机，缩放、拖动、勾选列、写备注都一样。和对比页的区别如下。</p>
         <Matrix
           head={["", "数据集", "对比"]}
           rows={[
@@ -490,7 +511,9 @@ export const dataReview: DocPage = {
         <ul>
           <li><b>路径写完整。</b>服务器写法（/…）、Windows 共享地址（\\主机\共享名\…）或盘符（X:\…）。路径要在所选位置的根目录之下。</li>
           <li><b>名字在模块内不能重复。</b>重名时 agent 应该问你换什么名字。</li>
-          <li><b>冻结只记录文件清单，不复制文件。</b>冻结在后台运行，大数据集可能要几个小时。<code>Thumbs.db</code>、<code>desktop.ini</code> 这类系统文件不进清单。</li>
+          <li><b>冻结只记录文件清单，不复制文件。</b><code>Thumbs.db</code>、<code>desktop.ini</code> 这类系统文件不进清单。</li>
+          <li><b>在对话里冻结，校验值在开会话的这台机器上算（v0.3.88 起）。</b>算好交给数据服务器随机抽查，对上了才算冻结。读不到目录时 agent 会先问你。网页上冻结仍由数据服务器算，异地 NAS 上的大数据可能要几个小时。详见<a href={pageHref("data-agent") + "#freeze"}>对话登记教程的冻结一节</a>。</li>
+          <li><b>冻结可以停：</b>在对话里说「停掉这个冻结」。排队时 agent 和网页都会说排第几、前面谁在跑。</li>
           <li><b>测试带结果路径时，结果目录会自动冻结</b>，不用再单独冻结。</li>
           <li><b>数据对比的每个版本都要设来源和配对规则。</b>版本目录下分 lq、gt 时，配对规则是 <code>{`{mode: dirs, input: lq, target: gt}`}</code>。</li>
           <li><b>写入都要写原因</b>，记进审计。经 MCP 的写入不会出现在云端「操作记录」页。</li>
@@ -503,7 +526,7 @@ export const dataReview: DocPage = {
         <ul>
           <li><b>拷贝前先报方案。</b>工具先报样本数、文件数和大小，已有一部分在本机时会写明还要拷多少，你确认后才拷贝。默认随机 100 个，还要拷的量超过 5 GB 时要再确认一次。</li>
           <li><b>图拷到本机缓存并逐个核对。</b>缓存上限 20 GB，最久没用的先淘汰。页面在数据平台上，图从你自己的电脑读取。</li>
-          <li><b>写在某张图上的备注</b>：点图片右上角的「备注」。备注会记下这张图和当前查看位置。</li>
+          <li><b>写在某张图上的备注</b>：用图下面的备注框。备注会记下这张图和当前查看区域。</li>
           <li><b>写给整个对比或数据集的备注</b>：点右侧的「写整体备注」，写完自动收起。</li>
           <li><b>同项目成员能看到备注。</b>备注记在写的人的账号下。网页上能看，也可以让 agent 用 <code>list_review_notes</code> 查。</li>
         </ul>
@@ -544,7 +567,8 @@ export const dataReview: DocPage = {
           <li>复制完 agent 给出 <code>index.html</code> 的路径，双击打开。</li>
         </ol>
         <Figure src="screenshots/data/report-page.png" alt="报告顶部：内部资料提示、血缘图、成员表" caption="报告顶部：内部资料提示、血缘图、成员表和对齐报告。" source="console-fixture" />
-        <Figure src="screenshots/data/report-cards.png" alt="报告里的样本卡片，三列对比" caption="样本卡片：可以放大、点图选位置、切列、按类别筛选。备注只读，带位置的备注可以跳回当时的位置。" source="console-fixture" />
+        <Figure src="screenshots/data/report-cards.png" alt="报告里的看图区，三个窗口，框出备注里的区域" caption="报告和查看页面是同一种看法：勾选列、缩放、拖动、框选、参照、滑动对比都能用。备注只读，点「跳到这个区域」会框出那块。" source="console-fixture" />
+        <p>v0.3.88 起导出的报告是这个样子。之前导出的报告还是一样本一张卡片，点带区域的备注只移到当时的中心。</p>
         <Code>{`夜景两次测试-20261102-1530/     默认放在用户目录的 AIIGovernance-reports 下
   index.html                    报告页面
   images/                       原图
@@ -594,6 +618,10 @@ export const dataReview: DocPage = {
             ["页面提示要打开查看器", "小服务已退出，或页面刷新后地址失效", "在 Claude Code 里再说一句「打开对比 X」，不会重新下载"],
             ["小服务在跑但图片全空", "浏览器没有允许访问本地网络", "地址栏左侧的站点设置里打开「本地网络访问」"],
             ["进评审页提示没有权限", "账号不属于任何项目", "找项目负责人加成员"],
+            ["按空格没有反应", "鼠标不在图上，或光标在输入框里", "把鼠标移到图上再按"],
+            ["窗口写「不是其他列按比例缩放来的」", "这一列长宽比不同，或者补过边、裁过边", "正常，硬拉过去会错位；单独打开那张图看"],
+            ["窗口写「放大 ×2 显示」", "这一列原图比别的列小，比如超分的输入", "正常，看到的像素块就是原图的像素"],
+            ["报告里点备注只移了位置，没有框", "报告是 v0.3.88 以前导出的", "升级后重新导出"],
           ]}
         />
         <Maintainer title="引导流程写在哪里">

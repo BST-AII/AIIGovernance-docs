@@ -38,13 +38,19 @@ try {
     if (external !== 0) throw new Error(`报告发出了 ${external} 个外部请求`);
     writeFileSync(join(OUT, "report-page.png"), await page.screenshot());
     await page.evaluate(`[...document.querySelectorAll("h2")].find((h) => h.textContent.startsWith("样本")).scrollIntoView(); true`);
-    await page.evaluate(`(function () {
-      const zoom = document.getElementById("zoom");
-      zoom.value = "3";
-      zoom.dispatchEvent(new Event("change"));
+    // 看图区和数据平台网页同一种看法：三个窗口、测试输入按比例放大，点备注跳回它框的区域。
+    const windows = await page.evaluate(`document.querySelectorAll('canvas[aria-label^="窗口："]').length`);
+    if (windows !== 3) throw new Error(`报告里应有 3 个窗口，实际 ${windows} 个：报告的看图区可能改过`);
+    const jumped = await page.evaluate(`(function () {
+      const jump = [...document.querySelectorAll("button")].find((b) => b.textContent.startsWith("跳到这个区域"));
+      if (!jump) return false;
+      jump.click();
       return true;
     })()`);
+    if (!jumped) throw new Error("找不到「跳到这个区域」：报告的备注可能改过");
     await new Promise((done) => setTimeout(done, 1200));
+    const caption = await page.evaluate(`document.querySelector(".window-note").textContent`);
+    if (!caption.includes("放大 ×2 显示")) throw new Error(`测试输入的窗口标题不对：${caption}`);
     writeFileSync(join(OUT, "report-cards.png"), await page.screenshot());
   } finally {
     await page.close();
