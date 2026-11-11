@@ -36,6 +36,11 @@ const PROJECT_ID = "11111111-1111-4111-8111-111111111111";
 const SEG_MODULE_ID = "aaaaaaaa-2222-4222-8222-aaaaaaaaaaaa";
 const SEG_NPY_ID = "c5000000-0000-4000-8000-000000000007";
 const SEG_COMPARE_ID = "f4000000-0000-4000-8000-000000000011";
+/* CE 检测 / 检测 v3 模块里的测试集 aiscene_v3_test：演示数据给它放了两份副本和一次收发。
+   训练 unet-lr1e-3 的输入数据记了版本。 */
+const DET_MODULE_ID = "aaaaaaaa-1111-4111-8111-aaaaaaaaaaaa";
+const DET_TEST_ID = "cccccccc-3333-4333-8333-cccccccccccc";
+const DET_RUN_ID = "f1000000-0000-4000-8000-000000000001";
 
 /* 页面里的小工具。控件都按用户看得到的文字找，和教程写的一致。 */
 const HELPERS = `
@@ -581,6 +586,20 @@ async function main() {
     await until("没有可看的图片");
     await sleep(1000);
     await shot("web-no-images.png");
+
+    // 两地之间的副本和收发记录：版本页下方的两张卡片，只显示，没有按钮。
+    await page.goto(`${BASE}/projects/${PROJECT_ID}/modules/${DET_MODULE_ID}/datasets/${DET_TEST_ID}`, { settle: 2000 });
+    await until("收发记录");
+    await sleep(800);
+    await scroll("副本");
+    await shot("web-copies.png");
+
+    // 训练页：输入数据旁写着登记时用的是哪一版。
+    await page.goto(`${BASE}/projects/${PROJECT_ID}/modules/${DET_MODULE_ID}/training/${DET_RUN_ID}`, { settle: 2000 });
+    await until("用的是现在这一版");
+    await sleep(800);
+    await scroll("输入数据");
+    await shot("web-training-version.png");
 
     // 合并测试集上的结果对比，数据已更新。
     await page.goto(`${BASE}/review/compare/${SEG_COMPARE_ID}`, { settle: 2500 });

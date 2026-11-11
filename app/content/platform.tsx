@@ -252,6 +252,7 @@ export const dataPlatform: DocPage = {
             ["修改、删除数据记录", "网页"],
             ["来源在别的模块", "对话"],
             ["看图", <>都要经 agent，见<a key="a" href={pageHref("data-review")}>查看数据和结果对比</a></>],
+            ["把数据、测试结果发到另一地", <>经飞书收发，只能在对话里做，见<a key="a" href={pageHref("data-transfer")}>两地收发教程</a></>],
           ]}
         />
         <ul>
@@ -281,9 +282,9 @@ export const dataPlatform: DocPage = {
             [<code key="t">register_data_record</code>, "登记一条数据，必须给数据类型（v0.3.83 起）。别名在模块里已存在时不写入，返回已有的那条", "负责人、成员"],
             [<code key="t">register_data_records</code>, "一次最多登记 200 条，每条都要给数据类型，每条单独检查，错的那条不影响其他条", "负责人、成员"],
             [<code key="t">list_data_assets</code>, "列出模块里的数据集版本、训练、模型、测试或对比（v0.3.80 起）。v0.3.87 起能按登记时间、名称、状态排序，数据集还能按大小、样本数排、按类型筛", "项目成员"],
-            [<code key="t">get_data_asset</code>, "看一个对象的详情：路径、清单状态、血缘、说明，对比还带对齐报告（v0.3.80 起）", "项目成员"],
+            [<code key="t">get_data_asset</code>, "看一个对象的详情：路径、清单状态、血缘、说明，对比还带对齐报告（v0.3.80 起）。数据和测试结果还列出副本和收发记录", "项目成员"],
             [<code key="t">list_manifest_entries</code>, "翻看冻结清单里的文件（v0.3.80 起）。v0.3.87 起能按大小、文件类型排序，按类别筛（合并集的类别就是来源名）", "项目成员"],
-            [<code key="t">manage_dataset_manifest</code>, "冻结或复核文件清单，不复制文件（v0.3.80 起）。v0.3.88 起冻结在开会话的这台机器上算校验值，数据服务器抽查；也能停止冻结", "负责人、成员"],
+            [<code key="t">manage_dataset_manifest</code>, <>冻结或复核文件清单，不复制文件（v0.3.80 起）。v0.3.88 起冻结在开会话的这台机器上算校验值，数据服务器抽查；也能停止冻结。v0.3.89 起还能经飞书发给另一地、收别人发来的、登记已有副本，见<a key="a" href={pageHref("data-transfer")}>两地收发教程</a></>, "负责人、成员"],
             [<code key="t">set_dataset_lineage</code>, "写清数据从哪几份数据来、输入和目标怎么配对（v0.3.80 起）。v0.3.86 起可以写多个来源，每个来源一段处理说明", "负责人、成员"],
             [<code key="t">update_asset_doc</code>, "写数据集、训练、模型的说明，每次保存留一个修订（v0.3.80 起）", "负责人、成员"],
             [<code key="t">register_data_asset</code>, "登记训练、模型、测试或对比（v0.3.80 起）。v0.3.86 起也能把几份已冻结的数据建成合并集", "负责人、成员"],
