@@ -13,6 +13,7 @@ export const docsRoutes = [
   { slug: "data-web", path: "/data-web/", title: "在网页上登记数据" },
   { slug: "data-agent", path: "/data-agent/", title: "用对话登记数据" },
   { slug: "data-review", path: "/data-review/", title: "查看数据和结果对比" },
+  { slug: "data-transfer", path: "/data-transfer/", title: "在两地之间收发数据" },
   { slug: "upgrade", path: "/upgrade/", title: "升级、重装与修复" },
   { slug: "uninstall", path: "/uninstall/", title: "安全卸载治理组件" },
   { slug: "troubleshooting", path: "/troubleshooting/", title: "按现象排查问题" },
