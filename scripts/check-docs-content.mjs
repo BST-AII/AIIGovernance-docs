@@ -83,6 +83,20 @@ for (const entry of searchIndex.entries) {
   assert.ok(entry.href.startsWith(basePath), `搜索结果越出本站路径：${entry.href}`);
 }
 
+// 检查更新（2026-11-13）：各台机器上的同步程序每天读 latest.json，版本号必须和下载页上的一致；
+// 只能有版本号四项，不许带地址——打开哪个页面写死在程序里。
+const releaseSource = await readFile(new URL("../app/release-data.ts", import.meta.url), "utf8");
+const releaseField = (name) => new RegExp(`\\b${name}: "([^"]+)"`).exec(releaseSource)?.[1];
+const latest = JSON.parse(await readFile(outputUrl("latest.json"), "utf8"));
+assert.deepEqual(Object.keys(latest).sort(), ["releaseDate", "schema", "tag", "version"],
+  "latest.json 只能有 schema、version、tag、releaseDate 四项");
+assert.equal(latest.schema, 1, "latest.json 的 schema 不是 1");
+for (const name of ["version", "tag", "releaseDate"]) {
+  assert.ok(releaseField(name), `app/release-data.ts 里读不出 ${name}`);
+  assert.equal(latest[name], releaseField(name),
+    `latest.json 的 ${name} 和 app/release-data.ts 不一致：运行 npm run sync:release`);
+}
+
 const controls = await readFile(new URL("../app/docs-controls.tsx", import.meta.url), "utf8");
 assert.match(controls, /ctrlKey\s*\|\|\s*event\.metaKey/, "搜索缺少 Ctrl/Cmd + K 快捷键");
 for (const key of ["Escape", "ArrowDown", "ArrowUp", "Enter"]) {
@@ -92,5 +106,6 @@ assert.ok(!controls.includes("fetch("), "本地搜索不应把查询发送到外
 
 process.stdout.write(
   `[content] ${docsRoutes.length} routes, ${localLinks} local refs, ${anchors} anchors, ` +
-  `${screenshots} screenshots, ${searchIndex.entries.length} search entries\n`,
+  `${screenshots} screenshots, ${searchIndex.entries.length} search entries, ` +
+  `latest ${latest.version}\n`,
 );

@@ -37,6 +37,10 @@ async function verify() {
     assert.ok(search.entries?.length > docsRoutes.length, `${site} 搜索索引为空`);
     const buildInfo = await (await fetchOk(new URL("build-info.json", site))).json();
     if (expectedCommit) assert.equal(buildInfo.commit, expectedCommit, `${site} 不是本次 commit`);
+    // 检查更新读的就是这个文件；两站都要有、版本要一样（同步程序先读 GitHub Pages，取不到读镜像）。
+    const latest = await (await fetchOk(new URL("latest.json", site))).json();
+    assert.equal(latest.schema, 1, `${site} latest.json 的 schema 不是 1`);
+    assert.match(String(latest.version), /^\d+(\.\d+)+$/, `${site} latest.json 的版本号不对`);
 
     const assets = new Set();
     for (const html of pages.values()) {
@@ -54,6 +58,7 @@ async function verify() {
       pages,
       searchHash: sha256(searchText),
       buildCommit: buildInfo.commit,
+      latestVersion: latest.version,
       assets: assets.size,
       automaticCount: account.match(/自动开通/g)?.length ?? 0,
     });
@@ -62,6 +67,7 @@ async function verify() {
   assert.ok(reports[0].automaticCount > 0, "账号页缺少“自动开通”文案");
   assert.equal(reports[0].automaticCount, reports[1].automaticCount, "两站账号页“自动开通”数量不一致");
   assert.equal(reports[0].searchHash, reports[1].searchHash, "两站搜索索引 hash 不一致");
+  assert.equal(reports[0].latestVersion, reports[1].latestVersion, "两站 latest.json 版本不一致");
   for (const route of docsRoutes) {
     const hashes = reports.map(report => sha256(mainBody(report.pages.get(route.path))));
     assert.equal(hashes[0], hashes[1], `${route.path} 两站正文 hash 不一致`);
@@ -76,7 +82,8 @@ for (let attempt = 1; attempt <= 6; attempt += 1) {
     for (const report of reports) {
       process.stdout.write(
         `[dual-site] ${report.site} pages=${docsRoutes.length} assets=${report.assets} ` +
-        `search=${report.searchHash} commit=${report.buildCommit}\n`,
+        `search=${report.searchHash} commit=${report.buildCommit} ` +
+        `latest=${report.latestVersion}\n`,
       );
     }
     process.exit(0);
