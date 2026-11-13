@@ -196,6 +196,27 @@
         });
       },
 
+      // 首页「看图缓存位置」（安装器 0.3.90 起）。示意数据：默认位置、用了 17.3 GB，已选好 E:\aiig。
+      get_viewer_cache_offer: function () {
+        var gib = 1073741824;
+        return ok({
+          limits: [20, 50, 100, 200],
+          choice: { mode: "custom", dir: "E:\\aiig", limit_gb: 100 },
+          error: null,
+          status: {
+            state_dir: "C:\\ProgramData\\AIIGovernance\\RecordsAgent\\users\\0123456789abcdef",
+            has_identity: true, custom: false,
+            cache_dir: "C:\\ProgramData\\AIIGovernance\\RecordsAgent\\users\\0123456789abcdef\\viewer-cache",
+            cache_bytes: 17.3 * gib, limit_bytes: 20 * gib, limit_gb: 20, free_bytes: 130 * gib,
+            viewers: [{ running: true }, { running: false }],
+          },
+        });
+      },
+      choose_viewer_cache_dir_via_dialog: function () {
+        return ok({ dir: "E:\\aiig", free_bytes: 3200 * 1073741824 });
+      },
+      apply_viewer_cache: function () { return ok({ ok: true }); },
+
       report_page_marker: function () { return ok(true); },
       start_payload_preparation: function () { return ok(true); },
       open_usage_guide: function () { return ok(true); },

@@ -161,9 +161,9 @@ QTWEBENGINE_CHROMIUM_FLAGS=--disable-gpu \\
       id: "wizard", title: "向导会做哪些事",
       body: <>
         <p>三个平台走同一条流程，侧栏的七步进度条对应下面这八件事。<b>身份核验在写入之前</b>：核验失败时项目里不会留下 <code>.governance</code>、<code>.mcp.json</code> 或任何其他安装痕迹。</p>
-        <Figure src="screenshots/installer/welcome.png" alt="安装器首页" caption="安装器首页的四个入口：首次安装、升级已有项目、已有项目添加机器人，以及从升级入口进入的卸载。" source="installer-stub" />
+        <Figure src="screenshots/installer/welcome.png" alt="安装器首页" caption="安装器首页的五个入口：首次安装、升级已有项目、已有项目添加机器人、只装数据工具、看图缓存位置。卸载从升级入口进入。" source="installer-stub" />
         <ol>
-          <li>首页选择首次安装、升级、卸载，或为已有项目添加机器人。</li>
+          <li>首页选择首次安装、升级、卸载，或为已有项目添加机器人。另外两个入口不走这条流程：「只装数据工具」见<a href={pageHref("data") + "#data-only"}>数据平台</a>，「看图缓存位置」见<a href={pageHref("data-review") + "#cache"}>查看数据和结果对比</a>。</li>
           <li>环境检查：图形后端、Python、Git 和 Claude Code。Linux/macOS 不显示 Windows 的 PortableGit 按钮，而是给出系统包管理器命令。</li>
           <li>选择项目目录；首次安装时如果目录还不是 Git 仓库，会先征求你的同意再执行 <code>git init</code>。</li>
           <li>选择这个目录所属的<b>产品线</b>（下一节详述）。可以不选。</li>
