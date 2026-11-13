@@ -53,7 +53,7 @@ const OUT = process.env.AIIG_SHOTS_OUT
 /* 想出图的向导状态。文件名即状态名，方便和安装器源码对上。
    注释是这一页在文档里的用途；不写文档的页也一起截，留作素材。 */
 const STATES = [
-  "welcome",              // 首页：四个入口
+  "welcome",              // 首页：五个入口
   "probing",              // 环境检查
   "need_git",             // 缺 Git
   "select_target_dir",    // 选择项目目录
@@ -78,6 +78,7 @@ const STATES = [
   "bot_binding_conflict", // 机器人唯一绑定
   "capture_open_id",      // 身份确认
   "daemon_registering",   // 服务自启
+  "viewer_cache",         // 首页「看图缓存位置」（0.3.90 起）
   "daemon_fallback_offer",// 自启降级
   "e2e_verifying",        // 端到端验证
   "done_success",         // 安装完成
