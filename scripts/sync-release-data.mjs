@@ -10,6 +10,10 @@
  *
  * 发布流水接口：打完 tag 后在 docs 仓运行本脚本，它重写 release-data.ts；
  * 面向用户的更新说明文字在 app/release-notes.ts，本脚本不会碰。
+ *
+ * 同时写 public/latest.json（检查更新，2026-11-13）：各台机器上的同步程序每天读它，
+ * 有比本机新的版本就弹窗提醒、点「更新」打开下载页。只放版本号四项、不放任何地址——
+ * 打开哪个页面写死在程序里。它跟着站点发布才变，所以下载页已经是新版时才会提醒。
  */
 
 import { spawnSync } from "node:child_process";
@@ -18,6 +22,7 @@ import { fileURLToPath } from "node:url";
 
 const REPO = process.env.AIIG_RELEASES_REPO ?? "BST-AII/AIIGovernance-releases";
 const target = new URL("../app/release-data.ts", import.meta.url);
+const latestTarget = new URL("../public/latest.json", import.meta.url);
 
 /* 生成文件的固定头尾。数据块夹在中间，类型和辅助函数不随发布变化。 */
 const HEADER = `/* 本文件由 scripts/sync-release-data.mjs 生成，数据全部来自 GitHub Release API。
@@ -192,21 +197,31 @@ ${FOOTER}`;
 const previous = await readFile(target, "utf8").catch(() => "");
 const previousBody = stripSyncedAt(previous);
 const nextBody = stripSyncedAt(render("x"));
+const latestBody = renderLatest({ version, tag, releaseDate });
+const previousLatest = lf(await readFile(latestTarget, "utf8").catch(() => ""));
 
 if (checkOnly) {
-  if (previousBody === nextBody) {
-    process.stdout.write(`[sync-release-data] app/release-data.ts 与 ${tag} 一致。\n`);
+  if (previousBody === nextBody && previousLatest === latestBody) {
+    process.stdout.write(
+      `[sync-release-data] app/release-data.ts、public/latest.json 与 ${tag} 一致。\n`);
     process.exit(0);
   }
+  const stale = [previousBody === nextBody ? null : "app/release-data.ts",
+                 previousLatest === latestBody ? null : "public/latest.json"].filter(Boolean);
   process.stderr.write(
-    `[sync-release-data] app/release-data.ts 与真实 Release ${tag} 不一致。\n` +
+    `[sync-release-data] ${stale.join("、")} 与真实 Release ${tag} 不一致。\n` +
       "运行 npm run sync:release 更新后再提交。\n",
   );
   process.exit(1);
 }
 
+if (previousLatest !== latestBody) {
+  await writeFile(latestTarget, latestBody, "utf8");
+  process.stdout.write(`[sync-release-data] 已写入 ${fileURLToPath(latestTarget)}\n`);
+}
+
 if (previousBody === nextBody) {
-  process.stdout.write(`[sync-release-data] 已经是 ${tag}，无需改写。\n`);
+  process.stdout.write(`[sync-release-data] app/release-data.ts 已经是 ${tag}，无需改写。\n`);
   process.exit(0);
 }
 
@@ -218,7 +233,17 @@ process.stdout.write(
     "\n提醒：面向用户的更新说明请在 app/release-notes.ts 里补写这一版的条目。\n",
 );
 
+/** public/latest.json：只有版本号四项，没有地址。字段固定，检查脚本逐项比。 */
+function renderLatest({ version, tag, releaseDate }) {
+  return `${JSON.stringify({ schema: 1, version, tag, releaseDate }, null, 2)}\n`;
+}
+
+/** Windows 上 git 检出成 CRLF：只比内容、不比换行，否则在 Windows 上每次都判为漂移。 */
+function lf(text) {
+  return text.replace(/\r\n/g, "\n");
+}
+
 /** 比对时忽略 syncedAt，避免每次运行都判为漂移。 */
 function stripSyncedAt(text) {
-  return text.replace(/syncedAt: "[^"]*"/, 'syncedAt: "-"');
+  return lf(text).replace(/syncedAt: "[^"]*"/, 'syncedAt: "-"');
 }

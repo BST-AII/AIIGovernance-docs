@@ -670,6 +670,66 @@ async function main() {
     } finally {
       server.close();
     }
+
+    // 收藏（2026-11-17）：在检测 v3 模块里收藏一个数据集、训练、模型和「夜景-加强」，
+    // 等每颗星推到网页上（按钮不再是灰的），拍测试结果表：收藏的那条排到了最前面。
+    // 再拍「我的收藏」页。放在最后，前面的图里不会出现实心的星。
+    const STAR_IN = (anchor) => `(() => {
+      const named = ${anchor};
+      let box = named;
+      while (box && !box.querySelector?.("button.star-button")) box = box.parentElement;
+      return box ? box.querySelector("button.star-button") : null;
+    })()`;
+    const rowNamed = (name) => STAR_IN(`[...document.querySelectorAll("tr")]
+      .map((row) => row.querySelector("a"))
+      .find((link) => link && link.textContent.trim() === ${JSON.stringify(name)})`);
+    const cardNamed = (name) => STAR_IN(`[...document.querySelectorAll("h4")]
+      .find((title) => title.textContent.trim() === ${JSON.stringify(name)})`);
+    const starAndWait = async (finder, name) => {
+      await act(`(() => {
+        const star = ${finder};
+        if (!star) return "找不到「${name}」的星";
+        if (star.disabled) return "「${name}」的星是灰的";
+        if (star.getAttribute("aria-pressed") === "true") return "「${name}」已经收藏过";
+        star.click();
+        return true;
+      })()`, `收藏「${name}」`);
+      for (let i = 0; i < 160; i += 1) {
+        const state = await run(`(() => {
+          const star = ${finder};
+          return star ? star.getAttribute("aria-pressed") + "/" + star.disabled : "gone";
+        })()`);
+        if (state === "true/false") return;
+        await sleep(250);
+      }
+      throw new CaptureError(`「${name}」的星 40 秒还没推到网页上，已中止`);
+    };
+    // 演示数据只在页面内存里：只在开头整页打开一次，之后都在页面里点，不重新加载。
+    await page.goto(`${BASE}/projects/${PROJECT_ID}/modules/${DET_MODULE_ID}?tab=training`, { settle: 2500 });
+    await until("unet-lr1e-3");
+    await starAndWait(cardNamed("aiscene_v3_test"), "aiscene_v3_test");
+    await starAndWait(rowNamed("unet-lr1e-3"), "unet-lr1e-3");
+    await click("模型");
+    await until("unet-best");
+    await starAndWait(rowNamed("unet-best"), "unet-best");
+    await click("测试");
+    await until("夜景-加强");
+    await starAndWait(rowNamed("夜景-加强"), "夜景-加强");
+    await act(`(() => {
+      const names = [...document.querySelectorAll("tr")].map((row) => row.querySelector("a")?.textContent.trim()).filter(Boolean);
+      return names.indexOf("夜景-加强") < names.indexOf("夜景-基线") ? true : "收藏的没有排到最前：" + names.join("、");
+    })()`, "确认收藏的排在最前");
+    // 上面的数据卡片加载完会把表格往下挤：先等页面稳定，再滚到「训练 模型 测试 对比」那一行。
+    await until("只看收藏");
+    await sleep(2500);
+    await scroll("训练模型测试");
+    await shot("web-stars.png", { settle: 600 });
+
+    await click("我的收藏", false);
+    await until("所有项目里你收藏的数据和结果");
+    await until("夜景-加强");
+    await sleep(800);
+    await shot("web-my-stars.png");
   } finally {
     await page.close();
   }
