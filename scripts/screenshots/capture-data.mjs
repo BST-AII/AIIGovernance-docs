@@ -290,7 +290,16 @@ async function main() {
   const shot = async (file, options = {}) => {
     if (options.clean ?? true) await run("window.__t.dismiss()");
     await sleep(options.settle ?? 400);
-    const buffer = await page.screenshot({ fullPage: options.fullPage ?? false });
+    // options.only：只截这个选择器框住的那一块，四周留 12 px。
+    const clip = options.only ? JSON.parse(await run(`(() => {
+      const el = document.querySelector(${JSON.stringify(options.only)});
+      if (!el) return "null";
+      const r = el.getBoundingClientRect();
+      return JSON.stringify({ x: Math.max(0, r.left + window.scrollX - 12), y: Math.max(0, r.top + window.scrollY - 12),
+        width: r.width + 24, height: r.height + 24 });
+    })()`)) : null;
+    if (options.only && !clip) throw new CaptureError(`页面上没有 ${options.only}，界面可能改过，已中止`);
+    const buffer = await page.screenshot({ fullPage: options.fullPage ?? false, clip });
     await writeFile(new URL(file, OUT), buffer);
     done.push(`${file.padEnd(26)} ${String(buffer.length).padStart(8)} B`);
     process.stdout.write(`[screenshots] ${file}\n`);
@@ -670,6 +679,64 @@ async function main() {
     } finally {
       server.close();
     }
+
+    /* 说明字段（2026-11-13）：在检测 v3 模块给两次测试写上「场景」「结论」，回到测试清单按「结论」筛；
+       再在数据集那一栏按「采集地点」筛（在数据服务器上筛）。演示数据只在页面内存里：
+       整页打开一次，之后都在页面里点。放在收藏前面：收藏那段重新打开页面，这里写的说明不会带过去。 */
+    const pickField = (which, key) => act(`(() => {
+      const boxes = [...document.querySelectorAll('select[aria-label="按说明字段筛"]')];
+      const box = boxes[${which === "datasets" ? 0 : "boxes.length - 1"}];
+      if (!box) return "没有「字段」下拉";
+      if (![...box.options].some((item) => item.value === ${JSON.stringify(key)})) {
+        return "「字段」下拉里没有「${key}」：" + [...box.options].map((item) => item.value).join("、");
+      }
+      window.__t.set(box, ${JSON.stringify(key)});
+      return true;
+    })()`, `「字段」选「${key}」`);
+    const writeDoc = async (name, fields, reason, snap) => {
+      await click(name);
+      await until("编辑说明");
+      await sleep(600);
+      await click("编辑说明");
+      for (const [index, [key, value]] of fields.entries()) {
+        await click("添加字段");
+        await fillAria(`字段名 ${index + 1}`, key);
+        await fillAria(`字段值 ${index + 1}`, value);
+      }
+      if (snap) {
+        await scroll("说明");
+        await shot(snap, { only: 'section.asset-card[aria-label="说明"]' });
+      }
+      await click("保存说明");
+      await until("修改原因", "保存说明对话框");
+      await fill("修改原因", reason);
+      await click("保存");
+      await until("修改于", `「${name}」的说明保存完`);
+      await sleep(600);
+      await click("返回清单");
+      await until("登记测试");
+      await sleep(800);
+    };
+    await page.goto(`${BASE}/projects/${PROJECT_ID}/modules/${DET_MODULE_ID}?tab=test`, { settle: 2500 });
+    await until("夜景-基线");
+    await writeDoc("夜景-基线", [["场景", "夜景"], ["结论", "暗部噪点多，先不上线"]], "写上评测结论");
+    await writeDoc("夜景-加强", [["场景", "夜景"], ["结论", "可以上线"]], "写上评测结论", "web-doc-edit.png");
+    // 测试清单：「字段」选「结论」，「包含」填「可以」，只剩「夜景-加强」，表格多一列「结论」。
+    await scroll("训练模型测试");
+    await pickField("assets", "结论");
+    await fillAria("「结论」里包含的文字", "可以");
+    await until("显示 1 / 共 2 条", "按字段筛完");
+    await sleep(600);
+    await scroll("训练模型测试");
+    await shot("web-doc-filter.png", { settle: 600 });
+    // 数据集：在数据服务器上筛，停手一会儿才去取。
+    await scroll("数据中心");
+    await pickField("datasets", "采集地点");
+    await fillAria("「采集地点」里包含的文字", "苏州");
+    await until("按「采集地点」包含「苏州」筛出", "数据集按字段筛完");
+    await sleep(800);
+    await scroll("数据中心");
+    await shot("web-doc-filter-datasets.png", { settle: 600 });
 
     // 收藏（2026-11-17）：在检测 v3 模块里收藏一个数据集、训练、模型和「夜景-加强」，
     // 等每颗星推到网页上（按钮不再是灰的），拍测试结果表：收藏的那条排到了最前面。

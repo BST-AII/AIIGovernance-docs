@@ -211,7 +211,7 @@ export const account: DocPage = {
 export const dataPlatform: DocPage = {
   group: "管理平台", label: "使用数据平台", title: "登记和查找数据集",
   intro: "数据平台记录每个项目、每个模块用到的数据放在哪里：原始数据、训练集、测试集，以及训练、模型、测试和它们之间的关系。数据本身不搬，平台只登记位置。可以在网页上操作，也可以让 agent 在会话里查和登记。",
-  keywords: ["数据平台", "数据中心", "list_data_projects", "register_data_record", "search_data_records", "数据位置"],
+  keywords: ["数据平台", "数据中心", "list_data_projects", "register_data_record", "search_data_records", "数据位置", "说明字段", "按字段筛", "field_filter", "update_asset_doc"],
   sections: [
     {
       id: "what", title: "它是什么、在哪里打开",
@@ -251,6 +251,7 @@ export const dataPlatform: DocPage = {
             ["逐项核对、批量导入 CSV", "网页"],
             ["修改、删除数据记录", "网页"],
             ["来源在别的模块", "对话"],
+            ["写说明字段、按字段找", <>都行，见<a key="a" href="#fields">说明字段</a></>],
             ["看图", <>都要经 agent，见<a key="a" href={pageHref("data-review")}>查看数据和结果对比</a></>],
             ["把数据、测试结果发到另一地", <>经飞书收发，只能在对话里做，见<a key="a" href={pageHref("data-transfer")}>两地收发教程</a></>],
           ]}
@@ -281,12 +282,12 @@ export const dataPlatform: DocPage = {
             [<code key="t">set_data_project_member</code>, "加成员或改角色（负责人、成员、只读）", "项目负责人"],
             [<code key="t">register_data_record</code>, "登记一条数据，必须给数据类型（v0.3.83 起）。别名在模块里已存在时不写入，返回已有的那条", "负责人、成员"],
             [<code key="t">register_data_records</code>, "一次最多登记 200 条，每条都要给数据类型，每条单独检查，错的那条不影响其他条", "负责人、成员"],
-            [<code key="t">list_data_assets</code>, "列出模块里的数据集版本、训练、模型、测试或对比（v0.3.80 起）。v0.3.87 起能按登记时间、名称、状态排序，数据集还能按大小、样本数排、按类型筛", "项目成员"],
+            [<code key="t">list_data_assets</code>, "列出模块里的数据集版本、训练、模型、测试或对比（v0.3.80 起）。v0.3.87 起能按登记时间、名称、状态排序，数据集还能按大小、样本数排、按类型筛。v0.3.91 起能按说明字段筛，结果里带这个模块用过的字段名", "项目成员"],
             [<code key="t">get_data_asset</code>, "看一个对象的详情：路径、清单状态、血缘、说明，对比还带对齐报告（v0.3.80 起）。数据和测试结果还列出副本和收发记录", "项目成员"],
             [<code key="t">list_manifest_entries</code>, "翻看冻结清单里的文件（v0.3.80 起）。v0.3.87 起能按大小、文件类型排序，按类别筛（合并集的类别就是来源名）", "项目成员"],
             [<code key="t">manage_dataset_manifest</code>, <>冻结或复核文件清单，不复制文件（v0.3.80 起）。v0.3.88 起冻结在开会话的这台机器上算校验值，数据服务器抽查；也能停止冻结。v0.3.89 起还能经飞书发给另一地、收别人发来的、登记已有副本，见<a key="a" href={pageHref("data-transfer")}>两地收发教程</a></>, "负责人、成员"],
             [<code key="t">set_dataset_lineage</code>, "写清数据从哪几份数据来、输入和目标怎么配对（v0.3.80 起）。v0.3.86 起可以写多个来源，每个来源一段处理说明", "负责人、成员"],
-            [<code key="t">update_asset_doc</code>, "写数据集、训练、模型的说明，每次保存留一个修订（v0.3.80 起）", "负责人、成员"],
+            [<code key="t">update_asset_doc</code>, "写数据集、训练、模型的说明，每次保存留一个修订（v0.3.80 起）。v0.3.91 起测试结果也能写", "负责人、成员"],
             [<code key="t">register_data_asset</code>, "登记训练、模型、测试或对比（v0.3.80 起）。v0.3.86 起也能把几份已冻结的数据建成合并集", "负责人、成员"],
             [<code key="t">update_data_asset</code>, "修改训练、模型或测试。已冻结的结果目录不能改路径（v0.3.80 起）。v0.3.86 起也能重新对齐对比", "负责人、成员"],
             [<code key="t">get_review_bundle</code>, "查对比的摘要：样本数、总大小、类别分布、对齐报告、血缘（v0.3.81 起）", "项目成员"],
@@ -306,6 +307,26 @@ export const dataPlatform: DocPage = {
         </ul>
         <Note title="AI 的写入不在「操作记录」页里">网页上的修改会在数据平台的「操作记录」页留一行；AI 通过工具做的修改走另一条加密通道，记录在公司内网数据服务器的审计里，不出现在那一页。</Note>
         <Maintainer title="这条通道怎么保证路径和 IP 不外泄"><p>数据平台的工具与知识检索工具走同一种端到端加密：请求在本机签名，用公司公钥加密，云端只转发密文；公司内网的数据服务器核实是哪台设备、哪个人之后才查库或写库，结果签名后加密返回。路径和服务器 IP 只出现在密文里。</p></Maintainer>
+      </>,
+    },
+    {
+      id: "fields", title: "说明字段",
+      body: <>
+        <p>登记以后，数据集、训练、模型、测试结果都能写说明：几个字段，加一段正文。字段是「名字 = 内容」，比如「场景 = 夜景」「采集地点 = 苏州」「结论 = 可以上线」。字段能拿来筛选，正文不能。测试结果 2026-11-13 起能写，网页上不用升级安装器，对话里要 v0.3.91 起；对比没有说明。</p>
+        <Matrix
+          head={["在哪里", "怎么写", "怎么筛"]}
+          rows={[
+            ["网页", "详情页的「说明」那一块，点「编辑说明」", "列表上方的「字段」下拉框选字段，在「包含」里输入文字"],
+            ["对话", "说「给测试结果 夜景-加强 写上 结论=可以上线」", "说「列出 phase2 里 结论 含 上线 的测试结果」"],
+          ]}
+        />
+        <ul>
+          <li><b>字段名要一字不差，内容包含就算，不分大小写。</b>同一件事在一个模块里用同一个字段名，比如都写「场景」，不要有的写「场景」有的写「拍摄场景」。</li>
+          <li><b>只看最新一版说明。</b>旧版里有、新版里删掉的值筛不到；写在正文里的字也筛不到。</li>
+          <li><b>网页上的训练、模型、测试结果只能按短字段筛：</b>每条最多 20 个字段，内容是 64 个字以内的文字、整数或是否。长的、带层级的、看着像路径或 IP 的不在下拉框里，到对话里筛。数据集在数据服务器上筛，没有这个限制，输入后要等几秒。</li>
+          <li><b>对话里最多 5 个条件，要同时满足。</b>agent 照列表结果里给的字段名筛，不猜；说不准字段名时先问「phase2 的测试结果写过哪些字段」。</li>
+        </ul>
+        <p>一步步的写法见<a href={pageHref("data-web") + "#fields"}>网页登记教程的说明字段</a>和<a href={pageHref("data-agent") + "#fields"}>对话登记教程的说明字段</a>。</p>
       </>,
     },
     {
@@ -338,7 +359,7 @@ export const dataPlatform: DocPage = {
 export const dataReview: DocPage = {
   group: "管理平台", label: "查看数据和结果对比", title: "查看数据和结果对比",
   intro: "在 Claude Code 里说要看什么，agent 查出已有的数据和对比，缺的部分登记好，再把选中的图拷到本机，给出对比网页地址。已经下载过的对比，再说一句就能接着看。",
-  keywords: ["数据对比", "结果对比", "查看器", "评审", "open_review_viewer", "register_data_asset", "get_review_bundle", "备注", "HTML 报告", "export_review_report", "合并集", "数据已更新", "重新对齐", "没有图片", "lq", "gt", "自动对齐", "拍摄方向", "看图缓存位置", "缓存上限"],
+  keywords: ["数据对比", "结果对比", "查看器", "评审", "open_review_viewer", "register_data_asset", "get_review_bundle", "备注", "HTML 报告", "export_review_report", "合并集", "数据已更新", "重新对齐", "没有图片", "lq", "gt", "自动对齐", "拍摄方向", "看图缓存位置", "缓存上限", "说明字段", "按字段筛"],
   sections: [
     {
       id: "before", title: "使用前提",
@@ -366,6 +387,7 @@ export const dataReview: DocPage = {
             ["还不确定看什么", "我想看数据对比"],
             ["已经有对比", "打开项目 data-platform-acceptance 里对比 ab-test2 的查看器，全部看"],
             ["只看一份数据", "打开数据集 variant_a 看图"],
+            ["按说明字段挑", "phase2 里 场景 含 夜 的测试结果有哪些"],
             ["导出成报告发给别人", "把对比 ab-test2 导出成 HTML 报告"],
             ["几份测试集合在一起评测", "把 reg-test-set 和 reg-test-set2 原样合并成测试集 reg-test-mset"],
             ["对比标着数据已更新", "把对比 ab-test2 重新对齐"],
@@ -385,7 +407,7 @@ export const dataReview: DocPage = {
           rows={[
             ["1. 范围", "看哪个项目、哪个模块。只有一个选项时不问", <><code key="a">list_data_projects</code>、<code key="b">list_data_modules</code></>],
             ["2. 目标", "看单份数据、同一原始数据的多个版本，还是同一测试集的多次结果", "无"],
-            ["3. 现有内容", "列出已有的对比和数据。有合适的就直接用，跳到第 5 步", <code key="a">list_data_assets</code>],
+            ["3. 现有内容", <>列出已有的对比和数据。有合适的就直接用，跳到第 5 步。多的时候可以按说明字段筛，见<a key="a" href={pageHref("data") + "#fields"}>说明字段</a></>, <code key="a">list_data_assets</code>],
             ["4. 补数据、建对比", <>缺数据时先登记，问法见<a key="a" href={pageHref("data-agent")}>对话登记教程</a>。建好后报告匹配了多少样本、有什么问题</>, <><code key="a">register_data_asset</code>、<code key="b">get_review_bundle</code></>],
             ["5. 查看", "看全部还是随机几个。还要拷贝时原样报出方案，确认后拷贝；图都在本机时直接给网页地址", <code key="a">open_review_viewer</code>],
           ]}
