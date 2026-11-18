@@ -269,10 +269,13 @@ export async function launch({ width = 1440, height = 900, scale = 2 } = {}) {
       return result.result.value;
     },
 
-    /** 截图，返回 PNG Buffer。fullPage 时按文档实际高度截，最高 4000 CSS px。 */
-    async screenshot({ fullPage = false } = {}) {
+    /** 截图，返回 PNG Buffer。fullPage 时按文档实际高度截，最高 4000 CSS px。
+        clip 只截页面上的一块（CSS px，相对文档左上角），清晰度照旧。 */
+    async screenshot({ fullPage = false, clip = null } = {}) {
       const params = { format: "png", captureBeyondViewport: fullPage };
-      if (fullPage) {
+      if (clip) {
+        params.clip = { x: clip.x, y: clip.y, width: clip.width, height: clip.height, scale: 1 };
+      } else if (fullPage) {
         const box = await this.evaluate(
           "JSON.stringify({w:document.documentElement.scrollWidth," +
             "h:document.documentElement.scrollHeight})",
