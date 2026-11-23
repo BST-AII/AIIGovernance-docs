@@ -35,6 +35,8 @@ const COMPARE_ID = "f4000000-0000-4000-8000-000000000001";
 const PROJECT_ID = "11111111-1111-4111-8111-111111111111";
 const SEG_MODULE_ID = "aaaaaaaa-2222-4222-8222-aaaaaaaaaaaa";
 const SEG_NPY_ID = "c5000000-0000-4000-8000-000000000007";
+/* 每个样本一个文件夹、三张输入一张目标的 lr3_gt_v1，配对检查是「不全」（2026-11-23）。 */
+const SEG_SLOTS_ID = "c5000000-0000-4000-8000-000000000008";
 const SEG_COMPARE_ID = "f4000000-0000-4000-8000-000000000011";
 /* CE 检测 / 检测 v3 模块里的测试集 aiscene_v3_test：演示数据给它放了两份副本和一次收发。
    训练 unet-lr1e-3 的输入数据记了版本。 */
@@ -211,24 +213,48 @@ function png(width, height, shade) {
   ]);
 }
 
+/* 测试集有配对规则：先是「测试输入」「测试目标」，再是两次测试的结果（2026-11-23 起）。 */
 const PANELS = [
-  { key: "input", caption: "测试输入" }, { key: "m0", caption: "夜景-基线" }, { key: "m1", caption: "夜景-加强" },
+  { key: "input", caption: "测试输入" }, { key: "target", caption: "测试目标" },
+  { key: "m0", caption: "夜景-基线" }, { key: "m1", caption: "夜景-加强" },
 ];
-const SHADES = {
-  input: { r: 30, g: 40, b: 70, freq: 18 }, m0: { r: 70, g: 80, b: 90, freq: 18 }, m1: { r: 95, g: 110, b: 105, freq: 18 },
-};
+/* 一个样本三张输入、一张目标（演示数据 lr3_gt_v1）。0042 缺 lr2。 */
+const SLOT_PANELS = [
+  { key: "input:lr1", caption: "输入 lr1" }, { key: "input:lr2", caption: "输入 lr2" },
+  { key: "input:lr3", caption: "输入 lr3" }, { key: "target", caption: "目标" },
+];
+/* 每一列一种底色，按列的先后取。 */
+const SHADES = [
+  { r: 30, g: 40, b: 70, freq: 18 }, { r: 120, g: 90, b: 60, freq: 18 },
+  { r: 70, g: 80, b: 90, freq: 18 }, { r: 95, g: 110, b: 105, freq: 18 },
+];
 
-function startViewer(token) {
-  const images = new Map();
-  const manifest = {
-    kind: "comparison", id: COMPARE_ID, title: "夜景两次测试", panels: PANELS,
-    items: ["night/0012", "night/0047", "indoor/0003"].map((key, index) => ({
-      sample_key: key, category: key.split("/")[0],
-      files: Object.fromEntries(PANELS.map((panel) => [panel.key, {
-        asset_id: `${index}-${panel.key}`, ext: "png", decode: "browser", width: 640, height: 480,
-      }])),
+function manifestOf({ kind, id, title, panels, keys, missing = {} }) {
+  return {
+    kind, id, title, panels,
+    items: keys.map((key, index) => ({
+      sample_key: key, category: key.includes("/") ? key.split("/")[0] : null,
+      files: Object.fromEntries(panels
+        .map((panel, column) => [panel, column])
+        .filter(([panel]) => !(missing[key] ?? []).includes(panel.key))
+        .map(([panel, column]) => [panel.key, {
+          asset_id: `${index}-${column}`, ext: "png", decode: "browser", width: 640, height: 480,
+        }])),
     })),
   };
+}
+
+const COMPARE_MANIFEST = manifestOf({
+  kind: "comparison", id: COMPARE_ID, title: "夜景两次测试", panels: PANELS,
+  keys: ["night/0012", "night/0047", "indoor/0003"],
+});
+const SLOTS_MANIFEST = manifestOf({
+  kind: "dataset", id: "c5000000-0000-4000-8000-000000000008", title: "lr3_gt_v1",
+  panels: SLOT_PANELS, keys: ["0007", "0042", "0108"], missing: { "0042": ["input:lr2"] },
+});
+
+function startViewer(token, manifest = COMPARE_MANIFEST) {
+  const images = new Map();
   const server = createServer((request, response) => {
     const url = new URL(request.url, "http://127.0.0.1");
     response.setHeader("Access-Control-Allow-Origin", "*");
@@ -241,8 +267,8 @@ function startViewer(token) {
     }
     const asset = /^\/cache\/([^/]+)/.exec(url.pathname)?.[1];
     if (asset) {
-      const [index, panel] = decodeURIComponent(asset).split("-");
-      if (!images.has(asset)) images.set(asset, png(640, 480, { ...SHADES[panel], freq: 14 + Number(index) * 9 }));
+      const [index, column] = decodeURIComponent(asset).split("-").map(Number);
+      if (!images.has(asset)) images.set(asset, png(640, 480, { ...SHADES[column % SHADES.length], freq: 14 + index * 9 }));
       response.setHeader("Content-Type", "image/png");
       response.end(images.get(asset));
       return;
@@ -609,6 +635,36 @@ async function main() {
     await sleep(800);
     await scroll("输入数据");
     await shot("web-training-version.png");
+
+    // 一个样本三张输入、一张目标：配对规则卡片下的检查结果，再打开「修改规则」看名单的写法。
+    // 这条也只在演示数据的索引里，直接打开。
+    await page.goto(`${BASE}/projects/${PROJECT_ID}/modules/${SEG_MODULE_ID}/datasets/${SEG_SLOTS_ID}`, { settle: 2000 });
+    await until("检查结果");
+    await sleep(800);
+    await scroll("配对规则");
+    await shot("web-pair-check.png");
+    await click("修改规则");
+    await until("怎么认出一对");
+    await scroll("配对规则");
+    await shot("web-pair-rule-names.png");
+    await click("取消");
+    await sleep(400);
+
+    // 看图：三张输入、一张目标各一列；0042 没有 lr2。
+    {
+      const token = "demo-token-slots";
+      const slots = await startViewer(token, SLOTS_MANIFEST);
+      try {
+        const { port } = slots.address();
+        await page.goto(`${BASE}/review/dataset/${SEG_SLOTS_ID}?local=127.0.0.1:${port}&t=${token}`, { settle: 3000 });
+        await until("输入 lr3");
+        await sleep(2000);
+        await reveal("样本与备注");
+        await shot("review-slots.png", { settle: 1500 });
+      } finally {
+        slots.close();
+      }
+    }
 
     // 合并测试集上的结果对比，数据已更新。
     await page.goto(`${BASE}/review/compare/${SEG_COMPARE_ID}`, { settle: 2500 });
